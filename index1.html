@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CRTY Tweaks Installer</title>
+
+  <!-- Particles.js CDN -->
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <!-- Font Awesome CDN for social media icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    /* Genel body ayarları */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0a0a0a;
+      color: #00ffcc;
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* Partiküllerin kapsayıcısı */
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      background: #0a0a0a;
+    }
+
+    /* Ana konteyner */
+    .container {
+      position: absolute;
+      z-index: 10;
+      max-width: 800px;
+      background: rgba(0, 0, 0, 0.85);
+      border-radius: 20px;
+      padding: 40px 60px;
+      box-shadow: 0 0 30px #00ffcc;
+      text-align: center;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Tanıtım konteyneri */
+    .intro-container {
+      display: none;
+      position: absolute;
+      z-index: 10;
+      max-width: 800px;
+      background: rgba(0, 0, 0, 0.85);
+      border-radius: 20px;
+      padding: 40px 60px;
+      box-shadow: 0 0 30px #00ffcc;
+      text-align: center;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Kapanış ekranı */
+    .closing-screen {
+      display: none;
+      position: absolute;
+      z-index: 10;
+      max-width: 800px;
+      background: rgba(0, 0, 0, 0.85);
+      border-radius: 20px;
+      padding: 40px 60px;
+      box-shadow: 0 0 30px #00ffcc;
+      text-align: center;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Program kapatma mesajı ekranı */
+    .closed-screen {
+      display: none;
+      position: absolute;
+      z-index: 100;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      color: #00ffcc;
+      text-align: center;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .closed-screen h1 {
+      font-size: 36px;
+      font-weight: bold;
+      animation: rgbGlow 3s infinite;
+      margin-top: 20%;
+    }
+
+    .intro-container h1, .closing-screen h1 {
+      font-size: 36px;
+      font-weight: bold;
+      animation: rgbGlow 3s infinite;
+      margin-bottom: 20px;
+    }
+
+    /* Tanıtım metni */
+    .intro-container p {
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      text-shadow: 0 0 5px #00ffcc;
+    }
+
+    .closing-screen a, .closing-screen button, .intro-container a, .intro-container button {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      color: #00ffcc;
+      text-decoration: none;
+      border: 2px solid #00ffcc;
+      border-radius: 10px;
+      background: #111;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      animation: rgbBorderGlow 3s infinite;
+    }
+
+    .closing-screen a:hover, .closing-screen button:hover, .intro-container a:hover, .intro-container button:hover {
+      background-color: #0055ff;
+      box-shadow: 0 0 20px #00aaff;
+      color: #fff;
+    }
+
+    /* Sosyal medya ikonları */
+    .closing-screen .social-links, .intro-container .social-links {
+      margin-top: 20px;
+    }
+
+    .closing-screen .social-links a, .intro-container .social-links a {
+      font-size: 24px;
+      padding: 8px 12px;
+      margin: 5px;
+      border: none;
+      background: none;
+      animation: none;
+    }
+
+    .closing-screen .social-links a:hover, .intro-container .social-links a:hover {
+      color: #00aaff;
+      text-shadow: 0 0 10px #00aaff;
+    }
+
+    /* Kapatma butonu */
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      background: #111 url('https://i.hizliresim.com/2986wrr.png') no-repeat center center;
+      background-size: 24px 24px;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ffcc;
+      transition: all 0.3s ease;
+      animation: rgbBorderGlow 3s infinite;
+    }
+
+    .close-btn:hover {
+      background-color: #ff0000;
+      box-shadow: 0 0 20px #ff0000, 0 0 15px #ff0000 inset;
+    }
+
+    /* RGB kenarlık animasyonu */
+    @keyframes rgbBorderGlow {
+      0% { border: 2px solid #ff0000; box-shadow: 0 0 10px #ff0000; }
+      33% { border: 2px solid #00ff00; box-shadow: 0 0 10px #00ff00; }
+      66% { border: 2px solid #0000ff; box-shadow: 0 0 10px #0000ff; }
+      100% { border: 2px solid #ff0000; box-shadow: 0 0 10px #ff0000; }
+    }
+
+    /* RGB metin animasyonu */
+    @keyframes rgbGlow {
+      0% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+      33% { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+      66% { color: #0000ff; text-shadow: 0 0 10px #0000ff; }
+      100% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+    }
+
+    /* Sağa-sola bakış animasyonu */
+    @keyframes lookAround {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      25% { transform: translate(-50%, -50%) rotate(10deg); }
+      50% { transform: translate(-50%, -50%) rotate(0deg); }
+      75% { transform: translate(-50%, -50%) rotate(-10deg); }
+      100% { transform: translate(-50%, -50%) rotate(0deg); }
+    }
+
+    /* Başlık ASCII sanatı */
+    pre.ascii {
+      font-size: 16px;
+      line-height: 1.1;
+      margin-bottom: 40px;
+      color: #00ffcc;
+      text-shadow: 0 0 10px #00ffcc;
+      user-select: none;
+      animation: rgbGlow 3s infinite;
+      position: relative;
+    }
+
+    /* ASCII kuru kafa sembolü */
+    .ascii .skull {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      font-size: 24px;
+      animation: rgbGlow 3s infinite, lookAround 3s infinite;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Select ve buton ortak stili */
+    select, button {
+      width: 100%;
+      padding: 18px 24px;
+      margin-top: 25px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 35px;
+      border: none;
+      background: #111;
+      color: #00ffcc;
+      box-shadow: inset 0 0 20px #00ffcc;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+
+    /* Select arkaplanı */
+    select {
+      background-color: #000;
+      color: #00ffcc;
+    }
+
+    /* Hover efektleri */
+    button:hover, select:hover {
+      background-color: #0055ff;
+      box-shadow: 0 0 20px #00aaff, 0 0 15px #0055ff inset;
+      color: #fff;
+    }
+
+    /* Sonuç ve güncelleme durumu */
+    #result, #updateStatus {
+      margin-top: 25px;
+      min-height: 4em;
+      font-size: 1.3em;
+      font-weight: 700;
+      text-shadow: 0 0 10px #00ffcc;
+      user-select: none;
+      word-wrap: break-word;
+      line-height: 1.4em;
+      padding: 10px 15px;
+      background: rgba(0, 255, 204, 0.1);
+      border-radius: 8px;
+    }
+
+    /* Responsive (mobil) */
+    @media (max-width: 600px) {
+      .container, .intro-container, .closing-screen, .closed-screen {
+        max-width: 95%;
+        padding: 30px 20px;
+        margin: 20px auto;
+        transform: translate(-50%, -50%);
+        top: 50%;
+        left: 50%;
+      }
+
+      pre.ascii {
+        font-size: 12px;
+        margin-bottom: 30px;
+      }
+
+      .ascii .skull {
+        font-size: 18px;
+      }
+
+      .intro-container h1, .closing-screen h1, .closed-screen h1 {
+        font-size: 24px;
+      }
+
+      .intro-container p {
+        font-size: 16px;
+      }
+
+      .closing-screen a, .closing-screen button, .intro-container a, .intro-container button {
+        font-size: 16px;
+        padding: 8px 16px;
+      }
+
+      .closing-screen .social-links a, .intro-container .social-links a {
+        font-size: 20px;
+        padding: 6px 10px;
+      }
+
+      select, button {
+        padding: 14px 18px;
+        font-size: 16px;
+      }
+
+      #result, #updateStatus {
+        font-size: 1.1em;
+      }
+
+      .close-btn {
+        width: 30px;
+        height: 30px;
+        background-size: 18px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <!-- Ana arayüz -->
+  <div class="container" id="mainContainer">
+    <button class="close-btn" id="closeBtn"></button>
+    <pre class="ascii">
+ ██████╗██████╗ ████████╗██╗   ██╗    ████████╗██╗    ██╗███████╗ █████╗ ██╗  ██╗███████╗
+██╔════╝██╔══██╗╚══██╔══╝╚██╗ ██╔╝    ╚══██╔══╝██║    ██║██╔════╝██╔══██╗██║ ██╔╝██╔════╝
+██║     ██████╔╝   ██║    ╚████╔╝        ██║   ██║ █╗ ██║█████╗  ███████║█████╔╝ ███████╗
+██║     ██╔══██╗   ██║     ╚██╔╝         ██║   ██║███╗██║██╔══╝  ██╔══██║██╔═██╗ ╚════██║
+╚██████╗██║  ██║   ██║      ██║          ██║   ╚███╔███╔╝███████╗██║  ██║██║  ██╗███████║
+ ╚═════╝╚═╝  ╚═╝   ╚═╝      ╚═╝          ╚═╝    ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝
+      <span class="skull">☠️</span>
+    </pre>
+
+    <select id="programSelect">
+      <option value="">Bir program seçin...</option>
+    </select>
+
+    <button id="installBtn">Yükle</button>
+    <button id="checkUpdateBtn">Güncellemeyi Kontrol Et</button>
+    <button id="introBtn">SpeedLoop Tanıtımı</button>
+
+    <div id="result"></div>
+    <div id="updateStatus"></div>
+  </div>
+
+  <!-- Tanıtım ekranı -->
+  <div class="intro-container" id="introContainer">
+    <button class="close-btn" id="introCloseBtn"></button>
+    <h1>ÇOK YAKINDA SpeedLoop</h1>
+    <p>SpeedLoop, hızlı ve özelleştirilebilir yazılım tweaks platformuyla teknolojinin sınırlarını zorluyor! Yenilikçi araçlarımızla sisteminizi optimize edin ve performansın keyfini çıkarın.</p>
+    <div class="links">
+      <a href="https://speedloopp.rf.gd" target="_blank">speedloopp.rf.gd</a>
+      <a href="https://help.speedloopp.rf.gd" target="_blank">help.speedloopp.rf.gd</a>
+    </div>
+    <a href="https://speedloopp.rf.gd" target="_blank" class="cta-btn">Keşfet</a>
+    <div class="social-links">
+      <a href="https://x.com/speedloopp" target="_blank" title="Twitter/X"><i class="fab fa-x-twitter"></i></a>
+      <a href="https://discord.gg/speedloopp" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
+      <a href="https://github.com/speedloopp" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+    </div>
+    <button id="introBackBtn">Geri</button>
+  </div>
+
+  <!-- Kapanış ekranı -->
+  <div class="closing-screen" id="closingScreen">
+    <h1>ÇOK YAKINDA SpeedLoop</h1>
+    <a href="https://speedloopp.rf.gd" target="_blank">speedloopp.rf.gd</a>
+    <a href="https://help.speedloopp.rf.gd" target="_blank">help.speedloopp.rf.gd</a>
+    <button id="exitBtn">Çıkış</button>
+    <div class="social-links">
+      <a href="https://x.com/speedloopp" target="_blank" title="Twitter/X"><i class="fab fa-x-twitter"></i></a>
+      <a href="https://discord.gg/speedloopp" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
+      <a href="https://github.com/speedloopp" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+    </div>
+  </div>
+
+  <!-- Program kapatma ekranı -->
+  <div class="closed-screen" id="closedScreen">
+    <h1>Program Kapatıldı</h1>
+  </div>
+
+  <!-- Ses kontrolü -->
+  <audio id="bg-music" loop>
+    <source src="/static/1.mp3" type="audio/mpeg">
+  </audio>
+
+  <div style="position: fixed; bottom: 10px; left: 10px; background: rgba(0,0,0,0.5); padding: 10px 15px; border-radius: 12px; color: #00ffcc; font-family: monospace; font-size: 14px;">
+    🔊 Ses:
+    <input type="range" id="volume-slider" min="0" max="100" value="30" style="vertical-align: middle;">
+  </div>
+
+  <script>
+    // Particles.js ayarları
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: ['#00ffcc', '#ff00ff'] },
+        shape: { type: 'circle' },
+        opacity: { value: 0.5, random: true },
+        size: { value: 3, random: true },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: '#00ffcc',
+          opacity: 0.4,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 2,
+          direction: 'none',
+          random: true,
+          out_mode: 'out'
+        }
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: {
+          onhover: { enable: true, mode: 'repulse' },
+          onclick: { enable: true, mode: 'push' },
+          resize: true
+        },
+        modes: {
+          repulse: { distance: 100, duration: 0.4 },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
+
+    // Program listesini API'den çekip dolduruyoruz
+    async function loadPrograms() {
+      const select = document.getElementById('programSelect');
+      try {
+        const res = await fetch('/get_programs');
+        const data = await res.json();
+        const progs = data.programs;
+        select.innerHTML = '<option value="">Bir program seçin...</option>';
+
+        for (const key in progs) {
+          const option = document.createElement('option');
+          option.value = key;
+          option.textContent = progs[key];
+          select.appendChild(option);
+        }
+      } catch (e) {
+        alert('Program listesi yüklenemedi!');
+      }
+    }
+
+    // Yükleme butonuna tıklandığında programı çalıştır
+    document.getElementById('installBtn').addEventListener('click', async () => {
+      const select = document.getElementById('programSelect');
+      const choice = select.value;
+      const resultDiv = document.getElementById('result');
+
+      if (!choice) {
+        resultDiv.textContent = 'Lütfen bir program seçin!';
+        return;
+      }
+
+      resultDiv.textContent = 'Yükleme başlatılıyor...';
+
+      try {
+        const res = await fetch('/install', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ choice })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          resultDiv.textContent = data.message;
+        } else {
+          resultDiv.textContent = data.error || 'Bir hata oluştu.';
+        }
+      } catch (e) {
+        resultDiv.textContent = 'İstek sırasında hata oluştu.';
+      }
+    });
+
+    // Güncelleme kontrol butonu
+    document.getElementById('checkUpdateBtn').addEventListener('click', async () => {
+      const status = document.getElementById('updateStatus');
+      status.textContent = "Güncelleme kontrol ediliyor...";
+      try {
+        const res = await fetch('/check_update');
+        const data = await res.json();
+        if (res.ok) {
+          if (data.has_update) {
+            status.innerHTML = `📢 Yeni sürüm: <strong>${data.version}</strong><br/>Detaylar: ${data.details}<br/><a href="${data.download_url}" target="_blank" style="color:#00ffcc;text-decoration:underline;">İndir</a>`;
+          } else {
+            status.textContent = "Güncelleme mevcut değil.";
+          }
+        } else {
+          status.textContent = "Güncelleme kontrolü başarısız.";
+        }
+      } catch (e) {
+        status.textContent = "Sunucuya bağlanılamadı.";
+      }
+    });
+
+    // Kapatma butonu
+    document.getElementById('closeBtn').addEventListener('click', () => {
+      document.getElementById('mainContainer').style.display = 'none';
+      document.getElementById('closingScreen').style.display = 'block';
+    });
+
+    // Çıkış butonu
+    document.getElementById('exitBtn').addEventListener('click', () => {
+      document.getElementById('closingScreen').style.display = 'none';
+      document.getElementById('closedScreen').style.display = 'block';
+    });
+
+    // Tanıtım butonu
+    document.getElementById('introBtn').addEventListener('click', () => {
+      document.getElementById('mainContainer').style.display = 'none';
+      document.getElementById('introContainer').style.display = 'block';
+    });
+
+    // Tanıtım ekranı kapatma butonu
+    document.getElementById('introCloseBtn').addEventListener('click', () => {
+      document.getElementById('introContainer').style.display = 'none';
+      document.getElementById('closingScreen').style.display = 'block';
+    });
+
+    // Tanıtım ekranından geri dönme
+    document.getElementById('introBackBtn').addEventListener('click', () => {
+      document.getElementById('introContainer').style.display = 'none';
+      document.getElementById('mainContainer').style.display = 'block';
+    });
+
+    // Ses kontrolü ve otomatik başlatma
+    const audio = document.getElementById("bg-music");
+    const slider = document.getElementById("volume-slider");
+
+    slider.addEventListener("input", function () {
+      audio.volume = this.value / 100;
+    });
+
+    window.addEventListener("click", function startMusicOnce() {
+      audio.volume = slider.value / 100;
+      audio.play().catch(() => {
+        console.warn("Tarayıcı otomatik müzik başlatmayı engelledi.");
+      });
+      window.removeEventListener("click", startMusicOnce);
+    });
+
+    // Sayfa yüklendiğinde program listesini çağır
+    window.addEventListener("load", loadPrograms);
+  </script>
+</body>
+</html>
