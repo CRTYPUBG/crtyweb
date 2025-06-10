@@ -111,13 +111,134 @@
     </div>
   </footer>
   <audio id="bg-music" loop>
-    <source src="https://github.com/CRTYPUBG/crty-tweaks/blob/main/embedded/static/1.mp3" type="audio/mpeg">
+    <source src="https://raw.githubusercontent.com/CRTYPUBG/crty-tweaks/main/embedded/static/1.mp3" type="audio/mpeg">
   </audio>
   <div class="audio-control">
     🔊 Ses: <input type="range" id="volume-slider" min="0" max="100" value="30" style="vertical-align:middle">
   </div>
   <script>
-    const supabase=Supabase.createClient('https://guolkrstbnjsgpmlxktf.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1b2xrcnN0Ym5qc2dwbWx4a3RmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1OTcwODgsImV4cCI6MjA2NTE3MzA4OH0.jCHuIAWWgmmElpn5lnLDvZ81Nue1B3qPSsyf1IK9yj0');particlesJS('particles-js',{particles:{number:{value:80,density:{enable:!0,value_area:800}},color:{value:['#00ffcc','#ff00ff']},shape:{type:'circle'},opacity:{value:.5,random:!0},size:{value:3,random:!0},line_linked:{enable:!0,distance:150,color:'#00ffcc',opacity:.4,width:1},move:{enable:!0,speed:2,direction:'none',random:!0,out_mode:'out'}},interactivity:{detect_on:'canvas',events:{onhover:{enable:!0,mode:'repulse'},onclick:{enable:!0,mode:'push'},resize:!0},modes:{repulse:{distance:100,duration:.4},push:{particles_nb:4}}},retina_detect:!0});const navLinks=document.querySelectorAll('.nav-link'),sections=document.querySelectorAll('section');navLinks.forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const targetId=link.getAttribute('href').slice(1);sections.forEach(section=>{section.classList.remove('active');section.id===targetId&&section.classList.add('active')});navLinks.forEach(l=>l.classList.remove('active'));link.classList.add('active')})});async function checkAuth(){const{data:{user}}=await supabase.auth.getUser(),productsNav=document.getElementById('products-nav'),productsBtn=document.getElementById('products-btn'),logoutBtn=document.getElementById('logout-btn');user?(productsNav.style.display='inline',productsBtn.style.display='inline-block',logoutBtn.style.display='inline',document.getElementById('admin-login').style.display='none',document.getElementById('admin-dashboard').style.display='block',loadProducts()):(productsNav.style.display='none',productsBtn.style.display='none',logoutBtn.style.display='none',document.getElementById('admin-login').style.display='block',document.getElementById('admin-dashboard').style.display='none')}const loginForm=document.getElementById('admin-login-form');loginForm.addEventListener('submit',async e=>{e.preventDefault();const email=document.getElementById('email').value,password=document.getElementById('password').value,{error}=await supabase.auth.signInWithPassword({email,password});error?alert('Giriş başarısız: '+error.message):checkAuth()});document.getElementById('logout-btn').addEventListener('click',async()=>{await supabase.auth.signOut();checkAuth()});const productForm=document.getElementById('product-form');productForm.addEventListener('submit',async e=>{e.preventDefault();const features=Array.from(document.querySelectorAll('#features-list input')).map(input=>input.value).filter(v=>v),tags=document.getElementById('product-tags').value.split(',').map(tag=>tag.trim()).filter(tag=>tag),product={name:document.getElementById('product-name').value,description:document.getElementById('product-description').value,category:document.getElementById('product-category').value,price:parseFloat(document.getElementById('product-price').value),stock:parseInt(document.getElementById('product-stock').value),features,tags,image_url:document.getElementById('product-image-url').value||null,status:document.getElementById('product-status').value},{error}=await supabase.from('products').insert([product]);error?alert('Ürün eklenemedi: '+error.message):(alert('Ürün eklendi!'),productForm.reset(),document.querySelectorAll('#features-list input').forEach((input,i)=>{i>0?input.remove():input.value=''}))});async function loadProducts(){const{data,error}=await supabase.from('products').select('*');if(error)return console.error('Ürünler yüklenemedi:',error);const productsGrid=document.getElementById('products-grid'),adminProductsGrid=document.getElementById('admin-products-grid');productsGrid.innerHTML='',adminProductsGrid.innerHTML='',data.forEach(product=>{const card=`<div class="product-card"><h3>${product.name}</h3><p>${product.description.substring(0,100)}...</p><p>Fiyat: $${product.price}</p><p>Stok: ${product.stock}</p><a href="#" class="btn">İncele</a></div>`;productsGrid.innerHTML+=card,adminProductsGrid.innerHTML+=card})}const showAddProduct=document.getElementById('show-add-product'),showProducts=document.getElementById('show-products'),addProductForm=document.getElementById('add-product-form'),productsList=document.getElementById('products-list');showAddProduct.addEventListener('click',()=>{addProductForm.style.display='block',productsList.style.display='none'}),showProducts.addEventListener('click',()=>{addProductForm.style.display='none',productsList.style.display='block',loadProducts()});const addFeatureBtn=document.getElementById('add-feature'),featuresList=document.getElementById('features-list');addFeatureBtn.addEventListener('click',()=>{const newInput=document.createElement('input');newInput.type='text',newInput.placeholder=`Özellik ${featuresList.querySelectorAll('input').length+1}`,featuresList.appendChild(newInput)});const audio=document.getElementById('bg-music'),slider=document.getElementById('volume-slider');slider.addEventListener('input',()=>{audio.volume=slider.value/100}),window.addEventListener('click',function startMusicOnce(){audio.volume=slider.value/100,audio.play().catch(()=>{console.warn('Tarayıcı otomatik müzik başlatmayı engelledi.')}),window.removeEventListener('click',startMusicOnce)}),checkAuth();
+    if (!window.supabase) {
+      console.error('Supabase kütüphanesi yüklenemedi. CDN bağlantısını kontrol edin.');
+    }
+    const supabase = window.supabase.createClient('https://guolkrstbnjsgpmlxktf.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1b2xrcnN0Ym5qc2dwbWx4a3RmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1OTcwODgsImV4cCI6MjA2NTE3MzA4OH0.jCHuIAWWgmmElpn5lnLDvZ81Nue1B3qPSsyf1IK9yj0');
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: ['#00ffcc', '#ff00ff'] },
+        shape: { type: 'circle' },
+        opacity: { value: 0.5, random: true },
+        size: { value: 3, random: true },
+        line_linked: { enable: true, distance: 150, color: '#00ffcc', opacity: 0.4, width: 1 },
+        move: { enable: true, speed: 2, direction: 'none', random: true, out_mode: 'out' }
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: { onhover: { enable: true, mode: 'repulse' }, onclick: { enable: true, mode: 'push' }, resize: true },
+        modes: { repulse: { distance: 100, duration: 0.4 }, push: { particles_nb: 4 } }
+      },
+      retina_detect: true
+    });
+    const navLinks = document.querySelectorAll('.nav-link'), sections = document.querySelectorAll('section');
+    navLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').slice(1);
+        sections.forEach(section => {
+          section.classList.remove('active');
+          if (section.id === targetId) section.classList.add('active');
+        });
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+    async function checkAuth() {
+      const { data: { user } } = await supabase.auth.getUser();
+      const productsNav = document.getElementById('products-nav'), productsBtn = document.getElementById('products-btn'), logoutBtn = document.getElementById('logout-btn');
+      if (user) {
+        productsNav.style.display = 'inline';
+        productsBtn.style.display = 'inline-block';
+        logoutBtn.style.display = 'inline';
+        document.getElementById('admin-login').style.display = 'none';
+        document.getElementById('admin-dashboard').style.display = 'block';
+        loadProducts();
+      } else {
+        productsNav.style.display = 'none';
+        productsBtn.style.display = 'none';
+        logoutBtn.style.display = 'none';
+        document.getElementById('admin-login').style.display = 'block';
+        document.getElementById('admin-dashboard').style.display = 'none';
+      }
+    }
+    const loginForm = document.getElementById('admin-login-form');
+    loginForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const email = document.getElementById('email').value, password = document.getElementById('password').value;
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) alert('Giriş başarısız: ' + error.message);
+      else checkAuth();
+    });
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      checkAuth();
+    });
+    const productForm = document.getElementById('product-form');
+    productForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const features = Array.from(document.querySelectorAll('#features-list input')).map(input => input.value).filter(v => v);
+      const tags = document.getElementById('product-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+      const product = {
+        name: document.getElementById('product-name').value,
+        description: document.getElementById('product-description').value,
+        category: document.getElementById('product-category').value,
+        price: parseFloat(document.getElementById('product-price').value),
+        stock: parseInt(document.getElementById('product-stock').value),
+        features,
+        tags,
+        image_url: document.getElementById('product-image-url').value || null,
+        status: document.getElementById('product-status').value
+      };
+      const { error } = await supabase.from('products').insert([product]);
+      if (error) alert('Ürün eklenemedi: ' + error.message);
+      else {
+        alert('Ürün eklendi!');
+        productForm.reset();
+        document.querySelectorAll('#features-list input').forEach((input, i) => {
+          if (i > 0) input.remove(); else input.value = '';
+        });
+      }
+    });
+    async function loadProducts() {
+      const { data, error } = await supabase.from('products').select('*');
+      if (error) return console.error('Ürünler yüklenemedi:', error);
+      const productsGrid = document.getElementById('products-grid'), adminProductsGrid = document.getElementById('admin-products-grid');
+      productsGrid.innerHTML = ''; adminProductsGrid.innerHTML = '';
+      data.forEach(product => {
+        const card = `<div class="product-card"><h3>${product.name}</h3><p>${product.description.substring(0, 100)}...</p><p>Fiyat: $${product.price}</p><p>Stok: ${product.stock}</p><a href="#" class="btn">İncele</a></div>`;
+        productsGrid.innerHTML += card; adminProductsGrid.innerHTML += card;
+      });
+    }
+    const showAddProduct = document.getElementById('show-add-product'), showProducts = document.getElementById('show-products');
+    const addProductForm = document.getElementById('add-product-form'), productsList = document.getElementById('products-list');
+    showAddProduct.addEventListener('click', () => {
+      addProductForm.style.display = 'block'; productsList.style.display = 'none';
+    });
+    showProducts.addEventListener('click', () => {
+      addProductForm.style.display = 'none'; productsList.style.display = 'block'; loadProducts();
+    });
+    const addFeatureBtn = document.getElementById('add-feature'), featuresList = document.getElementById('features-list');
+    addFeatureBtn.addEventListener('click', () => {
+      const newInput = document.createElement('input');
+      newInput.type = 'text'; newInput.placeholder = `Özellik ${featuresList.querySelectorAll('input').length + 1}`;
+      featuresList.appendChild(newInput);
+    });
+    const audio = document.getElementById('bg-music'), slider = document.getElementById('volume-slider');
+    slider.addEventListener('input', () => { audio.volume = slider.value / 100; });
+    window.addEventListener('click', function startMusicOnce() {
+      audio.volume = slider.value / 100;
+      audio.play().catch(() => { console.warn('Tarayıcı otomatik müzik başlatmayı engelledi.'); });
+      window.removeEventListener('click', startMusicOnce);
+    });
+    checkAuth();
   </script>
 </body>
 </html>
