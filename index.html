@@ -1,21 +1,24 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SpeedLoop - Çok Yakında!</title>
+  <title>CRTY Software</title>
 
   <!-- Particles.js CDN -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  <!-- Font Awesome CDN for social media icons -->
+  <!-- Font Awesome CDN for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <style>
-    /* Genel body ayarları */
-    body, html {
+    /* Genel ayarlar */
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+
+    body, html {
       height: 100%;
       background: #0a0a0a;
       color: #00ffcc;
@@ -24,7 +27,7 @@
       user-select: none;
     }
 
-    /* Partiküllerin kapsayıcısı */
+    /* Partiküller */
     #particles-js {
       position: fixed;
       width: 100%;
@@ -35,89 +38,63 @@
       background: #0a0a0a;
     }
 
-    /* Ana konteyner */
+    /* Konteyner */
     .container {
       position: relative;
       z-index: 10;
-      max-width: 800px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 40px 20px;
-      text-align: center;
-      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* Navigasyon */
+    nav {
+      background: rgba(0, 0, 0, 0.85);
+      padding: 15px 20px;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 20px #00ffcc;
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
 
-    /* Başlık */
-    h1 {
-      font-size: 48px;
+    nav .logo {
+      font-size: 24px;
       font-weight: bold;
-      animation: rgbGlow 3s infinite;
-      margin-bottom: 20px;
-      position: relative;
+      animation: glitch 2s infinite;
     }
 
-    /* Kuru kafa sembolü */
-    .skull {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      font-size: 32px;
-      animation: rgbGlow 3s infinite, lookAround 3s infinite;
-      transform: translate(-50%, -50%);
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
     }
 
-    /* Tanıtım metni */
-    p {
-      font-size: 18px;
-      line-height: 1.6;
-      margin-bottom: 30px;
-      text-shadow: 0 0 5px #00ffcc;
-    }
-
-    /* Bağlantılar ve butonlar */
-    .links a, .cta-btn {
-      display: inline-block;
-      margin: 10px;
-      padding: 10px 20px;
-      font-size: 18px;
+    nav ul li a {
       color: #00ffcc;
       text-decoration: none;
-      border: 2px solid #00ffcc;
-      border-radius: 10px;
-      background: #111;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      animation: rgbBorderGlow 3s infinite;
+      font-size: 18px;
+      transition: color 0.3s;
     }
 
-    .links a:hover, .cta-btn:hover {
-      background-color: #0055ff;
-      box-shadow: 0 0 20px #00aaff;
-      color: #fff;
+    nav ul li a:hover {
+      color: #ff00ff;
+      text-shadow: 0 0 10px #ff00ff;
     }
 
-    /* Sosyal medya ikonları */
-    .social-links {
-      margin-top: 20px;
+    /* Glitch animasyonu */
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(2px, -2px); }
+      60% { transform: translate(-2px, 0); }
+      80% { transform: translate(2px, 2px); }
+      100% { transform: translate(0); }
     }
 
-    .social-links a {
-      font-size: 24px;
-      padding: 8px 12px;
-      margin: 5px;
-      border: none;
-      background: none;
-      animation: none;
-    }
-
-    .social-links a:hover {
-      color: #00aaff;
-      text-shadow: 0 0 10px #00aaff;
-    }
-
-    /* RGB kenarlık animasyonu */
+    /* RGB animasyonları */
     @keyframes rgbBorderGlow {
       0% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
       33% { border-color: #00ff00; box-shadow: 0 0 10px #00ff00; }
@@ -125,7 +102,6 @@
       100% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
     }
 
-    /* RGB metin animasyonu */
     @keyframes rgbGlow {
       0% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
       33% { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
@@ -133,13 +109,163 @@
       100% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
     }
 
-    /* Sağa-sola bakış animasyonu */
-    @keyframes lookAround {
-      0% { transform: translate(-50%, -50%) rotate(0deg); }
-      25% { transform: translate(-50%, -50%) rotate(10deg); }
-      50% { transform: translate(-50%, -50%) rotate(0deg); }
-      75% { transform: translate(-50%, -50%) rotate(-10deg); }
-      100% { transform: translate(-50%, -50%) rotate(0deg); }
+    /* Bölüm stilleri */
+    section {
+      padding: 60px 20px;
+      min-height: 100vh;
+      display: none;
+      text-align: center;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    section h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      animation: rgbGlow 3s infinite;
+    }
+
+    section p {
+      font-size: 18px;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto 30px;
+      text-shadow: 0 0 5px #00ffcc;
+    }
+
+    /* Butonlar */
+    button, .btn {
+      padding: 12px 24px;
+      font-size: 18px;
+      color: #00ffcc;
+      background: #111;
+      border: 2px solid #00ffcc;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      animation: rgbBorderGlow 3s infinite;
+    }
+
+    button:hover, .btn:hover {
+      background: #0055ff;
+      box-shadow: 0 0 20px #00aaff;
+      color: #fff;
+    }
+
+    /* Ürün kartları */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .product-card {
+      background: rgba(0, 0, 0, 0.85);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00ffcc;
+      transition: transform 0.3s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-card h3 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .product-card p {
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    /* Form stilleri */
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input, textarea, select {
+      padding: 10px;
+      font-size: 16px;
+      background: #111;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      border-radius: 5px;
+      animation: rgbBorderGlow 3s infinite;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 10px #00aaff;
+    }
+
+    /* Admin ürün ekleme formu */
+    .admin-form {
+      max-width: 800px;
+    }
+
+    .admin-form textarea {
+      height: 150px;
+      resize: vertical;
+    }
+
+    .admin-form .features-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .admin-form .features-list input {
+      margin-bottom: 5px;
+    }
+
+    /* Sosyal medya */
+    .social-links {
+      margin-top: 20px;
+    }
+
+    .social-links a {
+      font-size: 24px;
+      color: #00ffcc;
+      margin: 0 10px;
+      transition: color 0.3s;
+    }
+
+    .social-links a:hover {
+      color: #ff00ff;
+      text-shadow: 0 0 10px #ff00ff;
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(0, 0, 0, 0.85);
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      box-shadow: 0 0 20px #00ffcc;
+    }
+
+    footer p {
+      font-size: 16px;
+    }
+
+    footer a {
+      color: #ff00ff;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-shadow: 0 0 10px #ff00ff;
     }
 
     /* Ses kontrolü */
@@ -155,37 +281,32 @@
       z-index: 20;
     }
 
-    /* Responsive (mobil) */
-    @media (max-width: 600px) {
-      .container {
-        padding: 20px;
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        gap: 10px;
       }
 
-      h1 {
+      nav ul {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      section h1 {
         font-size: 32px;
       }
 
-      .skull {
-        font-size: 24px;
-      }
-
-      p {
+      section p {
         font-size: 16px;
       }
 
-      .links a, .cta-btn {
-        font-size: 16px;
-        padding: 8px 16px;
+      .products-grid {
+        grid-template-columns: 1fr;
       }
 
-      .social-links a {
-        font-size: 20px;
-        padding: 6px 10px;
-      }
-
-      .audio-control {
-        font-size: 12px;
-        padding: 8px 12px;
+      .admin-form {
+        max-width: 95%;
       }
     }
   </style>
@@ -193,24 +314,138 @@
 <body>
   <div id="particles-js"></div>
 
+  <!-- Navigasyon -->
+  <nav>
+    <div class="logo">CRTY Software</div>
+    <ul>
+      <li><a href="#home" class="nav-link active">Ana Sayfa</a></li>
+      <li><a href="#products" class="nav-link">Ürünler</a></li>
+      <li><a href="#about" class="nav-link">Hakkında</a></li>
+      <li><a href="#contact" class="nav-link">İletişim</a></li>
+      <li><a href="#admin" class="nav-link">Admin Paneli</a></li>
+    </ul>
+  </nav>
+
+  <!-- Ana Sayfa -->
   <div class="container">
-    <h1>ÇOK YAKINDA SpeedLoop<span class="skull">☠️</span></h1>
-    <p>SpeedLoop, hızlı ve özelleştirilebilir yazılım tweaks platformuyla teknolojinin sınırlarını zorluyor! Yenilikçi araçlarımızla sisteminizi optimize edin ve performansın keyfini çıkarın.</p>
-    <div class="links">
-      <a href="https://speedloopp.rf.gd" target="_blank">speedloopp.rf.gd</a>
-      <a href="https://help.speedloopp.rf.gd" target="_blank">help.speedloopp.rf.gd</a>
-    </div>
-    <a href="https://speedloopp.rf.gd" target="_blank" class="cta-btn">Keşfet</a>
-    <div class="social-links">
-      <a href="https://x.com/speedloopp" target="_blank" title="Twitter/X"><i class="fab fa-x-twitter"></i></a>
-      <a href="https://discord.gg/speedloopp" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
-      <a href="https://github.com/speedloopp" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
-    </div>
+    <section id="home" class="active">
+      <h1>CRTY Software</h1>
+      <p>Hacker ruhuyla tasarlanan yenilikçi yazılım çözümleri. Sistemlerinizi optimize edin, sınırları zorlayın!</p>
+      <a href="#products" class="btn">Ürünleri Keşfet</a>
+    </section>
+
+    <!-- Ürünler -->
+    <section id="products">
+      <h1>Ürünlerimiz</h1>
+      <p>Performans ve özelleştirme için tasarlanmış araçlarımızla tanışın.</p>
+      <div class="products-grid">
+        <div class="product-card">
+          <h3>CRTY Tweak</h3>
+          <p>Sistem optimizasyonu için güçlü bir araç.</p>
+          <p>Fiyat: $29.99</p>
+          <a href="#" class="btn">İncele</a>
+        </div>
+        <div class="product-card">
+          <h3>CRTY Secure</h3>
+          <p>Gelişmiş güvenlik yazılımı.</p>
+          <p>Fiyat: $49.99</p>
+          <a href="#" class="btn">İncele</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hakkında -->
+    <section id="about">
+      <h1>Hakkımızda</h1>
+      <p>CRTY Software, teknoloji tutkunları için yenilikçi çözümler sunar. Misyonumuz, kullanıcıların sistemlerini maksimum performansa ulaştırmalarına yardımcı olmaktır.</p>
+    </section>
+
+    <!-- İletişim -->
+    <section id="contact">
+      <h1>İletişim</h1>
+      <p>Bize ulaşın, sorularınızı yanıtlayalım!</p>
+      <form id="contact-form">
+        <input type="text" placeholder="Adınız" required />
+        <input type="email" placeholder="E-posta" required />
+        <textarea placeholder="Mesajınız" required></textarea>
+        <button type="submit">Gönder</button>
+      </form>
+      <div class="social-links">
+        <a href="https://x.com/crtsoftware" target="_blank" title="Twitter/X"><i class="fab fa-x-twitter"></i></a>
+        <a href="https://discord.gg/crtsoftware" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
+        <a href="https://github.com/crtsoftware" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+      </div>
+    </section>
+
+    <!-- Admin Paneli -->
+    <section id="admin">
+      <h1>Admin Paneli</h1>
+      <div id="admin-login" class="active">
+        <p>Lütfen giriş yapın.</p>
+        <form id="admin-login-form">
+          <input type="text" placeholder="Kullanıcı Adı" required />
+          <input type="password" placeholder="Şifre" required />
+          <button type="submit">Giriş Yap</button>
+        </form>
+      </div>
+      <div id="admin-dashboard" style="display: none;">
+        <h2>Admin Dashboard</h2>
+        <button id="show-add-product">Ürün Ekle</button>
+        <button id="show-products">Ürünleri Listele</button>
+        <button id="show-users">Kullanıcılar</button>
+        <div id="add-product-form" style="display: none;">
+          <h3>Ürün Ekle</h3>
+          <form class="admin-form">
+            <input type="text" placeholder="Ürün Adı" required />
+            <textarea placeholder="Ürün Açıklaması" required></textarea>
+            <select required>
+              <option value="">Kategori Seçin</option>
+              <option value="tweak">Tweak</option>
+              <option value="security">Güvenlik</option>
+              <option value="utility">Yardımcı Araç</option>
+            </select>
+            <input type="number" placeholder="Fiyat ($)" step="0.01" required />
+            <input type="number" placeholder="Stok Adedi" required />
+            <div class="features-list">
+              <label>Özellikler:</label>
+              <input type="text" placeholder="Özellik 1" />
+              <input type="text" placeholder="Özellik 2" />
+              <button type="button" id="add-feature">Özellik Ekle</button>
+            </div>
+            <input type="file" accept="image/*" />
+            <input type="text" placeholder="Etiketler (virgülle ayırın)" />
+            <select required>
+              <option value="draft">Taslak</option>
+              <option value="published">Yayınla</option>
+            </select>
+            <button type="submit">Ürünü Kaydet</button>
+          </form>
+        </div>
+        <div id="products-list" style="display: none;">
+          <h3>Ürün Listesi</h3>
+          <p>Ürünler burada listelenecek.</p>
+        </div>
+        <div id="users-list" style="display: none;">
+          <h3>Kullanıcılar</h3>
+          <p>Kullanıcılar burada listelenecek.</p>
+        </div>
+      </div>
+    </section>
   </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 CRTY Software. Tüm hakları saklıdır. Lisans: <a href="https://opensource.org/licenses/MIT" target="_blank">MIT Lisansı</a></p>
+    <div class="social-links">
+      <a href="https://x.com/crtsoftware" target="_blank" title="Twitter/X"><i class="fab fa-x-twitter"></i></a>
+      <a href="https://discord.gg/crtsoftware" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
+      <a href="https://github.com/crtsoftware" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+    </div>
+  </footer>
 
   <!-- Ses kontrolü -->
   <audio id="bg-music" loop>
-    <source src="/static/intro.mp3" type="audio/mpeg">
+    <source src="/static/bg.mp3" type="audio/mpeg">
   </audio>
   <div class="audio-control">
     🔊 Ses:
@@ -256,20 +491,86 @@
       retina_detect: true
     });
 
-    // Ses kontrolü ve otomatik başlatma
-    const audio = document.getElementById("bg-music");
-    const slider = document.getElementById("volume-slider");
+    // Navigasyon
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('section');
 
-    slider.addEventListener("input", function () {
-      audio.volume = this.value / 100;
+    navLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').slice(1);
+        sections.forEach(section => {
+          section.classList.remove('active');
+          if (section.id === targetId) {
+            section.classList.add('active');
+          }
+        });
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
     });
 
-    window.addEventListener("click", function startMusicOnce() {
+    // Admin paneli
+    const loginForm = document.getElementById('admin-login-form');
+    const adminLogin = document.getElementById('admin-login');
+    const adminDashboard = document.getElementById('admin-dashboard');
+
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      adminLogin.style.display = 'none';
+      adminDashboard.style.display = 'block';
+    });
+
+    const showAddProduct = document.getElementById('show-add-product');
+    const showProducts = document.getElementById('show-products');
+    const showUsers = document.getElementById('show-users');
+    const addProductForm = document.getElementById('add-product-form');
+    const productsList = document.getElementById('products-list');
+    const usersList = document.getElementById('users-list');
+
+    showAddProduct.addEventListener('click', () => {
+      addProductForm.style.display = 'block';
+      productsList.style.display = 'none';
+      usersList.style.display = 'none';
+    });
+
+    showProducts.addEventListener('click', () => {
+      addProductForm.style.display = 'none';
+      productsList.style.display = 'block';
+      usersList.style.display = 'none';
+    });
+
+    showUsers.addEventListener('click', () => {
+      addProductForm.style.display = 'none';
+      productsList.style.display = 'none';
+      usersList.style.display = 'block';
+    });
+
+    // Özellik ekleme
+    const addFeatureBtn = document.getElementById('add-feature');
+    const featuresList = document.querySelector('.features-list');
+
+    addFeatureBtn.addEventListener('click', () => {
+      const newInput = document.createElement('input');
+      newInput.type = 'text';
+      newInput.placeholder = `Özellik ${featuresList.querySelectorAll('input').length + 1}`;
+      featuresList.insertBefore(newInput, addFeatureBtn);
+    });
+
+    // Ses kontrolü
+    const audio = document.getElementById('bg-music');
+    const slider = document.getElementById('volume-slider');
+
+    slider.addEventListener('input', () => {
+      audio.volume = slider.value / 100;
+    });
+
+    window.addEventListener('click', function startMusicOnce() {
       audio.volume = slider.value / 100;
       audio.play().catch(() => {
-        console.warn("Tarayıcı otomatik müzik başlatmayı engelledi.");
+        console.warn('Tarayıcı otomatik müzik başlatmayı engelledi.');
       });
-      window.removeEventListener("click", startMusicOnce);
+      window.removeEventListener('click', startMusicOnce);
     });
   </script>
 </body>
