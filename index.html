@@ -4,369 +4,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CRTY Software</title>
-
-  <!-- Particles.js CDN -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  <!-- Font Awesome CDN for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
-    /* Genel ayarlar */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body, html {
-      height: 100%;
-      background: #0a0a0a;
-      color: #00ffcc;
-      font-family: 'Courier New', monospace;
-      overflow-x: hidden;
-      user-select: none;
-    }
-
-    /* Partiküller */
-    #particles-js {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      top: 0;
-      left: 0;
-      background: #0a0a0a;
-    }
-
-    /* Konteyner */
-    .container {
-      position: relative;
-      z-index: 10;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    /* Navigasyon */
-    nav {
-      background: rgba(0, 0, 0, 0.85);
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 0 20px #00ffcc;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-
-    nav .logo {
-      font-size: 24px;
-      font-weight: bold;
-      animation: glitch 2s infinite;
-    }
-
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 20px;
-    }
-
-    nav ul li a {
-      color: #00ffcc;
-      text-decoration: none;
-      font-size: 18px;
-      transition: color 0.3s;
-    }
-
-    nav ul li a:hover {
-      color: #ff00ff;
-      text-shadow: 0 0 10px #ff00ff;
-    }
-
-    /* Glitch animasyonu */
-    @keyframes glitch {
-      0% { transform: translate(0); }
-      20% { transform: translate(-2px, 2px); }
-      40% { transform: translate(2px, -2px); }
-      60% { transform: translate(-2px, 0); }
-      80% { transform: translate(2px, 2px); }
-      100% { transform: translate(0); }
-    }
-
-    /* RGB animasyonları */
-    @keyframes rgbBorderGlow {
-      0% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
-      33% { border-color: #00ff00; box-shadow: 0 0 10px #00ff00; }
-      66% { border-color: #0000ff; box-shadow: 0 0 10px #0000ff; }
-      100% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
-    }
-
-    @keyframes rgbGlow {
-      0% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
-      33% { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
-      66% { color: #0000ff; text-shadow: 0 0 10px #0000ff; }
-      100% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
-    }
-
-    /* Bölüm stilleri */
-    section {
-      padding: 60px 20px;
-      min-height: 100vh;
-      display: none;
-      text-align: center;
-    }
-
-    section.active {
-      display: block;
-    }
-
-    section h1 {
-      font-size: 48px;
-      margin-bottom: 20px;
-      animation: rgbGlow 3s infinite;
-    }
-
-    section p {
-      font-size: 18px;
-      line-height: 1.6;
-      max-width: 800px;
-      margin: 0 auto 30px;
-      text-shadow: 0 0 5px #00ffcc;
-    }
-
-    /* Butonlar */
-    button, .btn {
-      padding: 12px 24px;
-      font-size: 18px;
-      color: #00ffcc;
-      background: #111;
-      border: 2px solid #00ffcc;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s;
-      animation: rgbBorderGlow 3s infinite;
-    }
-
-    button:hover, .btn:hover {
-      background: #0055ff;
-      box-shadow: 0 0 20px #00aaff;
-      color: #fff;
-    }
-
-    /* Ürün kartları */
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-top: 40px;
-    }
-
-    .product-card {
-      background: rgba(0, 0, 0, 0.85);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px #00ffcc;
-      transition: transform 0.3s;
-    }
-
-    .product-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .product-card h3 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .product-card p {
-      font-size: 16px;
-      margin-bottom: 15px;
-    }
-
-    /* Form stilleri */
-    form {
-      max-width: 600px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-
-    input, textarea, select {
-      padding: 10px;
-      font-size: 16px;
-      background: #111;
-      color: #00ffcc;
-      border: 2px solid #00ffcc;
-      border-radius: 5px;
-      animation: rgbBorderGlow 3s infinite;
-    }
-
-    input:focus, textarea:focus, select:focus {
-      outline: none;
-      box-shadow: 0 0 10px #00aaff;
-    }
-
-    /* Admin ürün ekleme formu */
-    .admin-form {
-      max-width: 800px;
-    }
-
-    .admin-form textarea {
-      height: 150px;
-      resize: vertical;
-    }
-
-    .admin-form .features-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .admin-form .features-list input {
-      margin-bottom: 5px;
-    }
-
-    /* Sosyal medya */
-    .social-links {
-      margin-top: 20px;
-    }
-
-    .social-links a {
-      font-size: 24px;
-      color: #00ffcc;
-      margin: 0 10px;
-      transition: color 0.3s;
-    }
-
-    .social-links a:hover {
-      color: #ff00ff;
-      text-shadow: 0 0 10px #ff00ff;
-    }
-
-    /* Footer */
-    footer {
-      background: rgba(0, 0, 0, 0.85);
-      padding: 20px;
-      text-align: center;
-      position: relative;
-      z-index: 10;
-      box-shadow: 0 0 20px #00ffcc;
-    }
-
-    footer p {
-      font-size: 16px;
-    }
-
-    footer a {
-      color: #ff00ff;
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      text-shadow: 0 0 10px #ff00ff;
-    }
-
-    /* Ses kontrolü */
-    .audio-control {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 10px 15px;
-      border-radius: 12px;
-      color: #00ffcc;
-      font-size: 14px;
-      z-index: 20;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      nav {
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      nav ul {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      section h1 {
-        font-size: 32px;
-      }
-
-      section p {
-        font-size: 16px;
-      }
-
-      .products-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .admin-form {
-        max-width: 95%;
-      }
-    }
+    *{box-sizing:border-box;margin:0;padding:0}body,html{height:100%;background:#0a0a0a;color:#00ffcc;font-family:'Courier New',monospace;overflow-x:hidden;user-select:none}#particles-js{position:fixed;width:100%;height:100%;z-index:0;top:0;left:0;background:#0a0a0a}.container{position:relative;z-index:10;max-width:1200px;margin:0 auto;padding:20px}nav{background:rgba(0,0,0,0.85);padding:15px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 0 20px #00ffcc;position:sticky;top:0;z-index:20}nav .logo{font-size:24px;font-weight:700;animation:glitch 2s infinite}nav ul{list-style:none;display:flex;gap:20px}nav ul li a,nav ul li button{color:#00ffcc;text-decoration:none;font-size:18px;background:0;border:0;cursor:pointer;transition:color .3s}nav ul li a:hover,nav ul li button:hover{color:#ff00ff;text-shadow:0 0 10px #ff00ff}@keyframes glitch{0%{transform:translate(0)}20%{transform:translate(-2px,2px)}40%{transform:translate(2px,-2px)}60%{transform:translate(-2px,0)}80%{transform:translate(2px,2px)}100%{transform:translate(0)}}@keyframes rgbBorderGlow{0%{border-color:#ff0000;box-shadow:0 0 10px #ff0000}33%{border-color:#00ff00;box-shadow:0 0 10px #00ff00}66%{border-color:#0000ff;box-shadow:0 0 10px #0000ff}100%{border-color:#ff0000;box-shadow:0 0 10px #ff0000}}@keyframes rgbGlow{0%{color:#ff0000;text-shadow:0 0 10px #ff0000}33%{color:#00ff00;text-shadow:0 0 10px #00ff00}66%{color:#0000ff;text-shadow:0 0 10px #0000ff}100%{color:#ff0000;text-shadow:0 0 10px #ff0000}}section{padding:60px 20px;min-height:100vh;display:none;text-align:center}section.active{display:block}section h1{font-size:48px;margin-bottom:20px;animation:rgbGlow 3s infinite}section p{font-size:18px;line-height:1.6;max-width:800px;margin:0 auto 30px;text-shadow:0 0 5px #00ffcc}button,.btn{padding:12px 24px;font-size:18px;color:#00ffcc;background:#111;border:2px solid #00ffcc;border-radius:10px;cursor:pointer;transition:all .3s;animation:rgbBorderGlow 3s infinite}button:hover,.btn:hover{background:#0055ff;box-shadow:0 0 20px #00aaff;color:#fff}.products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:40px}.product-card{background:rgba(0,0,0,0.85);padding:20px;border-radius:10px;box-shadow:0 0 15px #00ffcc;transition:transform .3s}.product-card:hover{transform:translateY(-5px)}.product-card h3{font-size:24px;margin-bottom:10px}.product-card p{font-size:16px;margin-bottom:15px}form{max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:15px}input,textarea,select{padding:10px;font-size:16px;background:#111;color:#00ffcc;border:2px solid #00ffcc;border-radius:5px;animation:rgbBorderGlow 3s infinite}input:focus,textarea:focus,select:focus{outline:0;box-shadow:0 0 10px #00aaff}.admin-form{max-width:800px}.admin-form textarea{height:150px;resize:vertical}.admin-form .features-list{display:flex;flex-direction:column;gap:10px}.admin-form .features-list input{margin-bottom:5px}.social-links{margin-top:20px}.social-links a{font-size:24px;color:#00ffcc;margin:0 10px;transition:color .3s}.social-links a:hover{color:#ff00ff;text-shadow:0 0 10px #ff00ff}footer{background:rgba(0,0,0,0.85);padding:20px;text-align:center;position:relative;z-index:10;box-shadow:0 0 20px #00ffcc}footer p{font-size:16px}footer a{color:#ff00ff;text-decoration:none}footer a:hover{text-shadow:0 0 10px #ff00ff}.audio-control{position:fixed;bottom:10px;left:10px;background:rgba(0,0,0,0.5);padding:10px 15px;border-radius:12px;color:#00ffcc;font-size:14px;z-index:20}@media (max-width:768px){nav{flex-direction:column;gap:10px}nav ul{flex-direction:column;align-items:center}section h1{font-size:32px}section p{font-size:16px}.products-grid{grid-template-columns:1fr}.admin-form{max-width:95%}}
   </style>
 </head>
 <body>
   <div id="particles-js"></div>
-
-  <!-- Navigasyon -->
   <nav>
     <div class="logo">CRTY Software</div>
-    <ul>
+    <ul id="nav-links">
       <li><a href="#home" class="nav-link active">Ana Sayfa</a></li>
-      <li><a href="#products" class="nav-link">Ürünler</a></li>
+      <li><a href="#products" class="nav-link" id="products-nav" style="display:none">Ürünler</a></li>
       <li><a href="#about" class="nav-link">Hakkında</a></li>
       <li><a href="#contact" class="nav-link">İletişim</a></li>
       <li><a href="#admin" class="nav-link">Admin Paneli</a></li>
+      <li><button id="logout-btn" style="display:none">Çıkış Yap</button></li>
     </ul>
   </nav>
-
-  <!-- Ana Sayfa -->
   <div class="container">
     <section id="home" class="active">
       <h1>CRTY Software</h1>
       <p>Hacker ruhuyla tasarlanan yenilikçi yazılım çözümleri. Sistemlerinizi optimize edin, sınırları zorlayın!</p>
-      <a href="#products" class="btn">Ürünleri Keşfet</a>
+      <a href="#products" class="btn" id="products-btn" style="display:none">Ürünleri Keşfet</a>
     </section>
-
-    <!-- Ürünler -->
     <section id="products">
       <h1>Ürünlerimiz</h1>
-      <p>Performans ve özelleştirme için tasarlanmış araçlarımızla tanışın.</p>
-      <div class="products-grid">
-        <div class="product-card">
-          <h3>CRTY Tweak</h3>
-          <p>Sistem optimizasyonu için güçlü bir araç.</p>
-          <p>Fiyat: $29.99</p>
-          <a href="#" class="btn">İncele</a>
-        </div>
-        <div class="product-card">
-          <h3>CRTY Secure</h3>
-          <p>Gelişmiş güvenlik yazılımı.</p>
-          <p>Fiyat: $49.99</p>
-          <a href="#" class="btn">İncele</a>
-        </div>
-      </div>
+      <p>Yetkili kullanıcılar için ürün listesi.</p>
+      <div class="products-grid" id="products-grid"></div>
     </section>
-
-    <!-- Hakkında -->
     <section id="about">
       <h1>Hakkımızda</h1>
       <p>CRTY Software, teknoloji tutkunları için yenilikçi çözümler sunar. Misyonumuz, kullanıcıların sistemlerini maksimum performansa ulaştırmalarına yardımcı olmaktır.</p>
     </section>
-
-    <!-- İletişim -->
     <section id="contact">
       <h1>İletişim</h1>
       <p>Bize ulaşın, sorularınızı yanıtlayalım!</p>
       <form id="contact-form">
-        <input type="text" placeholder="Adınız" required />
-        <input type="email" placeholder="E-posta" required />
+        <input type="text" placeholder="Adınız" required>
+        <input type="email" placeholder="E-posta" required>
         <textarea placeholder="Mesajınız" required></textarea>
         <button type="submit">Gönder</button>
       </form>
@@ -376,64 +54,54 @@
         <a href="https://github.com/crtsoftware" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
       </div>
     </section>
-
-    <!-- Admin Paneli -->
     <section id="admin">
       <h1>Admin Paneli</h1>
       <div id="admin-login" class="active">
         <p>Lütfen giriş yapın.</p>
         <form id="admin-login-form">
-          <input type="text" placeholder="Kullanıcı Adı" required />
-          <input type="password" placeholder="Şifre" required />
+          <input type="email" id="email" placeholder="E-posta" required>
+          <input type="password" id="password" placeholder="Şifre" required>
           <button type="submit">Giriş Yap</button>
         </form>
       </div>
-      <div id="admin-dashboard" style="display: none;">
+      <div id="admin-dashboard" style="display:none">
         <h2>Admin Dashboard</h2>
         <button id="show-add-product">Ürün Ekle</button>
         <button id="show-products">Ürünleri Listele</button>
-        <button id="show-users">Kullanıcılar</button>
-        <div id="add-product-form" style="display: none;">
+        <div id="add-product-form" style="display:none">
           <h3>Ürün Ekle</h3>
-          <form class="admin-form">
-            <input type="text" placeholder="Ürün Adı" required />
-            <textarea placeholder="Ürün Açıklaması" required></textarea>
-            <select required>
+          <form class="admin-form" id="product-form">
+            <input type="text" id="product-name" placeholder="Ürün Adı" required>
+            <textarea id="product-description" placeholder="Ürün Açıklaması" required></textarea>
+            <select id="product-category" required>
               <option value="">Kategori Seçin</option>
               <option value="tweak">Tweak</option>
               <option value="security">Güvenlik</option>
               <option value="utility">Yardımcı Araç</option>
             </select>
-            <input type="number" placeholder="Fiyat ($)" step="0.01" required />
-            <input type="number" placeholder="Stok Adedi" required />
-            <div class="features-list">
+            <input type="number" id="product-price" placeholder="Fiyat ($)" step="0.01" required>
+            <input type="number" id="product-stock" placeholder="Stok Adedi" required>
+            <div class="features-list" id="features-list">
               <label>Özellikler:</label>
-              <input type="text" placeholder="Özellik 1" />
-              <input type="text" placeholder="Özellik 2" />
-              <button type="button" id="add-feature">Özellik Ekle</button>
+              <input type="text" placeholder="Özellik 1">
             </div>
-            <input type="file" accept="image/*" />
-            <input type="text" placeholder="Etiketler (virgülle ayırın)" />
-            <select required>
+            <button type="button" id="add-feature">Özellik Ekle</button>
+            <input type="text" id="product-image-url" placeholder="Görsel URL">
+            <input type="text" id="product-tags" placeholder="Etiketler (virgülle ayırın)">
+            <select id="product-status" required>
               <option value="draft">Taslak</option>
               <option value="published">Yayınla</option>
             </select>
             <button type="submit">Ürünü Kaydet</button>
           </form>
         </div>
-        <div id="products-list" style="display: none;">
+        <div id="products-list" style="display:none">
           <h3>Ürün Listesi</h3>
-          <p>Ürünler burada listelenecek.</p>
-        </div>
-        <div id="users-list" style="display: none;">
-          <h3>Kullanıcılar</h3>
-          <p>Kullanıcılar burada listelenecek.</p>
+          <div id="admin-products-grid" class="products-grid"></div>
         </div>
       </div>
     </section>
   </div>
-
-  <!-- Footer -->
   <footer>
     <p>© 2025 CRTY Software. Tüm hakları saklıdır. Lisans: <a href="https://opensource.org/licenses/MIT" target="_blank">MIT Lisansı</a></p>
     <div class="social-links">
@@ -442,136 +110,14 @@
       <a href="https://github.com/crtsoftware" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
     </div>
   </footer>
-
-  <!-- Ses kontrolü -->
   <audio id="bg-music" loop>
     <source src="/static/bg.mp3" type="audio/mpeg">
   </audio>
   <div class="audio-control">
-    🔊 Ses:
-    <input type="range" id="volume-slider" min="0" max="100" value="30" style="vertical-align: middle;">
+    🔊 Ses: <input type="range" id="volume-slider" min="0" max="100" value="30" style="vertical-align:middle">
   </div>
-
   <script>
-    // Particles.js ayarları
-    particlesJS('particles-js', {
-      particles: {
-        number: { value: 80, density: { enable: true, value_area: 800 } },
-        color: { value: ['#00ffcc', '#ff00ff'] },
-        shape: { type: 'circle' },
-        opacity: { value: 0.5, random: true },
-        size: { value: 3, random: true },
-        line_linked: {
-          enable: true,
-          distance: 150,
-          color: '#00ffcc',
-          opacity: 0.4,
-          width: 1
-        },
-        move: {
-          enable: true,
-          speed: 2,
-          direction: 'none',
-          random: true,
-          out_mode: 'out'
-        }
-      },
-      interactivity: {
-        detect_on: 'canvas',
-        events: {
-          onhover: { enable: true, mode: 'repulse' },
-          onclick: { enable: true, mode: 'push' },
-          resize: true
-        },
-        modes: {
-          repulse: { distance: 100, duration: 0.4 },
-          push: { particles_nb: 4 }
-        }
-      },
-      retina_detect: true
-    });
-
-    // Navigasyon
-    const navLinks = document.querySelectorAll('.nav-link');
-    const sections = document.querySelectorAll('section');
-
-    navLinks.forEach(link => {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        const targetId = link.getAttribute('href').slice(1);
-        sections.forEach(section => {
-          section.classList.remove('active');
-          if (section.id === targetId) {
-            section.classList.add('active');
-          }
-        });
-        navLinks.forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
-      });
-    });
-
-    // Admin paneli
-    const loginForm = document.getElementById('admin-login-form');
-    const adminLogin = document.getElementById('admin-login');
-    const adminDashboard = document.getElementById('admin-dashboard');
-
-    loginForm.addEventListener('submit', e => {
-      e.preventDefault();
-      adminLogin.style.display = 'none';
-      adminDashboard.style.display = 'block';
-    });
-
-    const showAddProduct = document.getElementById('show-add-product');
-    const showProducts = document.getElementById('show-products');
-    const showUsers = document.getElementById('show-users');
-    const addProductForm = document.getElementById('add-product-form');
-    const productsList = document.getElementById('products-list');
-    const usersList = document.getElementById('users-list');
-
-    showAddProduct.addEventListener('click', () => {
-      addProductForm.style.display = 'block';
-      productsList.style.display = 'none';
-      usersList.style.display = 'none';
-    });
-
-    showProducts.addEventListener('click', () => {
-      addProductForm.style.display = 'none';
-      productsList.style.display = 'block';
-      usersList.style.display = 'none';
-    });
-
-    showUsers.addEventListener('click', () => {
-      addProductForm.style.display = 'none';
-      productsList.style.display = 'none';
-      usersList.style.display = 'block';
-    });
-
-    // Özellik ekleme
-    const addFeatureBtn = document.getElementById('add-feature');
-    const featuresList = document.querySelector('.features-list');
-
-    addFeatureBtn.addEventListener('click', () => {
-      const newInput = document.createElement('input');
-      newInput.type = 'text';
-      newInput.placeholder = `Özellik ${featuresList.querySelectorAll('input').length + 1}`;
-      featuresList.insertBefore(newInput, addFeatureBtn);
-    });
-
-    // Ses kontrolü
-    const audio = document.getElementById('bg-music');
-    const slider = document.getElementById('volume-slider');
-
-    slider.addEventListener('input', () => {
-      audio.volume = slider.value / 100;
-    });
-
-    window.addEventListener('click', function startMusicOnce() {
-      audio.volume = slider.value / 100;
-      audio.play().catch(() => {
-        console.warn('Tarayıcı otomatik müzik başlatmayı engelledi.');
-      });
-      window.removeEventListener('click', startMusicOnce);
-    });
+    const supabase=Supabase.createClient('https://guolkrstbnjsgpmlxktf.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1b2xrcnN0Ym5qc2dwbWx4a3RmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1OTcwODgsImV4cCI6MjA2NTE3MzA4OH0.jCHuIAWWgmmElpn5lnLDvZ81Nue1B3qPSsyf1IK9yj0');particlesJS('particles-js',{particles:{number:{value:80,density:{enable:!0,value_area:800}},color:{value:['#00ffcc','#ff00ff']},shape:{type:'circle'},opacity:{value:.5,random:!0},size:{value:3,random:!0},line_linked:{enable:!0,distance:150,color:'#00ffcc',opacity:.4,width:1},move:{enable:!0,speed:2,direction:'none',random:!0,out_mode:'out'}},interactivity:{detect_on:'canvas',events:{onhover:{enable:!0,mode:'repulse'},onclick:{enable:!0,mode:'push'},resize:!0},modes:{repulse:{distance:100,duration:.4},push:{particles_nb:4}}},retina_detect:!0});const navLinks=document.querySelectorAll('.nav-link'),sections=document.querySelectorAll('section');navLinks.forEach(link=>{link.addEventListener('click',e=>{e.preventDefault();const targetId=link.getAttribute('href').slice(1);sections.forEach(section=>{section.classList.remove('active');section.id===targetId&&section.classList.add('active')});navLinks.forEach(l=>l.classList.remove('active'));link.classList.add('active')})});async function checkAuth(){const{data:{user}}=await supabase.auth.getUser(),productsNav=document.getElementById('products-nav'),productsBtn=document.getElementById('products-btn'),logoutBtn=document.getElementById('logout-btn');user?(productsNav.style.display='inline',productsBtn.style.display='inline-block',logoutBtn.style.display='inline',document.getElementById('admin-login').style.display='none',document.getElementById('admin-dashboard').style.display='block',loadProducts()):(productsNav.style.display='none',productsBtn.style.display='none',logoutBtn.style.display='none',document.getElementById('admin-login').style.display='block',document.getElementById('admin-dashboard').style.display='none')}const loginForm=document.getElementById('admin-login-form');loginForm.addEventListener('submit',async e=>{e.preventDefault();const email=document.getElementById('email').value,password=document.getElementById('password').value,{error}=await supabase.auth.signInWithPassword({email,password});error?alert('Giriş başarısız: '+error.message):checkAuth()});document.getElementById('logout-btn').addEventListener('click',async()=>{await supabase.auth.signOut();checkAuth()});const productForm=document.getElementById('product-form');productForm.addEventListener('submit',async e=>{e.preventDefault();const features=Array.from(document.querySelectorAll('#features-list input')).map(input=>input.value).filter(v=>v),tags=document.getElementById('product-tags').value.split(',').map(tag=>tag.trim()).filter(tag=>tag),product={name:document.getElementById('product-name').value,description:document.getElementById('product-description').value,category:document.getElementById('product-category').value,price:parseFloat(document.getElementById('product-price').value),stock:parseInt(document.getElementById('product-stock').value),features,tags,image_url:document.getElementById('product-image-url').value||null,status:document.getElementById('product-status').value},{error}=await supabase.from('products').insert([product]);error?alert('Ürün eklenemedi: '+error.message):(alert('Ürün eklendi!'),productForm.reset(),document.querySelectorAll('#features-list input').forEach((input,i)=>{i>0?input.remove():input.value=''}))});async function loadProducts(){const{data,error}=await supabase.from('products').select('*');if(error)return console.error('Ürünler yüklenemedi:',error);const productsGrid=document.getElementById('products-grid'),adminProductsGrid=document.getElementById('admin-products-grid');productsGrid.innerHTML='',adminProductsGrid.innerHTML='',data.forEach(product=>{const card=`<div class="product-card"><h3>${product.name}</h3><p>${product.description.substring(0,100)}...</p><p>Fiyat: $${product.price}</p><p>Stok: ${product.stock}</p><a href="#" class="btn">İncele</a></div>`;productsGrid.innerHTML+=card,adminProductsGrid.innerHTML+=card})}const showAddProduct=document.getElementById('show-add-product'),showProducts=document.getElementById('show-products'),addProductForm=document.getElementById('add-product-form'),productsList=document.getElementById('products-list');showAddProduct.addEventListener('click',()=>{addProductForm.style.display='block',productsList.style.display='none'}),showProducts.addEventListener('click',()=>{addProductForm.style.display='none',productsList.style.display='block',loadProducts()});const addFeatureBtn=document.getElementById('add-feature'),featuresList=document.getElementById('features-list');addFeatureBtn.addEventListener('click',()=>{const newInput=document.createElement('input');newInput.type='text',newInput.placeholder=`Özellik ${featuresList.querySelectorAll('input').length+1}`,featuresList.appendChild(newInput)});const audio=document.getElementById('bg-music'),slider=document.getElementById('volume-slider');slider.addEventListener('input',()=>{audio.volume=slider.value/100}),window.addEventListener('click',function startMusicOnce(){audio.volume=slider.value/100,audio.play().catch(()=>{console.warn('Tarayıcı otomatik müzik başlatmayı engelledi.')}),window.removeEventListener('click',startMusicOnce)}),checkAuth();
   </script>
 </body>
 </html>
