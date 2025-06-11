@@ -173,7 +173,10 @@
       const logoutBtn = document.getElementById('logout-btn'), authNav = document.getElementById('auth-nav');
       if (user) {
         const { data: userData, error } = await supabase.from('users').select('role').eq('id', user.id).single();
-        if (error) return console.error('Kullanıcı rolü alınamadı:', error);
+        if (error) {
+          console.error('Kullanıcı rolü alınamadı:', error);
+          return alert('Hata: Kullanıcı bilgileri alınamadı. Lütfen tekrar giriş yapın.');
+        }
         productsNav.style.display = 'inline';
         productsBtn.style.display = 'inline-block';
         logoutBtn.style.display = 'inline';
@@ -213,7 +216,7 @@
       if (error) return alert('Kayıt başarısız: ' + error.message);
       if (data.user) {
         const { error: insertError } = await supabase.from('users').insert([{ id: data.user.id, email, role: role === 'admin' ? 'customer' : 'customer' }]);
-        if (insertError) alert('Kullanıcı rolü eklenemedi: ' + insertError.message);
+        if (insertError) alert('Kullanıcı kaydı tamamlanamadı: ' + insertError.message);
         else alert('Kayıt başarılı! Giriş yapabilirsiniz. Admin rolü için onay bekleyin.');
       }
     });
