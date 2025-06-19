@@ -2,6 +2,7 @@ Add-Type -AssemblyName PresentationFramework
 
 $XAML = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="CRTY GameLoop Optimize Aracı" Height="420" Width="640" Background="#1e1e1e" WindowStartupLocation="CenterScreen">
   <Grid Margin="10">
     <TextBlock Text="🟢 CTTY TOOL" FontSize="32" FontWeight="Bold" Foreground="Lime" HorizontalAlignment="Center" Margin="0,10,0,0"/>
