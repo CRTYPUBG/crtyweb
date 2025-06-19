@@ -68,7 +68,7 @@ $KeyBox = $Window.FindName('KeyBox')
 $BtnCheckKey = $Window.FindName('BtnCheckKey')
 $KeyStatusText = $Window.FindName('KeyStatusText')
 
-# Title rainbow effect
+# Rainbow cycling title effect
 $colors = @("Red","Orange","Yellow","Green","Cyan","Blue","Purple")
 $i = 0
 $timer = New-Object System.Windows.Threading.DispatcherTimer
@@ -124,6 +124,7 @@ $StartButton.Add_Click({
         $StatusText.Text = "Please validate your license key first!"
         return
     }
+
     $StatusText.Text = "Searching for GameLoop path..."
     $emuPath = Find-EmulatorPath
     if (-not $emuPath) {
