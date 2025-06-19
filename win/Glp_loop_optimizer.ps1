@@ -26,7 +26,7 @@ $XAML = @"
                 </ComboBox>
             </StackPanel>
 
-            <TextBlock Text='Anti-Lag & FPS Boost Options:' Foreground='White' FontSize='16' Margin='0,0,0,5' />
+            <TextBlock Text='Anti-Lag &amp; FPS Boost Options:' Foreground='White' FontSize='16' Margin='0,0,0,5' />
             <StackPanel Margin='20,0,0,25'>
                 <CheckBox x:Name='ChkDisableGameDVR' Content='Disable Game DVR' Foreground='White' FontSize='14' Margin='0,6'/>
                 <CheckBox x:Name='ChkDisableGameBar' Content='Disable Game Bar' Foreground='White' FontSize='14' Margin='0,6'/>
@@ -52,9 +52,11 @@ $XAML = @"
 </Window>
 "@
 
+# Parse XAML
 $xmlReader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$XAML)
 $Window = [Windows.Markup.XamlReader]::Load($xmlReader)
 
+# Find UI elements
 $StartButton = $Window.FindName('StartButton')
 $StatusText = $Window.FindName('StatusText')
 $TitleText = $Window.FindName('TitleText')
@@ -68,7 +70,7 @@ $KeyBox = $Window.FindName('KeyBox')
 $BtnCheckKey = $Window.FindName('BtnCheckKey')
 $KeyStatusText = $Window.FindName('KeyStatusText')
 
-# Rainbow cycling title effect
+# Title text rainbow animation
 $colors = @("Red","Orange","Yellow","Green","Cyan","Blue","Purple")
 $i = 0
 $timer = New-Object System.Windows.Threading.DispatcherTimer
@@ -79,6 +81,24 @@ $timer.Add_Tick({
 })
 $timer.Start()
 
+# License key to validate
+$validKey = "Crty-key-1246523564"
+
+# License validation handler
+$BtnCheckKey.Add_Click({
+    if ($KeyBox.Text.Trim() -eq $validKey) {
+        $KeyStatusText.Text = "License key valid ✅"
+        $KeyStatusText.Foreground = [System.Windows.Media.Brushes]::LightGreen
+        $StartButton.IsEnabled = $true
+    }
+    else {
+        $KeyStatusText.Text = "Invalid license key ❌"
+        $KeyStatusText.Foreground = [System.Windows.Media.Brushes]::Red
+        $StartButton.IsEnabled = $false
+    }
+})
+
+# Helper to find emulator path
 function Find-EmulatorPath {
     $paths = @(
         "C:\Program Files\TxGameAssistant\ui\AndroidEmulatorEn.exe",
@@ -90,80 +110,77 @@ function Find-EmulatorPath {
     return $null
 }
 
+# Open file dialog to manually select if not found
 function Ask-UserForPath {
     Add-Type -AssemblyName System.Windows.Forms
     $ofd = New-Object System.Windows.Forms.OpenFileDialog
-    $ofd.Filter = "Emulator Executable|AndroidEmulatorEn.exe"
+    $ofd.Filter = "GameLoop Emulator|AndroidEmulatorEn.exe"
     $ofd.Title = "Select GameLoop Emulator Executable"
     if ($ofd.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
         return $ofd.FileName
-    } else {
+    }
+    else {
         return $null
     }
 }
 
-$global:validKey = $false
-$expectedKey = "Crty-key-1246523564"
-
-$BtnCheckKey.Add_Click({
-    if ($KeyBox.Text.Trim() -eq $expectedKey) {
-        $KeyStatusText.Text = "License validated successfully! 🎉"
-        $KeyStatusText.Foreground = [System.Windows.Media.Brushes]::Lime
-        $StartButton.IsEnabled = $true
-        $global:validKey = $true
-    } else {
-        $KeyStatusText.Text = "Invalid license key!"
-        $KeyStatusText.Foreground = [System.Windows.Media.Brushes]::Red
-        $StartButton.IsEnabled = $false
-        $global:validKey = $false
-    }
-})
-
+# Start button click handler
 $StartButton.Add_Click({
-    if (-not $global:validKey) {
-        $StatusText.Text = "Please validate your license key first!"
-        return
-    }
-
-    $StatusText.Text = "Searching for GameLoop path..."
+    $StatusText.Text = "Locating GameLoop emulator..."
     $emuPath = Find-EmulatorPath
     if (-not $emuPath) {
-        $StatusText.Text = "Path not found, please select the emulator executable."
+        $StatusText.Text = "Emulator not found, please select the executable."
         $emuPath = Ask-UserForPath
         if (-not $emuPath) {
-            $StatusText.Text = "Operation cancelled."
+            $StatusText.Text = "Operation canceled."
             return
         }
     }
 
     $StatusText.Text = "Applying system optimizations..."
 
+    $regCommands = @()
     if ($ChkDisableGameDVR.IsChecked) {
-        reg add HKCU\System\GameConfigStore /v GameDVR_Enabled /t REG_DWORD /d 0 /f | Out-Null
-        reg add HKCU\System\GameConfigStore /v GameDVR_FSEBehavior /t REG_DWORD /d 0 /f | Out-Null
+        $regCommands += 'reg add "HKCU\System\GameConfigStore" /v GameDVR_Enabled /t REG_DWORD /d 0 /f'
     }
     if ($ChkDisableGameBar.IsChecked) {
-        reg add HKCU\Software\Microsoft\GameBar /v AllowAutoGameMode /t REG_DWORD /d 0 /f | Out-Null
+        $regCommands += 'reg add "HKCU\Software\Microsoft\GameBar" /v AllowAutoGameMode /t REG_DWORD /d 0 /f'
     }
     if ($ChkOptimizeTimer.IsChecked) {
-        bcdedit /set useplatformtick yes | Out-Null
-        bcdedit /set disabledynamictick yes | Out-Null
-        bcdedit /set tscsyncpolicy Enhanced | Out-Null
+        $regCommands += 'bcdedit /set useplatformtick yes'
     }
     if ($ChkDisableDynamicTick.IsChecked) {
-        bcdedit /set disabledynamictick yes | Out-Null
+        $regCommands += 'bcdedit /set disabledynamictick yes'
     }
 
-    $fps = ($FpsComboBox.SelectedItem).Content
-    $StatusText.Text = "Starting GameLoop with FPS: $fps"
+    # Apply registry and bcdedit commands with elevated rights
+    foreach ($cmd in $regCommands) {
+        Start-Process powershell -Verb runAs -ArgumentList "-NoProfile -Command `$cmd" -Wait
+    }
 
-    $arguments = "-cmd StartApk -param -startpkg `"com.tencent.ig`" -engine `"aow`" -vm `"100`" -fps `"$fps`" -resolution `"1280x960`" -from `"Custom`""
+    # Prepare emulator launch arguments
+    $fps = $FpsComboBox.SelectedItem.Content
+    $args = @(
+        "-cmd", "StartApk",
+        "-param",
+        "-startpkg", '"com.tencent.ig"',
+        "-engine", '"aow"',
+        "-vm", "100",
+        "-fps", $fps,
+        "-resolution", '"1280x960"',
+        "-from", '"Custom"'
+    )
+    
+    $startProcessParams = @{
+        FilePath = $emuPath
+        ArgumentList = $args
+        Priority = "High"
+    }
 
-    $priority = if ($ChkHighPriority.IsChecked) { "High" } else { "Normal" }
+    $StatusText.Text = "Starting GameLoop with FPS $fps..."
+    Start-Process @startProcessParams
 
-    Start-Process -FilePath $emuPath -ArgumentList $arguments -Priority $priority
-
-    $StatusText.Text = "Game started successfully ✔️"
+    $StatusText.Text = "Game started successfully! ✔️"
 })
 
 $Window.ShowDialog() | Out-Null
