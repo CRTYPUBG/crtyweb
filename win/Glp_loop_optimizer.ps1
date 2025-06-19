@@ -3,96 +3,78 @@ Add-Type -AssemblyName PresentationFramework
 $XAML = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="CRTY GameLoop Optimizer" Height="420" Width="620" Background="#1e1e1e" WindowStartupLocation="CenterScreen">
-    <Grid Margin="20">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
-            <TextBlock Text="CRTY GameLoop Optimizer" FontSize="26" FontWeight="Bold" Foreground="White" Margin="0,10,0,20" TextAlignment="Center"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
-                <TextBox x:Name="KeyInput" Width="300" Height="28" Margin="0,0,10,0" PlaceholderText="Enter License Key"/>
-                <Button x:Name="CheckKeyBtn" Content="Verify Key" Width="100" Height="28" Background="#0078D7" Foreground="White"/>
-            </StackPanel>
-            <TextBlock x:Name="StatusText" Text="" Foreground="Lime" FontSize="14" TextAlignment="Center" Margin="0,0,0,20"/>
-            <CheckBox x:Name="FpsBoost" Content="Enable FPS Boost" Foreground="White" Margin="0,5"/>
-            <CheckBox x:Name="AntiLag" Content="Enable Anti-Lag" Foreground="White" Margin="0,5"/>
-            <CheckBox x:Name="InputLag" Content="Enable Input Lag Fix" Foreground="White" Margin="0,5"/>
-            <CheckBox x:Name="Restore" Content="Restore Previous Settings" Foreground="White" Margin="0,5"/>
-            <Button x:Name="ApplyBtn" Content="Apply Settings & Launch GameLoop" Width="240" Height="38" Margin="0,20,0,0" Background="#0078D7" Foreground="White"/>
-        </StackPanel>
-    </Grid>
+        Title="CRTY GameLoop Optimizer" Height="360" Width="480" Background="#1e1e1e" WindowStartupLocation="CenterScreen">
+  <Grid Margin="20">
+    <StackPanel>
+      <TextBlock Text="CRTY TOOL v1.0" Foreground="White" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+      <TextBox x:Name="KeyBox" Height="30" PlaceholderText="Lisans anahtarınızı girin..." />
+      <Button x:Name="CheckKeyBtn" Content="Anahtarı Doğrula" Height="35" Background="#333" Foreground="White" Margin="0,10,0,10"/>
+      <StackPanel x:Name="MainPanel" Visibility="Collapsed">
+        <CheckBox x:Name="FpsBoost" Content="FPS Boost" Foreground="White"/>
+        <CheckBox x:Name="AntiLag" Content="Anti-Lag Fix" Foreground="White"/>
+        <CheckBox x:Name="InputLag" Content="Input Lag Removal" Foreground="White"/>
+        <CheckBox x:Name="Restore" Content="Geri Al (Restore)" Foreground="White"/>
+        <Button x:Name="RunBtn" Content="Uygula & Başlat" Height="40" Background="Green" Foreground="White" Margin="0,10,0,0"/>
+        <TextBlock x:Name="DurumText" Text="Hazır" Foreground="Lime" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+      </StackPanel>
+    </StackPanel>
+  </Grid>
 </Window>
 "@
 
 $reader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$XAML)
 $Window = [Windows.Markup.XamlReader]::Load($reader)
 
-$KeyInput = $Window.FindName("KeyInput")
-$CheckKeyBtn = $Window.FindName("CheckKeyBtn")
-$StatusText = $Window.FindName("StatusText")
-$FpsBoost = $Window.FindName("FpsBoost")
-$AntiLag = $Window.FindName("AntiLag")
-$InputLag = $Window.FindName("InputLag")
-$Restore = $Window.FindName("Restore")
-$ApplyBtn = $Window.FindName("ApplyBtn")
+$KeyBox     = $Window.FindName("KeyBox")
+$CheckKeyBtn= $Window.FindName("CheckKeyBtn")
+$MainPanel  = $Window.FindName("MainPanel")
+$FpsBoost   = $Window.FindName("FpsBoost")
+$AntiLag    = $Window.FindName("AntiLag")
+$InputLag   = $Window.FindName("InputLag")
+$Restore    = $Window.FindName("Restore")
+$RunBtn     = $Window.FindName("RunBtn")
+$DurumText  = $Window.FindName("DurumText")
 
-$ApplyBtn.IsEnabled = $false
-
+# Lisans kontrolü
 $CheckKeyBtn.Add_Click({
-    if ($KeyInput.Text -eq "Crty-key-1246523564") {
-        $StatusText.Text = "✅ License verified."
-        $ApplyBtn.IsEnabled = $true
+    if ($KeyBox.Text -eq "Crty-key-1246523564") {
+        $KeyBox.Visibility = "Collapsed"
+        $CheckKeyBtn.Visibility = "Collapsed"
+        $MainPanel.Visibility = "Visible"
     } else {
-        $StatusText.Text = "❌ Invalid license key."
-        $ApplyBtn.IsEnabled = $false
+        [System.Windows.MessageBox]::Show("Geçersiz anahtar!", "Hata", "OK", "Error")
     }
 })
 
-$ApplyBtn.Add_Click({
-    $StatusText.Text = "Applying settings..."
+$RunBtn.Add_Click({
+    $DurumText.Text = "Uygulamalar çalıştırılıyor..."
+    Start-Sleep -Milliseconds 300
 
     if ($FpsBoost.IsChecked) {
-        Start-Process powershell -WindowStyle Hidden -ArgumentList "-Command `"
-            powercfg /setactive SCHEME_MIN;
-            reg add HKCU\Software\Microsoft\GameBar /v AllowAutoGameMode /t REG_DWORD /d 0 /f;
-            reg add HKCU\System\GameConfigStore /v GameDVR_Enabled /t REG_DWORD /d 0 /f;
-        `""
+        powercfg /setactive SCHEME_MIN
+        bcdedit /set useplatformtick yes
+        bcdedit /set disabledynamictick yes
+        bcdedit /set tscsyncpolicy Enhanced
     }
 
     if ($AntiLag.IsChecked) {
-        Start-Process powershell -WindowStyle Hidden -ArgumentList "-Command `"
-            bcdedit /set useplatformtick yes;
-            bcdedit /set disabledynamictick yes;
-        `""
+        reg add "HKCU\System\GameConfigStore" /v GameDVR_Enabled /t REG_DWORD /d 0 /f
+        reg add "HKCU\Software\Microsoft\GameBar" /v AllowAutoGameMode /t REG_DWORD /d 0 /f
     }
 
     if ($InputLag.IsChecked) {
-        Start-Process powershell -WindowStyle Hidden -ArgumentList "-Command `"
-            reg add "HKLM\SYSTEM\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 26 /f;
-        `""
+        reg add "HKLM\SYSTEM\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
     }
 
     if ($Restore.IsChecked) {
-        Start-Process powershell -WindowStyle Hidden -ArgumentList "-Command `"
-            bcdedit /deletevalue useplatformtick;
-            bcdedit /deletevalue disabledynamictick;
-            powercfg /setactive SCHEME_BALANCED;
-        `""
+        bcdedit /deletevalue useplatformtick
+        bcdedit /deletevalue disabledynamictick
+        bcdedit /deletevalue tscsyncpolicy
+        reg delete "HKCU\System\GameConfigStore" /v GameDVR_Enabled /f
+        reg delete "HKCU\Software\Microsoft\GameBar" /v AllowAutoGameMode /f
     }
 
-    Start-Sleep -Seconds 2
-    $StatusText.Text = "Launching GameLoop..."
-
-    $paths = @(
-        "C:\Program Files\TxGameAssistant\ui\AndroidEmulatorEn.exe",
-        "C:\Program Files (x86)\TxGameAssistant\ui\AndroidEmulatorEn.exe"
-    )
-    $emuPath = $paths | Where-Object { Test-Path $_ } | Select-Object -First 1
-
-    if ($emuPath) {
-        Start-Process -FilePath $emuPath -ArgumentList '-cmd StartApk -param -startpkg "com.tencent.ig" -engine "aow" -vm "100" -fps "120" -resolution "1280x960" -from "Custom"' -Priority High
-        $StatusText.Text = "✅ GameLoop started."
-    } else {
-        $StatusText.Text = "❌ GameLoop not found."
-    }
+    $DurumText.Text = "İşlem tamamlandı ✔️"
 })
 
 $Window.ShowDialog() | Out-Null
