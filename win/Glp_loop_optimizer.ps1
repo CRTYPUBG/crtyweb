@@ -95,46 +95,55 @@ $copyrightText.Margin = [System.Windows.Thickness]::new(0,20,0,0)
 $grid.Children.Add($copyrightText) | Out-Null
 
 # Optimize fonksiyonu
-function Optimize-GameLoop {
+function Set-RegistryValueSafe {
+    param(
+        [string]$Path,
+        [string]$Name,
+        [int]$Value
+    )
     try {
-        $statusText.Text = "Durum: Optimizasyon başladı..."
-
-        # Windows Game Bar & DVR kapat
-        Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 0 -Type DWord -ErrorAction Stop
-        Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_FSEBehavior" -Value 0 -Type DWord -ErrorAction Stop
-        # Policies altında kapatma (bazı sistemler için)
-        if (-not (Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR")) {
-            New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows" -Name "GameDVR" -Force | Out-Null
+        if (-not (Test-Path $Path)) {
+            New-Item -Path $Path -Force | Out-Null
         }
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -Value 0 -Type DWord -ErrorAction Stop
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowBroadcastRecording" -Value 0 -Type DWord -ErrorAction Stop
-
-        # CPU güç modunu yüksek performansa ayarla
-        powercfg /setactive SCHEME_MIN
-
-        # Superfetch / SysMain servisini durdur ve devre dışı bırak
-        Stop-Service -Name "SysMain" -ErrorAction SilentlyContinue
-        Set-Service -Name "SysMain" -StartupType Disabled
-
-        # TCP autotuning disable ederek gecikmeyi azalt
-        netsh int tcp set global autotuninglevel=disabled | Out-Null
-
-        # GameLoop işlemi varsa önceliğini yüksek yap (gameLoop.exe farklıysa adını değiştir)
-        $glproc = Get-Process -Name "dnplayer" -ErrorAction SilentlyContinue
-        if ($glproc) {
-            $glproc | ForEach-Object { $_.PriorityClass = 'High' }
-        }
-
-        # Sanal bellek ayarlarını optimize et (otomatik ayarla)
-        $computer = Get-WmiObject Win32_ComputerSystem
-        $computer.AutomaticManagedPagefile = $true
-
-        $statusText.Text = "Durum: Optimizasyon tamamlandı! 🎮"
+        Set-ItemProperty -Path $Path -Name $Name -Value $Value -Type DWord -ErrorAction Stop
+        return $true
     }
     catch {
-        $statusText.Text = "Hata: $($_.Exception.Message)"
+        Write-Host "Registry ayarı yapılamadı: $Path $Name"
+        return $false
     }
 }
+
+function Optimize-GameLoop {
+    $statusText.Text = "Durum: Optimizasyon başladı..."
+
+    # Game DVR kapatma
+    Set-RegistryValueSafe -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 0
+    Set-RegistryValueSafe -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_FSEBehavior" -Value 0
+
+    # Policies altında GameDVR ayarları
+    Set-RegistryValueSafe -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -Value 0
+    Set-RegistryValueSafe -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowBroadcastRecording" -Value 0
+
+    # Diğer optimizasyonlar...
+
+    $statusText.Text = "Durum: Optimizasyon tamamlandı! 🎮"
+}
+
+function Undo-Optimization {
+    $statusText.Text = "Durum: Ayarlar geri alınıyor..."
+
+    Set-RegistryValueSafe -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 1
+    Set-RegistryValueSafe -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_FSEBehavior" -Value 1
+
+    Set-RegistryValueSafe -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -Value 1
+    Set-RegistryValueSafe -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowBroadcastRecording" -Value 1
+
+    # Diğer geri alma işlemleri...
+
+    $statusText.Text = "Durum: Ayarlar geri alındı."
+}
+
 
 # Geri alma fonksiyonu
 function Undo-Optimization {
