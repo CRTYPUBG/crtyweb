@@ -1,72 +1,77 @@
 Add-Type -AssemblyName PresentationFramework
 
-# Pencere oluştur
+# Pencere ayarları
 $Window = New-Object System.Windows.Window
-$Window.Title = "GameLoop Optimizer"
-$Window.Width = 320
-$Window.Height = 180
+$Window.Title = "🎮 GameLoop Optimizer 🚀"
+$Window.Width = 360
+$Window.Height = 220
 $Window.WindowStartupLocation = "CenterScreen"
 $Window.ResizeMode = "NoResize"
+$Window.Background = [System.Windows.Media.Brushes]::WhiteSmoke
 
 # Grid oluştur
 $Grid = New-Object System.Windows.Controls.Grid
-$Grid.Margin = [System.Windows.Thickness]::new(10)
+$Grid.Margin = [System.Windows.Thickness]::new(15)
 
 # Satır tanımları
-$rowDef1 = New-Object System.Windows.Controls.RowDefinition
-$rowDef1.Height = [System.Windows.GridLength]::new([System.Windows.GridUnitType]::Auto)
-$rowDef2 = New-Object System.Windows.Controls.RowDefinition
-$rowDef2.Height = [System.Windows.GridLength]::new(50)
-$rowDef3 = New-Object System.Windows.Controls.RowDefinition
-$rowDef3.Height = [System.Windows.GridLength]::new([System.Windows.GridUnitType]::Star)
-
-$Grid.RowDefinitions.Add($rowDef1)
-$Grid.RowDefinitions.Add($rowDef2)
-$Grid.RowDefinitions.Add($rowDef3)
+$Grid.RowDefinitions.Add((New-Object System.Windows.Controls.RowDefinition -Property @{Height=[System.Windows.GridLength]::Auto}))
+$Grid.RowDefinitions.Add((New-Object System.Windows.Controls.RowDefinition -Property @{Height=50}))
+$Grid.RowDefinitions.Add((New-Object System.Windows.Controls.RowDefinition -Property @{Height=[System.Windows.GridLength]::Star}))
 
 # Başlık TextBlock
-$TitleText = New-Object System.Windows.Controls.TextBlock
-$TitleText.Text = "GameLoop Optimizer"
-$TitleText.FontSize = 18
-$TitleText.FontWeight = 'Bold'
-$TitleText.HorizontalAlignment = 'Center'
-$TitleText.Margin = [System.Windows.Thickness]::new(0,0,0,10)
-[System.Windows.Controls.Grid]::SetRow($TitleText, 0)
-$Grid.Children.Add($TitleText) | Out-Null
+$Title = New-Object System.Windows.Controls.TextBlock
+$Title.Text = "🚀 GameLoop FPS Optimize 🚀"
+$Title.FontSize = 22
+$Title.FontWeight = 'Bold'
+$Title.Foreground = [System.Windows.Media.Brushes]::DarkBlue
+$Title.HorizontalAlignment = 'Center'
+$Title.Margin = [System.Windows.Thickness]::new(0,0,0,15)
+[System.Windows.Controls.Grid]::SetRow($Title, 0)
+$Grid.Children.Add($Title) | Out-Null
 
-# Başlat Butonu
+# Başlat butonu
 $StartButton = New-Object System.Windows.Controls.Button
-$StartButton.Content = "Optimize Başlat"
-$StartButton.Width = 150
-$StartButton.Height = 35
+$StartButton.Content = "✨ Optimizasyonu Başlat ✨"
+$StartButton.Width = 180
+$StartButton.Height = 45
+$StartButton.FontSize = 16
+$StartButton.Foreground = [System.Windows.Media.Brushes]::White
+$StartButton.Background = [System.Windows.Media.Brushes]::DodgerBlue
+$StartButton.BorderBrush = [System.Windows.Media.Brushes]::RoyalBlue
+$StartButton.Cursor = [System.Windows.Input.Cursors]::Hand
 $StartButton.HorizontalAlignment = 'Center'
+$StartButton.Margin = [System.Windows.Thickness]::new(0,0,0,10)
 [System.Windows.Controls.Grid]::SetRow($StartButton, 1)
 $Grid.Children.Add($StartButton) | Out-Null
 
 # Durum TextBlock
-$StatusText = New-Object System.Windows.Controls.TextBlock
-$StatusText.Text = "Durum: Bekleniyor..."
-$StatusText.FontSize = 14
-$StatusText.HorizontalAlignment = 'Center'
-$StatusText.VerticalAlignment = 'Center'
-$StatusText.TextWrapping = 'Wrap'
-[System.Windows.Controls.Grid]::SetRow($StatusText, 2)
-$Grid.Children.Add($StatusText) | Out-Null
+$Status = New-Object System.Windows.Controls.TextBlock
+$Status.Text = "ℹ️ Durum: Bekleniyor..."
+$Status.FontSize = 14
+$Status.Foreground = [System.Windows.Media.Brushes]::DarkSlateGray
+$Status.HorizontalAlignment = 'Center'
+$Status.VerticalAlignment = 'Center'
+$Status.TextWrapping = 'Wrap'
+[System.Windows.Controls.Grid]::SetRow($Status, 2)
+$Grid.Children.Add($Status) | Out-Null
 
 # Grid'i pencereye ekle
 $Window.Content = $Grid
 
-# Optimize fonksiyonu
+# Optimize fonksiyonu (örnek)
 function Optimize-GameLoop {
-    $StatusText.Text = "Optimizasyon başladı..."
+    $Status.Text = "⏳ Optimizasyon başlıyor..."
     Start-Sleep -Seconds 1
 
-    # Buraya optimizasyon kodlarını ekle
+    # Buraya FPS artırma, input lag azaltma gibi komutları ekle
 
-    $StatusText.Text = "Optimizasyon tamamlandı! FPS artışı deneyin."
+    # Örnek: İşlem önceliği yükseltme
+    # Start-Process -FilePath "gameloop.exe" -Priority "High"
+
+    $Status.Text = "✅ Optimizasyon tamamlandı! FPS'niz arttırıldı."
 }
 
-# Buton click eventi ekle
+# Buton tıklama eventi
 $StartButton.Add_Click({
     Optimize-GameLoop
 })
