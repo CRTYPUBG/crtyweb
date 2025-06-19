@@ -1,4 +1,3 @@
-
 Add-Type -AssemblyName PresentationFramework
 
 $XAML = @"
