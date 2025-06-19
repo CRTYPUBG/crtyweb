@@ -1,186 +1,161 @@
-Add-Type -AssemblyName PresentationFramework
+Add-Type -AssemblyName PresentationFramework,PresentationCore,System.Xaml,System.Windows.Forms
 
 $XAML = @"
 <Window xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
-        xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
-        Title='CRTY GameLoop Optimizer v2' Height='520' Width='700' Background='#1E1E1E' WindowStartupLocation='CenterScreen' ResizeMode='NoResize' FontFamily='Segoe UI'>
-    <Grid Margin='20'>
-        <Grid.RowDefinitions>
-            <RowDefinition Height='Auto'/>
-            <RowDefinition Height='*'/>
-            <RowDefinition Height='Auto'/>
-        </Grid.RowDefinitions>
+        Title='CRTY GameLoop Optimizer' Height='550' Width='680' Background='#1E1E1E' WindowStartupLocation='CenterScreen' ResizeMode='NoResize'>
+    <Grid Margin='15'>
+        <TextBlock Text='CRTY GameLoop Optimizer' FontSize='30' FontWeight='Bold' Foreground='Lime' HorizontalAlignment='Center' Margin='0,0,0,20'/>
+        <StackPanel Orientation='Vertical' Margin='0,50,0,90'>
 
-        <TextBlock x:Name='TitleText' Text='CRTY TOOL v2' FontSize='44' FontWeight='Bold' 
-                   HorizontalAlignment='Center' VerticalAlignment='Top' Foreground='White' Margin='0,0,0,10'/>
+            <TextBlock Text='Select tweaks to apply:' Foreground='White' FontSize='16' Margin='0,0,0,15'/>
+            
+            <CheckBox x:Name='chkFPS' Content='Maximum FPS (120fps)' Foreground='White' FontSize='15' IsChecked='True' Margin='0,5'/>
+            <CheckBox x:Name='chkAntiLag' Content='Anti-Lag Optimizations' Foreground='White' FontSize='15' IsChecked='True' Margin='0,5'/>
+            <CheckBox x:Name='chkInputLag' Content='Input Lag Reduction' Foreground='White' FontSize='15' IsChecked='True' Margin='0,5'/>
+            <CheckBox x:Name='chkGameBar' Content='Disable Game Bar & DVR' Foreground='White' FontSize='15' IsChecked='True' Margin='0,5'/>
+            <CheckBox x:Name='chkPowerPlan' Content='Set High Performance Power Plan' Foreground='White' FontSize='15' IsChecked='True' Margin='0,5'/>
+            <CheckBox x:Name='chkOther' Content='Additional System Tweaks' Foreground='White' FontSize='15' IsChecked='True' Margin='0,5'/>
 
-        <StackPanel Grid.Row='1' Margin='0,10,0,0' VerticalAlignment='Top'>
-
-            <StackPanel Orientation='Horizontal' Margin='0,0,0,15' VerticalAlignment='Center'>
-                <TextBlock Text='FPS Setting:' Foreground='White' FontSize='16' Width='110' VerticalAlignment='Center'/>
-                <ComboBox x:Name='FpsComboBox' Width='160' FontSize='16' SelectedIndex='1'>
-                    <ComboBoxItem Content='30' />
-                    <ComboBoxItem Content='60' />
-                    <ComboBoxItem Content='90' />
-                    <ComboBoxItem Content='120' />
-                </ComboBox>
-            </StackPanel>
-
-            <TextBlock Text='Anti-Lag &amp; FPS Boost Options:' Foreground='White' FontSize='16' Margin='0,0,0,5' />
-            <StackPanel Margin='20,0,0,25'>
-                <CheckBox x:Name='ChkDisableGameDVR' Content='Disable Game DVR' Foreground='White' FontSize='14' Margin='0,6'/>
-                <CheckBox x:Name='ChkDisableGameBar' Content='Disable Game Bar' Foreground='White' FontSize='14' Margin='0,6'/>
-                <CheckBox x:Name='ChkOptimizeTimer' Content='Optimize Timer Resolution (useplatformtick)' Foreground='White' FontSize='14' Margin='0,6'/>
-                <CheckBox x:Name='ChkDisableDynamicTick' Content='Disable Dynamic Tick' Foreground='White' FontSize='14' Margin='0,6'/>
-                <CheckBox x:Name='ChkHighPriority' Content='Run Emulator with High Priority' Foreground='White' FontSize='14' Margin='0,6'/>
-            </StackPanel>
-
-            <StackPanel Orientation='Horizontal' Margin='0,0,0,20' VerticalAlignment='Center'>
-                <TextBlock Text='License Key:' Foreground='White' FontSize='16' Width='120' VerticalAlignment='Center'/>
-                <TextBox x:Name='KeyBox' Width='280' FontSize='16' />
-                <Button x:Name='BtnCheckKey' Content='Validate' Width='100' Margin='15,0,0,0' FontSize='16' Cursor='Hand' />
-            </StackPanel>
-
-            <TextBlock x:Name='KeyStatusText' Text='Please validate your license key.' Foreground='Orange' FontSize='14' Margin='0,0,0,20' TextAlignment='Center'/>
-
-            <Button x:Name='StartButton' Content='START GAME 🚀' Width='260' Height='70' 
-                HorizontalAlignment='Center' Background='#007ACC' Foreground='White' FontSize='22' Cursor='Hand' IsEnabled='False' />
         </StackPanel>
 
-        <TextBlock x:Name='StatusText' Grid.Row='2' Text='Waiting...' Foreground='LightGreen' FontSize='14' HorizontalAlignment='Center' Margin='0,20,0,0'/>
+        <StackPanel Orientation='Horizontal' HorizontalAlignment='Center' VerticalAlignment='Bottom' Margin='0,0,0,45' Spacing='15'>
+            <Button x:Name='btnStart' Content='Apply Tweaks & Start Game 🚀' Width='260' Height='55' Background='#007ACC' Foreground='White' FontSize='17' Cursor='Hand' />
+            <Button x:Name='btnRestore' Content='Restore Defaults 🔄' Width='160' Height='55' Background='#444' Foreground='White' FontSize='17' Cursor='Hand' />
+        </StackPanel>
+
+        <TextBlock x:Name='txtStatus' Text='Ready' Foreground='Lime' FontSize='14' HorizontalAlignment='Center' VerticalAlignment='Bottom' Margin='0,0,0,15'/>
+        <TextBlock Text='License Key: Crty-key-1246523564 (auto verified)' Foreground='Gray' FontSize='11' HorizontalAlignment='Center' VerticalAlignment='Bottom' Margin='0,0,0,0' />
     </Grid>
 </Window>
 "@
 
-# Parse XAML
+# Load XAML
 $xmlReader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$XAML)
 $Window = [Windows.Markup.XamlReader]::Load($xmlReader)
 
-# Find UI elements
-$StartButton = $Window.FindName('StartButton')
-$StatusText = $Window.FindName('StatusText')
-$TitleText = $Window.FindName('TitleText')
-$FpsComboBox = $Window.FindName('FpsComboBox')
-$ChkDisableGameDVR = $Window.FindName('ChkDisableGameDVR')
-$ChkDisableGameBar = $Window.FindName('ChkDisableGameBar')
-$ChkOptimizeTimer = $Window.FindName('ChkOptimizeTimer')
-$ChkDisableDynamicTick = $Window.FindName('ChkDisableDynamicTick')
-$ChkHighPriority = $Window.FindName('ChkHighPriority')
-$KeyBox = $Window.FindName('KeyBox')
-$BtnCheckKey = $Window.FindName('BtnCheckKey')
-$KeyStatusText = $Window.FindName('KeyStatusText')
+# Controls
+$btnStart = $Window.FindName('btnStart')
+$btnRestore = $Window.FindName('btnRestore')
+$txtStatus = $Window.FindName('txtStatus')
+$chkFPS = $Window.FindName('chkFPS')
+$chkAntiLag = $Window.FindName('chkAntiLag')
+$chkInputLag = $Window.FindName('chkInputLag')
+$chkGameBar = $Window.FindName('chkGameBar')
+$chkPowerPlan = $Window.FindName('chkPowerPlan')
+$chkOther = $Window.FindName('chkOther')
 
-# Title text rainbow animation
-$colors = @("Red","Orange","Yellow","Green","Cyan","Blue","Purple")
-$i = 0
-$timer = New-Object System.Windows.Threading.DispatcherTimer
-$timer.Interval = [TimeSpan]::FromMilliseconds(150)
-$timer.Add_Tick({
-    $TitleText.Foreground = [System.Windows.Media.Brushes]::$( $colors[$i] )
-    $i = ($i + 1) % $colors.Length
-})
-$timer.Start()
-
-# License key to validate
-$validKey = "Crty-key-1246523564"
-
-# License validation handler
-$BtnCheckKey.Add_Click({
-    if ($KeyBox.Text.Trim() -eq $validKey) {
-        $KeyStatusText.Text = "License key valid ✅"
-        $KeyStatusText.Foreground = [System.Windows.Media.Brushes]::LightGreen
-        $StartButton.IsEnabled = $true
-    }
-    else {
-        $KeyStatusText.Text = "Invalid license key ❌"
-        $KeyStatusText.Foreground = [System.Windows.Media.Brushes]::Red
-        $StartButton.IsEnabled = $false
-    }
-})
-
-# Helper to find emulator path
-function Find-EmulatorPath {
-    $paths = @(
+function Find-GameLoop {
+    $possiblePaths = @(
         "C:\Program Files\TxGameAssistant\ui\AndroidEmulatorEn.exe",
         "C:\Program Files (x86)\TxGameAssistant\ui\AndroidEmulatorEn.exe"
     )
-    foreach ($p in $paths) {
-        if (Test-Path $p) { return $p }
+    foreach ($path in $possiblePaths) {
+        if (Test-Path $path) { return $path }
     }
     return $null
 }
 
-# Open file dialog to manually select if not found
-function Ask-UserForPath {
+function Ask-GameLoopPath {
     Add-Type -AssemblyName System.Windows.Forms
     $ofd = New-Object System.Windows.Forms.OpenFileDialog
-    $ofd.Filter = "GameLoop Emulator|AndroidEmulatorEn.exe"
-    $ofd.Title = "Select GameLoop Emulator Executable"
+    $ofd.Filter = "GameLoop Executable|AndroidEmulatorEn.exe"
+    $ofd.Title = "Select GameLoop Emulator Executable (AndroidEmulatorEn.exe)"
     if ($ofd.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
         return $ofd.FileName
     }
-    else {
-        return $null
-    }
+    return $null
 }
 
-# Start button click handler
-$StartButton.Add_Click({
-    $StatusText.Text = "Locating GameLoop emulator..."
-    $emuPath = Find-EmulatorPath
+function Apply-FPSTweaks {
+    # FPS max 120 for GameLoop launch param
+    return '-fps "120"'
+}
+
+function Apply-AntiLagTweaks {
+    # Disable Game DVR and Game Bar related services/settings
+    Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -Command `"reg add HKCU\System\GameConfigStore /v GameDVR_Enabled /t REG_DWORD /d 0 /f; reg add HKCU\System\GameConfigStore /v GameDVR_FSEBehavior /t REG_DWORD /d 0 /f; reg add HKCU\Software\Microsoft\GameBar /v AllowAutoGameMode /t REG_DWORD /d 0 /f;`"" -WindowStyle Hidden -Wait
+}
+
+function Apply-InputLagTweaks {
+    # System tweaks to reduce input lag and improve timer resolution
+    Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -Command `"powercfg /setactive SCHEME_MIN; bcdedit /set useplatformtick yes; bcdedit /set disabledynamictick yes; bcdedit /set tscsyncpolicy Enhanced;`"" -WindowStyle Hidden -Wait
+}
+
+function Apply-DisableGameBar {
+    # Further disable Game DVR & Game Bar components
+    Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -Command `"reg add HKCU\Software\Microsoft\Windows\CurrentVersion\GameDVR /v AppCaptureEnabled /t REG_DWORD /d 0 /f; reg add HKCU\System\GameConfigStore /v GameDVR_Enabled /t REG_DWORD /d 0 /f;`"" -WindowStyle Hidden -Wait
+}
+
+function Apply-PowerPlanHighPerf {
+    # Set High Performance power plan
+    Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -Command `"powercfg /setactive SCHEME_MIN`"" -WindowStyle Hidden -Wait
+}
+
+function Apply-AdditionalTweaks {
+    # Misc system tweaks - TCP optimizations etc
+    Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -Command `"reg add HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters /v EnableTCPA /t REG_DWORD /d 0 /f;`"" -WindowStyle Hidden -Wait
+}
+
+function Restore-Defaults {
+    # Restore default Windows settings for all applied tweaks
+
+    Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -Command `"
+        reg add HKCU\System\GameConfigStore /v GameDVR_Enabled /t REG_DWORD /d 1 /f;
+        reg add HKCU\System\GameConfigStore /v GameDVR_FSEBehavior /t REG_DWORD /d 1 /f;
+        reg add HKCU\Software\Microsoft\GameBar /v AllowAutoGameMode /t REG_DWORD /d 1 /f;
+        reg add HKCU\Software\Microsoft\Windows\CurrentVersion\GameDVR /v AppCaptureEnabled /t REG_DWORD /d 1 /f;
+        powercfg /setactive SCHEME_BALANCED;
+        bcdedit /deletevalue useplatformtick;
+        bcdedit /deletevalue disabledynamictick;
+        bcdedit /deletevalue tscsyncpolicy;
+        reg add HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters /v EnableTCPA /t REG_DWORD /d 1 /f;
+    `" -WindowStyle Hidden -Wait
+}
+
+# Button click event: Start & Apply Tweaks + Launch GameLoop
+$btnStart.Add_Click({
+
+    $txtStatus.Text = "Checking GameLoop path..."
+    $emuPath = Find-GameLoop
     if (-not $emuPath) {
-        $StatusText.Text = "Emulator not found, please select the executable."
-        $emuPath = Ask-UserForPath
+        $txtStatus.Text = "GameLoop not found, please select executable..."
+        $emuPath = Ask-GameLoopPath
         if (-not $emuPath) {
-            $StatusText.Text = "Operation canceled."
+            $txtStatus.Text = "Operation cancelled by user."
             return
         }
     }
 
-    $StatusText.Text = "Applying system optimizations..."
+    $txtStatus.Text = "Applying selected tweaks..."
+    if ($chkAntiLag.IsChecked) { Apply-AntiLagTweaks }
+    if ($chkInputLag.IsChecked) { Apply-InputLagTweaks }
+    if ($chkGameBar.IsChecked) { Apply-DisableGameBar }
+    if ($chkPowerPlan.IsChecked) { Apply-PowerPlanHighPerf }
+    if ($chkOther.IsChecked) { Apply-AdditionalTweaks }
 
-    $regCommands = @()
-    if ($ChkDisableGameDVR.IsChecked) {
-        $regCommands += 'reg add "HKCU\System\GameConfigStore" /v GameDVR_Enabled /t REG_DWORD /d 0 /f'
+    # Build launch parameters string
+    $args = '-cmd StartApk -param -startpkg "com.tencent.ig" -engine "aow" -vm "100"'
+    if ($chkFPS.IsChecked) {
+        $args += " " + (Apply-FPSTweaks)
     }
-    if ($ChkDisableGameBar.IsChecked) {
-        $regCommands += 'reg add "HKCU\Software\Microsoft\GameBar" /v AllowAutoGameMode /t REG_DWORD /d 0 /f'
-    }
-    if ($ChkOptimizeTimer.IsChecked) {
-        $regCommands += 'bcdedit /set useplatformtick yes'
-    }
-    if ($ChkDisableDynamicTick.IsChecked) {
-        $regCommands += 'bcdedit /set disabledynamictick yes'
-    }
+    $args += ' -resolution "1280x960" -from "Custom"'
 
-    # Apply registry and bcdedit commands with elevated rights
-    foreach ($cmd in $regCommands) {
-        Start-Process powershell -Verb runAs -ArgumentList "-NoProfile -Command `$cmd" -Wait
+    $txtStatus.Text = "Starting GameLoop with tweaks..."
+    try {
+        Start-Process -FilePath $emuPath -ArgumentList $args -Priority High
+        $txtStatus.Text = "Game started successfully! 🚀"
     }
-
-    # Prepare emulator launch arguments
-    $fps = $FpsComboBox.SelectedItem.Content
-    $args = @(
-        "-cmd", "StartApk",
-        "-param",
-        "-startpkg", '"com.tencent.ig"',
-        "-engine", '"aow"',
-        "-vm", "100",
-        "-fps", $fps,
-        "-resolution", '"1280x960"',
-        "-from", '"Custom"'
-    )
-    
-    $startProcessParams = @{
-        FilePath = $emuPath
-        ArgumentList = $args
-        Priority = "High"
+    catch {
+        $txtStatus.Text = "Failed to start GameLoop!"
     }
-
-    $StatusText.Text = "Starting GameLoop with FPS $fps..."
-    Start-Process @startProcessParams
-
-    $StatusText.Text = "Game started successfully! ✔️"
 })
 
+# Button click event: Restore Defaults
+$btnRestore.Add_Click({
+    $txtStatus.Text = "Restoring default system settings..."
+    Restore-Defaults
+    $txtStatus.Text = "Defaults restored. Please reboot for full effect."
+})
+
+# Show GUI window
 $Window.ShowDialog() | Out-Null
