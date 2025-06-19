@@ -1,163 +1,128 @@
-Add-Type -AssemblyName PresentationFramework
+Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
 
-# Basit arayüz fonksiyonu
-function Show-UI {
-    $Window = New-Object System.Windows.Window
-    $Window.Title = "CRTY FPS OPTIMIZER"
-    $Window.Width = 600
-    $Window.Height = 350
-    $Window.WindowStartupLocation = "CenterScreen"
-    $Window.ResizeMode = "NoResize"
-    $Window.Background = [System.Windows.Media.Brushes]::WhiteSmoke
+# Window oluştur
+$window = New-Object System.Windows.Window
+$window.Title = "CRTY GameLoop Optimizer"
+$window.Width = 450
+$window.Height = 300
+$window.WindowStartupLocation = 'CenterScreen'
+$window.Background = [System.Windows.Media.Brushes]::WhiteSmoke
 
-    $Grid = New-Object System.Windows.Controls.Grid
-    $Grid.Margin = [System.Windows.Thickness]::new(20)
+# Grid oluştur
+$grid = New-Object System.Windows.Controls.Grid
+$grid.Margin = [System.Windows.Thickness]::new(10)
 
-    # Satırlar
-    $row1 = New-Object System.Windows.Controls.RowDefinition
-    $row1.Height = [System.Windows.GridLength]::Auto
-    $Grid.RowDefinitions.Add($row1)
-    $row2 = New-Object System.Windows.Controls.RowDefinition
-    $row2.Height = New-Object System.Windows.GridLength(80)
-    $Grid.RowDefinitions.Add($row2)
-    $row3 = New-Object System.Windows.Controls.RowDefinition
-    $row3.Height = New-Object System.Windows.GridLength(1, [System.Windows.GridUnitType]::Star)
-    $Grid.RowDefinitions.Add($row3)
+# Grid row tanımları
+$row1 = New-Object System.Windows.Controls.RowDefinition
+$row1.Height = [System.Windows.GridLength]::Auto
+$row2 = New-Object System.Windows.Controls.RowDefinition
+$row2.Height = [System.Windows.GridLength]::Auto
+$row3 = New-Object System.Windows.Controls.RowDefinition
+$row3.Height = [System.Windows.GridLength]::new(1, [System.Windows.GridUnitType]::Star)
+$row4 = New-Object System.Windows.Controls.RowDefinition
+$row4.Height = [System.Windows.GridLength]::Auto
 
-    # Başlık
-    $Title = New-Object System.Windows.Controls.TextBlock
-    $Title.Text = "CRTY FPS OPTIMIZER"
-    $Title.FontSize = 24
-    $Title.FontWeight = 'Bold'
-    $Title.Foreground = [System.Windows.Media.Brushes]::DarkBlue
-    $Title.HorizontalAlignment = 'Center'
-    $Title.VerticalAlignment = 'Center'
-    [System.Windows.Controls.Grid]::SetRow($Title, 0)
-    $Grid.Children.Add($Title) | Out-Null
+$grid.RowDefinitions.Add($row1)
+$grid.RowDefinitions.Add($row2)
+$grid.RowDefinitions.Add($row3)
+$grid.RowDefinitions.Add($row4)
 
-    # Başlat Butonu
-    $StartButton = New-Object System.Windows.Controls.Button
-    $StartButton.Content = "Optimize Et"
-    $StartButton.Width = 200
-    $StartButton.Height = 60
-    $StartButton.FontSize = 18
-    $StartButton.Foreground = [System.Windows.Media.Brushes]::White
-    $StartButton.Background = [System.Windows.Media.Brushes]::Green
-    $StartButton.HorizontalAlignment = 'Center'
-    [System.Windows.Controls.Grid]::SetRow($StartButton, 1)
-    $Grid.Children.Add($StartButton) | Out-Null
+# Başlık TextBlock
+$titleText = New-Object System.Windows.Controls.TextBlock
+$titleText.Text = "CRTY GameLoop Optimizer"
+$titleText.FontSize = 22
+$titleText.FontWeight = 'Bold'
+$titleText.Foreground = [System.Windows.Media.Brushes]::Black
+$titleText.HorizontalAlignment = 'Center'
+$titleText.Margin = [System.Windows.Thickness]::new(0,0,0,15)
+[System.Windows.Controls.Grid]::SetRow($titleText,0)
+$grid.Children.Add($titleText) | Out-Null
 
-    # Durum metni
-    $Status = New-Object System.Windows.Controls.TextBlock
-    $Status.Text = "Durum: Bekleniyor..."
-    $Status.FontSize = 16
-    $Status.Foreground = [System.Windows.Media.Brushes]::Black
-    $Status.TextAlignment = 'Center'
-    $Status.HorizontalAlignment = 'Center'
-    $Status.VerticalAlignment = 'Top'
-    $Status.TextWrapping = 'Wrap'
-    [System.Windows.Controls.Grid]::SetRow($Status, 2)
-    $Grid.Children.Add($Status) | Out-Null
+# Durum TextBlock
+$statusText = New-Object System.Windows.Controls.TextBlock
+$statusText.Text = "Durum: Bekleniyor..."
+$statusText.FontSize = 14
+$statusText.Foreground = [System.Windows.Media.Brushes]::Black
+$statusText.HorizontalAlignment = 'Center'
+$statusText.Margin = [System.Windows.Thickness]::new(0,0,0,10)
+[System.Windows.Controls.Grid]::SetRow($statusText,1)
+$grid.Children.Add($statusText) | Out-Null
 
-    $Window.Content = $Grid
+# Butonlar için StackPanel
+$stackPanel = New-Object System.Windows.Controls.StackPanel
+$stackPanel.Orientation = 'Vertical'
+$stackPanel.HorizontalAlignment = 'Center'
+$stackPanel.VerticalAlignment = 'Top'
+[System.Windows.Controls.Grid]::SetRow($stackPanel,2)
+$grid.Children.Add($stackPanel) | Out-Null
 
-    # Optimize fonksiyonu
-    function Optimize-System {
-        try {
-            $Status.Text = "Optimize ediliyor... Lütfen bekleyin."
+# Optimize butonu
+$btnOptimize = New-Object System.Windows.Controls.Button
+$btnOptimize.Content = "Optimize Et (FPS & Anti-Lag)"
+$btnOptimize.Width = 250
+$btnOptimize.Height = 40
+$btnOptimize.Margin = [System.Windows.Thickness]::new(0,0,0,10)
+$btnOptimize.Background = [System.Windows.Media.Brushes]::DarkGreen
+$btnOptimize.Foreground = [System.Windows.Media.Brushes]::White
+$btnOptimize.FontWeight = 'SemiBold'
+$stackPanel.Children.Add($btnOptimize) | Out-Null
 
-            # 1. Güç Planını Yüksek Performansa Çevir
-            powercfg /setactive SCHEME_MIN
+# Geri al butonu
+$btnUndo = New-Object System.Windows.Controls.Button
+$btnUndo.Content = "Ayarları Geri Al"
+$btnUndo.Width = 250
+$btnUndo.Height = 40
+$btnUndo.Background = [System.Windows.Media.Brushes]::DarkRed
+$btnUndo.Foreground = [System.Windows.Media.Brushes]::White
+$btnUndo.FontWeight = 'SemiBold'
+$stackPanel.Children.Add($btnUndo) | Out-Null
 
-            # 2. Windows Oyun Modunu Aktif Et
-            reg add "HKCU\Software\Microsoft\GameBar" /v AllowAutoGameMode /t REG_DWORD /d 1 /f | Out-Null
+# Alt copyright yazısı
+$copyrightText = New-Object System.Windows.Controls.TextBlock
+$copyrightText.Text = "© 2025 CRTY Tool"
+$copyrightText.FontSize = 12
+$copyrightText.Foreground = [System.Windows.Media.Brushes]::Gray
+$copyrightText.HorizontalAlignment = 'Center'
+$copyrightText.Margin = [System.Windows.Thickness]::new(0,15,0,0)
+[System.Windows.Controls.Grid]::SetRow($copyrightText,3)
+$grid.Children.Add($copyrightText) | Out-Null
 
-            # 3. Oyun DVR ve Game Bar kapat (bazı sistemlerde lag yapabilir)
-            reg add "HKCU\System\GameConfigStore" /v GameDVR_Enabled /t REG_DWORD /d 0 /f | Out-Null
-            reg add "HKCU\System\GameConfigStore" /v GameDVR_FSEBehavior /t REG_DWORD /d 0 /f | Out-Null
-            reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\GameDVR" /v AppCaptureEnabled /t REG_DWORD /d 0 /f | Out-Null
-            reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\GameDVR" /v GameDVR_Enabled /t REG_DWORD /d 0 /f | Out-Null
+# Event: Optimize butonu tıklanınca
+$btnOptimize.Add_Click({
+    try {
+        $statusText.Text = "Durum: Optimize ediliyor..."
 
-            # 4. Arka Plan Uygulamalarını Kapat (gerekirse)
-            Get-Process | Where-Object { $_.MainWindowTitle -eq '' -and $_.Responding } | Stop-Process -ErrorAction SilentlyContinue
+        # Game DVR kapat
+        reg add "HKCU\System\GameConfigStore" /v GameDVR_Enabled /t REG_DWORD /d 0 /f | Out-Null
+        reg add "HKCU\System\GameConfigStore" /v GameDVR_FSEBehavior /t REG_DWORD /d 0 /f | Out-Null
 
-            # 5. Zamanlayıcı ve önbellek optimizasyonları (DPC latency, timer resolution)
-            # Burada sadece örnek, gelişmiş araç önerilir
+        Start-Sleep -Seconds 2
 
-            # 6. Sanal Belleği Otomatik Ayarla
-            $sysPageFile = Get-WmiObject Win32_PageFileSetting
-            if ($sysPageFile) {
-                $sysPageFile.InitialSize = 0
-                $sysPageFile.MaximumSize = 0
-                $sysPageFile.Put() | Out-Null
-            }
-
-            # 7. Önemsiz görsel efektleri kapat (Performans Modu)
-            reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v VisualFXSetting /t REG_DWORD /d 2 /f | Out-Null
-
-            # 8. Ağ için TCP optimizasyonu (basit)
-            netsh int tcp set global autotuninglevel=normal | Out-Null
-            netsh int tcp set global chimney=enabled | Out-Null
-            netsh int tcp set global rss=enabled | Out-Null
-
-            Start-Sleep -Seconds 2
-            $Status.Text = "Optimizasyon tamamlandı! FPS artışı ve düşük lag bekleniyor."
-        } catch {
-            $Status.Text = "Bir hata oluştu: $_"
-        }
+        $statusText.Text = "Durum: Optimizasyon tamamlandı! 🎮"
     }
-
-    # Geri alma fonksiyonu (eklemek istersen buraya)
-    function Undo-Optimize {
-        try {
-            $Status.Text = "Geri alınıyor... Lütfen bekleyin."
-
-            # Güç Planını varsayılan yap (dengeli)
-            powercfg /setactive SCHEME_BALANCED
-
-            # Oyun modunu kapat
-            reg add "HKCU\Software\Microsoft\GameBar" /v AllowAutoGameMode /t REG_DWORD /d 0 /f | Out-Null
-
-            # Oyun DVR ve Game Bar aç
-            reg add "HKCU\System\GameConfigStore" /v GameDVR_Enabled /t REG_DWORD /d 1 /f | Out-Null
-            reg add "HKCU\System\GameConfigStore" /v GameDVR_FSEBehavior /t REG_DWORD /d 1 /f | Out-Null
-            reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\GameDVR" /v AppCaptureEnabled /t REG_DWORD /d 1 /f | Out-Null
-            reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\GameDVR" /v GameDVR_Enabled /t REG_DWORD /d 1 /f | Out-Null
-
-            # Görsel efektleri eski haline getir
-            reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects" /v VisualFXSetting /t REG_DWORD /d 1 /f | Out-Null
-
-            # TCP ayarlarını varsayılan yap
-            netsh int tcp set global autotuninglevel=normal | Out-Null
-            netsh int tcp set global chimney=default | Out-Null
-            netsh int tcp set global rss=enabled | Out-Null
-
-            $Status.Text = "Ayarlar geri alındı."
-        } catch {
-            $Status.Text = "Geri alma sırasında hata: $_"
-        }
+    catch {
+        $statusText.Text = "Hata: $_"
     }
+})
 
-    # Optimize ve Undo için butonlar
-    $UndoButton = New-Object System.Windows.Controls.Button
-    $UndoButton.Content = "Geri Al"
-    $UndoButton.Width = 200
-    $UndoButton.Height = 60
-    $UndoButton.FontSize = 18
-    $UndoButton.Foreground = [System.Windows.Media.Brushes]::White
-    $UndoButton.Background = [System.Windows.Media.Brushes]::DarkRed
-    $UndoButton.HorizontalAlignment = 'Center'
-    $UndoButton.Margin = [System.Windows.Thickness]::new(0,10,0,0)
-    [System.Windows.Controls.Grid]::SetRow($UndoButton, 2)
-    $Grid.Children.Add($UndoButton) | Out-Null
+# Event: Geri al butonu tıklanınca
+$btnUndo.Add_Click({
+    try {
+        $statusText.Text = "Durum: Ayarlar geri alınıyor..."
 
-    # Buton eventleri
-    $StartButton.Add_Click({ Optimize-System })
-    $UndoButton.Add_Click({ Undo-Optimize })
+        # Game DVR aç
+        reg add "HKCU\System\GameConfigStore" /v GameDVR_Enabled /t REG_DWORD /d 1 /f | Out-Null
+        reg add "HKCU\System\GameConfigStore" /v GameDVR_FSEBehavior /t REG_DWORD /d 1 /f | Out-Null
 
-    $Window.Content = $Grid
-    $Window.ShowDialog() | Out-Null
-}
+        Start-Sleep -Seconds 2
 
-# Script çalıştırma
-Show-UI
+        $statusText.Text = "Durum: Ayarlar geri alındı."
+    }
+    catch {
+        $statusText.Text = "Hata: $_"
+    }
+})
+
+# Window'a grid ekle ve göster
+$window.Content = $grid
+$window.ShowDialog() | Out-Null
