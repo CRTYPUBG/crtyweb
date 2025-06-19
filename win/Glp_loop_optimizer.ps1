@@ -1,7 +1,8 @@
-﻿Add-Type -AssemblyName PresentationFramework
+Add-Type -AssemblyName PresentationFramework
 
 $XAML = @"
 <Window xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
+        xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
         Title='CRTY GameLoop Optimizer' Height='400' Width='600' Background='#111'>
     <Grid>
         <TextBlock x:Name='TitleText' Text='CRTY TOOL' FontSize='36' FontWeight='Bold' 
@@ -27,7 +28,9 @@ $i = 0
 $timer = New-Object System.Windows.Threading.DispatcherTimer
 $timer.Interval = [TimeSpan]::FromMilliseconds(150)
 $timer.Add_Tick({
-    $TitleText.Foreground = [System.Windows.Media.Brushes]::$( $colors[$i] )
+    $colorName = $colors[$i]
+    $brush = [System.Windows.Media.Brushes]::$colorName
+    $TitleText.Foreground = $brush
     $i = ($i + 1) % $colors.Length
 })
 $timer.Start()
