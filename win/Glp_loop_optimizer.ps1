@@ -1,4 +1,4 @@
-Add-Type -AssemblyName PresentationFramework,PresentationCore,WindowsBase,System.Net.Http
+Add-Type -AssemblyName PresentationFramework
 
 $XAML = @"
 <Window xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
@@ -26,7 +26,7 @@ $XAML = @"
                 </ComboBox>
             </StackPanel>
 
-            <TextBlock Text='Anti Lag & FPS Artırma Ayarları:' Foreground='White' FontSize='16' Margin='0,0,0,5' />
+            <TextBlock Text='Anti Lag &amp; FPS Artırma Ayarları:' Foreground='White' FontSize='16' Margin='0,0,0,5' />
             <StackPanel Margin='20,0,0,20'>
                 <CheckBox x:Name='ChkDisableGameDVR' Content='Game DVR kapat' Foreground='White' FontSize='14' Margin='0,5'/>
                 <CheckBox x:Name='ChkDisableGameBar' Content='Game Bar kapat' Foreground='White' FontSize='14' Margin='0,5'/>
@@ -56,6 +56,8 @@ $XAML = @"
 $xmlReader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$XAML)
 $Window = [Windows.Markup.XamlReader]::Load($xmlReader)
 
+$StartButton = $Window.FindName('StartButton')
+$StatusText = $Window.FindName('StatusText')
 $TitleText = $Window.FindName('TitleText')
 $FpsComboBox = $Window.FindName('FpsComboBox')
 $ChkDisableGameDVR = $Window.FindName('ChkDisableGameDVR')
@@ -66,18 +68,14 @@ $ChkDisableDynamicTick = $Window.FindName('ChkDisableDynamicTick')
 $KeyBox = $Window.FindName('KeyBox')
 $BtnCheckKey = $Window.FindName('BtnCheckKey')
 $KeyStatusText = $Window.FindName('KeyStatusText')
-$StartButton = $Window.FindName('StartButton')
-$StatusText = $Window.FindName('StatusText')
 
-# Renkli animasyon
+# Renkli başlık efekti
 $colors = @("Red","Orange","Yellow","Green","Cyan","Blue","Purple")
 $i = 0
 $timer = New-Object System.Windows.Threading.DispatcherTimer
 $timer.Interval = [TimeSpan]::FromMilliseconds(150)
 $timer.Add_Tick({
-    $colorName = $colors[$i]
-    $brush = [System.Windows.Media.Brushes]::$colorName
-    $TitleText.Foreground = $brush
+    $TitleText.Foreground = [System.Windows.Media.Brushes]::$( $colors[$i] )
     $i = ($i + 1) % $colors.Length
 })
 $timer.Start()
@@ -105,32 +103,28 @@ function Ask-UserForPath {
     }
 }
 
-function Validate-Key($key) {
-    # Burada https://crtypubg.github.io/crtyweb/ sitesine request yapılabilir.
-    # Şimdilik sabit key kontrolü:
-    return $key -eq "Crty-key-1246523564"
-}
+$global:validKey = $false
+$expectedKey = "Crty-key-1246523564"
 
-# Lisans doğrulama butonu
 $BtnCheckKey.Add_Click({
-    $enteredKey = $KeyBox.Text.Trim()
-    $KeyStatusText.Foreground = [System.Windows.Media.Brushes]::Orange
-    $KeyStatusText.Text = "Doğrulanıyor..."
-    Start-Sleep -Milliseconds 500
-
-    if (Validate-Key $enteredKey) {
-        $KeyStatusText.Foreground = [System.Windows.Media.Brushes]::LimeGreen
-        $KeyStatusText.Text = "Lisans doğrulandı! Artık oyunu başlatabilirsiniz."
+    if ($KeyBox.Text.Trim() -eq $expectedKey) {
+        $KeyStatusText.Text = "Lisans doğrulandı! 🎉"
+        $KeyStatusText.Foreground = [System.Windows.Media.Brushes]::Lime
         $StartButton.IsEnabled = $true
+        $global:validKey = $true
     } else {
+        $KeyStatusText.Text = "Geçersiz lisans anahtarı!"
         $KeyStatusText.Foreground = [System.Windows.Media.Brushes]::Red
-        $KeyStatusText.Text = "Lisans doğrulaması başarısız! Geçerli bir anahtar girin."
         $StartButton.IsEnabled = $false
+        $global:validKey = $false
     }
 })
 
 $StartButton.Add_Click({
-    $StartButton.IsEnabled = $false
+    if (-not $global:validKey) {
+        $StatusText.Text = "Lütfen önce lisans anahtarını doğrulayın!"
+        return
+    }
     $StatusText.Text = "GameLoop yolu aranıyor..."
     $emuPath = Find-EmulatorPath
     if (-not $emuPath) {
@@ -138,58 +132,39 @@ $StartButton.Add_Click({
         $emuPath = Ask-UserForPath
         if (-not $emuPath) {
             $StatusText.Text = "İşlem iptal edildi."
-            $StartButton.IsEnabled = $true
             return
         }
     }
 
-    $StatusText.Text = "Seçilen ayarlar uygulanıyor..."
+    $StatusText.Text = "Sistem optimize ediliyor..."
 
-    $fps = $FpsComboBox.SelectedItem.Content
-    $argsList = @()
+    # Ayarları uygula
     if ($ChkDisableGameDVR.IsChecked) {
-        $argsList += "reg add HKCU\System\GameConfigStore /v GameDVR_Enabled /t REG_DWORD /d 0 /f"
+        reg add HKCU\System\GameConfigStore /v GameDVR_Enabled /t REG_DWORD /d 0 /f | Out-Null
+        reg add HKCU\System\GameConfigStore /v GameDVR_FSEBehavior /t REG_DWORD /d 0 /f | Out-Null
     }
     if ($ChkDisableGameBar.IsChecked) {
-        $argsList += "reg add HKCU\Software\Microsoft\GameBar /v AllowAutoGameMode /t REG_DWORD /d 0 /f"
+        reg add HKCU\Software\Microsoft\GameBar /v AllowAutoGameMode /t REG_DWORD /d 0 /f | Out-Null
     }
     if ($ChkOptimizeTimer.IsChecked) {
-        $argsList += "bcdedit /set useplatformtick yes"
-        $argsList += "bcdedit /set disabledynamictick yes"
-        $argsList += "bcdedit /set tscsyncpolicy Enhanced"
+        bcdedit /set useplatformtick yes | Out-Null
+        bcdedit /set disabledynamictick yes | Out-Null
+        bcdedit /set tscsyncpolicy Enhanced | Out-Null
     }
     if ($ChkDisableDynamicTick.IsChecked) {
-        $argsList += "bcdedit /set disabledynamictick yes"
+        bcdedit /set disabledynamictick yes | Out-Null
     }
 
-    $regCommands = $argsList -join "; "
+    $fps = ($FpsComboBox.SelectedItem).Content
+    $StatusText.Text = "GameLoop başlatılıyor... FPS: $fps"
 
-    # Yönetici yetkisi ile optimize komutları çalıştırılıyor
-    try {
-        Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -Command `"$regCommands`""
-    } catch {
-        $StatusText.Text = "Optimize sırasında hata oluştu: $_"
-        $StartButton.IsEnabled = $true
-        return
-    }
+    $arguments = "-cmd StartApk -param -startpkg `"com.tencent.ig`" -engine `"aow`" -vm `"100`" -fps `"$fps`" -resolution `"1280x960`" -from `"Custom`""
 
-    Start-Sleep -Seconds 2
+    $priority = if ($ChkHighPriority.IsChecked) { "High" } else { "Normal" }
 
-    $StatusText.Text = "GameLoop başlatılıyor..."
+    Start-Process -FilePath $emuPath -ArgumentList $arguments -Priority $priority
 
-    $startArgs = "-cmd StartApk -param -startpkg `"com.tencent.ig`" -engine `"aow`" -vm `"100`" -fps `"$fps`" -resolution `"1280x960`" -from `"Custom`""
-
-    try {
-        if ($ChkHighPriority.IsChecked) {
-            Start-Process -FilePath $emuPath -ArgumentList $startArgs -Priority High
-        } else {
-            Start-Process -FilePath $emuPath -ArgumentList $startArgs
-        }
-        $StatusText.Text = "Oyun başlatıldı ✔️"
-    } catch {
-        $StatusText.Text = "Oyun başlatılamadı: $_"
-    }
-    $StartButton.IsEnabled = $true
+    $StatusText.Text = "Oyun başlatıldı ✔️"
 })
 
 $Window.ShowDialog() | Out-Null
