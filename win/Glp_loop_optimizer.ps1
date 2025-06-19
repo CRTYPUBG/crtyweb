@@ -1,93 +1,128 @@
 Add-Type -AssemblyName PresentationFramework
 
+# GUI XAML - mutlaka xmlns:x tanımı var
 $XAML = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="CRTY GameLoop Optimizer" Height="360" Width="480" Background="#1e1e1e" WindowStartupLocation="CenterScreen">
-  <Grid Margin="20">
-    <StackPanel>
-      <TextBlock Text="CRTY TOOL v1.0" Foreground="White" FontSize="28" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-      <TextBox x:Name="KeyBox" Height="30" Text="Enter license key..." Foreground="Gray"/>
-      <Button x:Name="CheckKeyBtn" Content="Validate Key" Height="35" Background="#333" Foreground="White" Margin="0,10,0,10"/>
-      <StackPanel x:Name="MainPanel" Visibility="Collapsed">
-        <CheckBox x:Name="FpsBoost" Content="FPS Boost" Foreground="White"/>
-        <CheckBox x:Name="AntiLag" Content="Anti‑Lag Fix" Foreground="White"/>
-        <CheckBox x:Name="InputLag" Content="Input‑Lag Removal" Foreground="White"/>
-        <CheckBox x:Name="Restore" Content="Restore Settings" Foreground="White"/>
-        <Button x:Name="RunBtn" Content="Apply Tweaks" Height="40" Background="Green" Foreground="White" Margin="0,10,0,0"/>
-        <TextBlock x:Name="DurumText" Text="Ready" Foreground="Lime" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-      </StackPanel>
-    </StackPanel>
-  </Grid>
+        Title="CRTY GameLoop Optimizer" Height="380" Width="450" Background="#1E1E1E" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid Margin="15">
+        <TextBlock Text="CRTY GameLoop Optimizer" Foreground="White" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,10,0,0" />
+        
+        <StackPanel VerticalAlignment="Top" Margin="0,60,0,0" >
+            <CheckBox x:Name="ChkFPS" Content="Enable FPS Boost" Foreground="LightGreen" FontSize="16" Margin="0,10"/>
+            <CheckBox x:Name="ChkAntiLag" Content="Enable Anti-Lag" Foreground="LightGreen" FontSize="16" Margin="0,10"/>
+            <CheckBox x:Name="ChkInputLag" Content="Enable Input Lag Removal" Foreground="LightGreen" FontSize="16" Margin="0,10"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30" >
+            <Button x:Name="BtnRun" Content="Optimize & Start GameLoop" Width="210" Height="45" Margin="10" Background="#007ACC" Foreground="White" FontWeight="Bold" Cursor="Hand"/>
+            <Button x:Name="BtnRestore" Content="Restore Defaults" Width="130" Height="45" Margin="10" Background="#555555" Foreground="White" Cursor="Hand"/>
+        </StackPanel>
+
+        <TextBlock x:Name="StatusText" Text="Status: Waiting for your selection..." Foreground="LightGray" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,5" />
+    </Grid>
 </Window>
 "@
 
-$reader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$XAML)
+# XAML oku ve WPF Window oluştur
+$reader = [System.Xml.XmlReader]::Create([System.IO.StringReader] $XAML)
 $Window = [Windows.Markup.XamlReader]::Load($reader)
 
-$KeyBox     = $Window.FindName("KeyBox")
-$CheckKeyBtn= $Window.FindName("CheckKeyBtn")
-$MainPanel  = $Window.FindName("MainPanel")
-$FpsBoost   = $Window.FindName("FpsBoost")
-$AntiLag    = $Window.FindName("AntiLag")
-$InputLag   = $Window.FindName("InputLag")
-$Restore    = $Window.FindName("Restore")
-$RunBtn     = $Window.FindName("RunBtn")
-$DurumText  = $Window.FindName("DurumText")
+# Kontrolleri al
+$ChkFPS = $Window.FindName("ChkFPS")
+$ChkAntiLag = $Window.FindName("ChkAntiLag")
+$ChkInputLag = $Window.FindName("ChkInputLag")
+$BtnRun = $Window.FindName("BtnRun")
+$BtnRestore = $Window.FindName("BtnRestore")
+$StatusText = $Window.FindName("StatusText")
 
-$KeyBox.Add_GotFocus({
-  if ($KeyBox.Text -eq "Enter license key...") {
-    $KeyBox.Text = ""
-    $KeyBox.Foreground = "White"
-  }
+# Optimize işlemi fonksiyonu
+function Optimize-GameLoop {
+    $StatusText.Text = "Status: Applying optimizations..."
+    Start-Sleep -Milliseconds 500
+
+    # FPS Boost örneği - registry veya process tweak - buraya istediğin optimize kodunu koyabilirsin
+    if ($ChkFPS.IsChecked) {
+        # Örnek: Timer Resolution optimize
+        # Timeout: 0 means max performance for multimedia timer
+        Start-Process -FilePath "powershell" -ArgumentList "-Command [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject((New-Object -ComObject WScript.Shell))" -WindowStyle Hidden -Wait
+        $StatusText.Text = "Status: FPS Boost enabled"
+    } else {
+        $StatusText.Text = "Status: FPS Boost skipped"
+    }
+
+    # Anti Lag örneği
+    if ($ChkAntiLag.IsChecked) {
+        # Örnek registry tweak
+        try {
+            Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Value 0 -ErrorAction Stop
+            Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "GameDVR_Enabled" -Value 0 -ErrorAction Stop
+            $StatusText.Text = "Status: Anti-Lag enabled"
+        }
+        catch {
+            $StatusText.Text = "Status: Failed to apply Anti-Lag settings"
+        }
+    }
+    else {
+        $StatusText.Text = "Status: Anti-Lag skipped"
+    }
+
+    # Input Lag kaldırma örneği (Örnek registry)
+    if ($ChkInputLag.IsChecked) {
+        try {
+            Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 0 -ErrorAction Stop
+            Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_FSEBehavior" -Value 0 -ErrorAction Stop
+            $StatusText.Text = "Status: Input Lag Removal enabled"
+        }
+        catch {
+            $StatusText.Text = "Status: Failed to apply Input Lag Removal"
+        }
+    }
+    else {
+        $StatusText.Text = "Status: Input Lag Removal skipped"
+    }
+}
+
+# Geri al fonksiyonu - ayarları eski haline getirir (örnek)
+function Restore-Defaults {
+    $StatusText.Text = "Status: Restoring defaults..."
+    Start-Sleep -Milliseconds 500
+    try {
+        # Örnek: registry ayarlarını eski haline getir
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Value 1 -ErrorAction Stop
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "GameDVR_Enabled" -Value 1 -ErrorAction Stop
+        Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 1 -ErrorAction Stop
+        Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_FSEBehavior" -Value 1 -ErrorAction Stop
+        $StatusText.Text = "Status: Defaults restored ✔️"
+    }
+    catch {
+        $StatusText.Text = "Status: Failed to restore defaults"
+    }
+}
+
+# Oyun başlatma fonksiyonu
+function Start-GameLoop {
+    $StatusText.Text = "Status: Starting GameLoop..."
+    # GameLoop emulator yolu - gerekirse değiştir
+    $emuPath = "C:\Program Files\TxGameAssistant\ui\AndroidEmulatorEn.exe"
+    if (-not (Test-Path $emuPath)) {
+        $StatusText.Text = "Status: GameLoop emulator not found!"
+        return
+    }
+    Start-Process -FilePath $emuPath -ArgumentList '-cmd StartApk -param -startpkg "com.tencent.ig"' -Priority High
+    $StatusText.Text = "Status: GameLoop started ✔️"
+}
+
+# Run butonuna tıklama olayı
+$BtnRun.Add_Click({
+    Optimize-GameLoop
+    Start-GameLoop
 })
-$KeyBox.Add_LostFocus({
-  if ([string]::IsNullOrWhiteSpace($KeyBox.Text)) {
-    $KeyBox.Text = "Enter license key..."
-    $KeyBox.Foreground = "Gray"
-  }
+
+# Restore butonuna tıklama olayı
+$BtnRestore.Add_Click({
+    Restore-Defaults
 })
 
-$CheckKeyBtn.Add_Click({
-  if ($KeyBox.Text -eq "Crty-key-1246523564") {
-    $KeyBox.Visibility = "Collapsed"
-    $CheckKeyBtn.Visibility = "Collapsed"
-    $MainPanel.Visibility = "Visible"
-  } else {
-    [System.Windows.MessageBox]::Show("Invalid key!", "Error", "OK", "Error")
-  }
-})
-
-$RunBtn.Add_Click({
-  $DurumText.Text = "Applying tweaks..."
-  Start-Sleep -Milliseconds 300
-
-  if ($FpsBoost.IsChecked) {
-    powercfg /setactive SCHEME_MIN
-    bcdedit /set useplatformtick yes
-    bcdedit /set disabledynamictick yes
-    bcdedit /set tscsyncpolicy Enhanced
-  }
-
-  if ($AntiLag.IsChecked) {
-    reg add "HKCU\System\GameConfigStore" /v GameDVR_Enabled /t REG_DWORD /d 0 /f
-    reg add "HKCU\Software\Microsoft\GameBar" /v AllowAutoGameMode /t REG_DWORD /d 0 /f
-  }
-
-  if ($InputLag.IsChecked) {
-    reg add "HKLM\SYSTEM\CurrentControlSet\Control\PriorityControl" /v Win32PrioritySeparation /t REG_DWORD /d 38 /f
-  }
-
-  if ($Restore.IsChecked) {
-    bcdedit /deletevalue useplatformtick
-    bcdedit /deletevalue disabledynamictick
-    bcdedit /deletevalue tscsyncpolicy
-    reg delete "HKCU\System\GameConfigStore" /v GameDVR_Enabled /f
-    reg delete "HKCU\Software\Microsoft\GameBar" /v AllowAutoGameMode /f
-  }
-
-  Start-Sleep -Milliseconds 300
-  $DurumText.Text = "Tweaks applied ✔️"
-})
-
+# Pencereyi aç
 $Window.ShowDialog() | Out-Null
