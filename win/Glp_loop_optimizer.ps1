@@ -59,6 +59,7 @@ function Ask-UserForPath {
 }
 
 $StartButton.Add_Click({
+    $StartButton.IsEnabled = $false
     $StatusText.Text = "GameLoop yolu aranıyor..."
     $emuPath = Find-EmulatorPath
     if (-not $emuPath) {
@@ -66,19 +67,29 @@ $StartButton.Add_Click({
         $emuPath = Ask-UserForPath
         if (-not $emuPath) {
             $StatusText.Text = "İşlem iptal edildi."
+            $StartButton.IsEnabled = $true
             return
         }
     }
     $StatusText.Text = "Sistem optimize ediliyor..."
-
-    Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -Command `"powercfg /setactive SCHEME_MIN; bcdedit /set useplatformtick yes; bcdedit /set disabledynamictick yes; bcdedit /set tscsyncpolicy Enhanced; reg add HKCU\System\GameConfigStore /v GameDVR_Enabled /t REG_DWORD /d 0 /f; reg add HKCU\System\GameConfigStore /v GameDVR_FSEBehavior /t REG_DWORD /d 0 /f; reg add HKCU\Software\Microsoft\GameBar /v AllowAutoGameMode /t REG_DWORD /d 0 /f;`""
+    try {
+        Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -Command `"powercfg /setactive SCHEME_MIN; bcdedit /set useplatformtick yes; bcdedit /set disabledynamictick yes; bcdedit /set tscsyncpolicy Enhanced; reg add HKCU\System\GameConfigStore /v GameDVR_Enabled /t REG_DWORD /d 0 /f; reg add HKCU\System\GameConfigStore /v GameDVR_FSEBehavior /t REG_DWORD /d 0 /f; reg add HKCU\Software\Microsoft\GameBar /v AllowAutoGameMode /t REG_DWORD /d 0 /f;`""
+    } catch {
+        $StatusText.Text = "Optimize sırasında hata oluştu: $_"
+        $StartButton.IsEnabled = $true
+        return
+    }
 
     Start-Sleep -Seconds 1
 
     $StatusText.Text = "GameLoop başlatılıyor..."
-    Start-Process -FilePath $emuPath -ArgumentList '-cmd StartApk -param -startpkg "com.tencent.ig" -engine "aow" -vm "100" -fps "120" -resolution "1280x960" -from "Custom"' -Priority High
-
-    $StatusText.Text = "Oyun başlatıldı ✔️"
+    try {
+        Start-Process -FilePath $emuPath -ArgumentList '-cmd StartApk -param -startpkg "com.tencent.ig" -engine "aow" -vm "100" -fps "120" -resolution "1280x960" -from "Custom"' -Priority High
+        $StatusText.Text = "Oyun başlatıldı ✔️"
+    } catch {
+        $StatusText.Text = "Oyun başlatılamadı: $_"
+    }
+    $StartButton.IsEnabled = $true
 })
 
 $Window.ShowDialog() | Out-Null
