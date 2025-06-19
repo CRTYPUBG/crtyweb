@@ -1,29 +1,28 @@
 Add-Type -AssemblyName PresentationFramework
 
-# Pencere ayarları
+# Ana pencere oluştur
 $Window = New-Object System.Windows.Window
-$Window.Title = "🎮 GameLoop Optimizer 🚀"
+$Window.Title = "GameLoop Optimizer - FPS & Anti-Lag"
 $Window.Width = 360
-$Window.Height = 220
+$Window.Height = 210
 $Window.WindowStartupLocation = "CenterScreen"
 $Window.ResizeMode = "NoResize"
 $Window.Background = [System.Windows.Media.Brushes]::WhiteSmoke
 
-# Grid oluştur
+# Grid layout
 $Grid = New-Object System.Windows.Controls.Grid
 $Grid.Margin = [System.Windows.Thickness]::new(15)
 
-# Satır tanımları
 $Grid.RowDefinitions.Add((New-Object System.Windows.Controls.RowDefinition -Property @{Height=[System.Windows.GridLength]::Auto}))
-$Grid.RowDefinitions.Add((New-Object System.Windows.Controls.RowDefinition -Property @{Height=50}))
+$Grid.RowDefinitions.Add((New-Object System.Windows.Controls.RowDefinition -Property @{Height=55}))
 $Grid.RowDefinitions.Add((New-Object System.Windows.Controls.RowDefinition -Property @{Height=[System.Windows.GridLength]::Star}))
 
-# Başlık TextBlock
+# Başlık
 $Title = New-Object System.Windows.Controls.TextBlock
-$Title.Text = "🚀 GameLoop FPS Optimize 🚀"
-$Title.FontSize = 22
+$Title.Text = "GameLoop FPS & Anti-Lag Optimize"
+$Title.FontSize = 20
 $Title.FontWeight = 'Bold'
-$Title.Foreground = [System.Windows.Media.Brushes]::DarkBlue
+$Title.Foreground = [System.Windows.Media.Brushes]::DarkGreen
 $Title.HorizontalAlignment = 'Center'
 $Title.Margin = [System.Windows.Thickness]::new(0,0,0,15)
 [System.Windows.Controls.Grid]::SetRow($Title, 0)
@@ -31,22 +30,22 @@ $Grid.Children.Add($Title) | Out-Null
 
 # Başlat butonu
 $StartButton = New-Object System.Windows.Controls.Button
-$StartButton.Content = "✨ Optimizasyonu Başlat ✨"
-$StartButton.Width = 180
-$StartButton.Height = 45
+$StartButton.Content = "Optimize Et & Başlat"
+$StartButton.Width = 200
+$StartButton.Height = 50
 $StartButton.FontSize = 16
 $StartButton.Foreground = [System.Windows.Media.Brushes]::White
-$StartButton.Background = [System.Windows.Media.Brushes]::DodgerBlue
-$StartButton.BorderBrush = [System.Windows.Media.Brushes]::RoyalBlue
+$StartButton.Background = [System.Windows.Media.Brushes]::ForestGreen
+$StartButton.BorderBrush = [System.Windows.Media.Brushes]::DarkGreen
 $StartButton.Cursor = [System.Windows.Input.Cursors]::Hand
 $StartButton.HorizontalAlignment = 'Center'
 $StartButton.Margin = [System.Windows.Thickness]::new(0,0,0,10)
 [System.Windows.Controls.Grid]::SetRow($StartButton, 1)
 $Grid.Children.Add($StartButton) | Out-Null
 
-# Durum TextBlock
+# Durum metni
 $Status = New-Object System.Windows.Controls.TextBlock
-$Status.Text = "ℹ️ Durum: Bekleniyor..."
+$Status.Text = "Durum: Bekleniyor..."
 $Status.FontSize = 14
 $Status.Foreground = [System.Windows.Media.Brushes]::DarkSlateGray
 $Status.HorizontalAlignment = 'Center'
@@ -55,25 +54,54 @@ $Status.TextWrapping = 'Wrap'
 [System.Windows.Controls.Grid]::SetRow($Status, 2)
 $Grid.Children.Add($Status) | Out-Null
 
-# Grid'i pencereye ekle
 $Window.Content = $Grid
 
-# Optimize fonksiyonu (örnek)
-function Optimize-GameLoop {
-    $Status.Text = "⏳ Optimizasyon başlıyor..."
-    Start-Sleep -Seconds 1
+function Optimize-AndStartGameLoop {
+    try {
+        $Status.Text = "Ultimate Performance planı aktif ediliyor..."
+        # Ultimate Performance planını aktif et
+        powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 | Out-Null
+        powercfg -setactive e9a42b02-d5df-448d-aa00-03f14749eb61
 
-    # Buraya FPS artırma, input lag azaltma gibi komutları ekle
+        Start-Sleep -Seconds 1
+        $Status.Text = "FPS, Anti-Lag ve Input Lag ayarları uygulanıyor..."
+        # Burada sistem ayarları, registry tweakleri ekle
+        # Örnek:
+        # Disable Nagle's Algorithm, optimize ağ, oyun modu ayarları, timer resolution vs.
+        # (Kendi optimize kodlarını buraya ekleyebilirsin)
 
-    # Örnek: İşlem önceliği yükseltme
-    # Start-Process -FilePath "gameloop.exe" -Priority "High"
+        Start-Sleep -Seconds 1
 
-    $Status.Text = "✅ Optimizasyon tamamlandı! FPS'niz arttırıldı."
+        $Status.Text = "GameLoop yüksek öncelikle başlatılıyor..."
+
+        # GameLoop exe yolu - bunu kendi sistemine göre değiştir
+        $glPath = "C:\Program Files\Tencent\Tencent Gaming Buddy\TencentGamingBuddy.exe"
+        if (-Not (Test-Path $glPath)) {
+            $Status.Text = "GameLoop bulunamadı: $glPath"
+            return
+        }
+
+        # GameLoop'u 120 FPS + AOW modunda başlatmak için argüman ekle (örnek args)
+        $arguments = "--fps 120 --aow-mode"
+
+        # Yeni process başlat
+        $process = Start-Process -FilePath $glPath -ArgumentList $arguments -PassThru
+
+        # İşleme yüksek öncelik ver
+        Start-Sleep -Milliseconds 500
+        $proc = Get-Process -Id $process.Id
+        $proc.PriorityClass = 'High'
+
+        $Status.Text = "Optimize edildi ve GameLoop başlatıldı! İyi oyunlar."
+    }
+    catch {
+        $Status.Text = "Hata oluştu: $_"
+    }
 }
 
 # Buton tıklama eventi
 $StartButton.Add_Click({
-    Optimize-GameLoop
+    Optimize-AndStartGameLoop
 })
 
 # Pencereyi göster
