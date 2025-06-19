@@ -1,82 +1,25 @@
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
 
-function Optimize-GameLoop {
-    try {
-        reg add "HKCU\System\GameConfigStore" /v GameDVR_Enabled /t REG_DWORD /d 0 /f | Out-Null
-        reg add "HKCU\System\GameConfigStore" /v GameDVR_FSEBehavior /t REG_DWORD /d 0 /f | Out-Null
-        reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\GameDVR" /v AllowGameDVR /t REG_DWORD /d 0 /f | Out-Null
-        reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\GameDVR" /v AllowBroadcastRecording /t REG_DWORD /d 0 /f | Out-Null
-
-        Stop-Service -Name "SysMain" -Force -ErrorAction SilentlyContinue
-        Set-Service -Name "SysMain" -StartupType Disabled
-
-        $ultimatePerfGuid = "e9a42b02-d5df-448d-aa00-03f14749eb61"
-        $existingPlans = powercfg /list
-        if (-not ($existingPlans -match $ultimatePerfGuid)) {
-            powercfg -duplicatescheme $ultimatePerfGuid | Out-Null
-        }
-        powercfg /setactive $ultimatePerfGuid
-
-        netsh interface tcp set global autotuning=disabled | Out-Null
-
-        $totalRAM = (Get-CimInstance -ClassName Win32_ComputerSystem).TotalPhysicalMemory
-        $totalRAMMB = [math]::Round($totalRAM / 1MB)
-        $initialSize = $totalRAMMB
-        $maximumSize = [math]::Round($totalRAMMB * 1.5)
-        $pageFile = "C:\pagefile.sys"
-
-        wmic computersystem where name="%computername%" set AutomaticManagedPagefile=False | Out-Null
-        wmic pagefileset where name="$pageFile" delete | Out-Null
-        wmic pagefileset create name="$pageFile" | Out-Null
-        wmic pagefileset where name="$pageFile" set InitialSize=$initialSize,MaximumSize=$maximumSize | Out-Null
-
-        $gameloopProcess = Get-Process -Name "dnplayer" -ErrorAction SilentlyContinue
-        if ($gameloopProcess) {
-            $gameloopProcess | ForEach-Object {
-                $_.PriorityClass = 'High'
-            }
-        }
-        return "Optimizasyon tamamlandı! FPS artışı ve anti-lag etkin."
-    }
-    catch {
-        return "Hata oluştu: $_"
-    }
+# Yönetici kontrolü
+If (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{
+    [System.Windows.MessageBox]::Show("Lütfen PowerShell'i Yönetici olarak çalıştırınız!", "Yetki Hatası", 'OK', 'Error') | Out-Null
+    exit
 }
 
-function Undo-Optimize {
-    try {
-        reg add "HKCU\System\GameConfigStore" /v GameDVR_Enabled /t REG_DWORD /d 1 /f | Out-Null
-        reg add "HKCU\System\GameConfigStore" /v GameDVR_FSEBehavior /t REG_DWORD /d 1 /f | Out-Null
-        reg delete "HKLM\SOFTWARE\Policies\Microsoft\Windows\GameDVR" /v AllowGameDVR /f | Out-Null
-        reg delete "HKLM\SOFTWARE\Policies\Microsoft\Windows\GameDVR" /v AllowBroadcastRecording /f | Out-Null
-
-        Set-Service -Name "SysMain" -StartupType Automatic
-        Start-Service -Name "SysMain" -ErrorAction SilentlyContinue
-
-        powercfg /setactive SCHEME_BALANCED
-
-        netsh interface tcp set global autotuning=normal | Out-Null
-
-        wmic computersystem where name="%computername%" set AutomaticManagedPagefile=True | Out-Null
-
-        return "Ayarlar geri alındı."
-    }
-    catch {
-        return "Hata oluştu: $_"
-    }
-}
-
-# GUI kısmı
+# Window oluştur
 $window = New-Object System.Windows.Window
 $window.Title = "CRTY GameLoop Optimizer"
 $window.Width = 450
-$window.Height = 350
+$window.Height = 320
 $window.WindowStartupLocation = 'CenterScreen'
 $window.Background = [System.Windows.Media.Brushes]::WhiteSmoke
 
+# Grid oluştur
 $grid = New-Object System.Windows.Controls.Grid
 $grid.Margin = [System.Windows.Thickness]::new(10)
 
+# Grid row tanımları
 $row1 = New-Object System.Windows.Controls.RowDefinition
 $row1.Height = [System.Windows.GridLength]::Auto
 $row2 = New-Object System.Windows.Controls.RowDefinition
@@ -91,9 +34,10 @@ $grid.RowDefinitions.Add($row2)
 $grid.RowDefinitions.Add($row3)
 $grid.RowDefinitions.Add($row4)
 
+# Başlık TextBlock
 $titleText = New-Object System.Windows.Controls.TextBlock
 $titleText.Text = "CRTY GameLoop Optimizer"
-$titleText.FontSize = 22
+$titleText.FontSize = 24
 $titleText.FontWeight = 'Bold'
 $titleText.Foreground = [System.Windows.Media.Brushes]::Black
 $titleText.HorizontalAlignment = 'Center'
@@ -101,15 +45,17 @@ $titleText.Margin = [System.Windows.Thickness]::new(0,0,0,15)
 [System.Windows.Controls.Grid]::SetRow($titleText,0)
 $grid.Children.Add($titleText) | Out-Null
 
+# Durum TextBlock
 $statusText = New-Object System.Windows.Controls.TextBlock
 $statusText.Text = "Durum: Bekleniyor..."
 $statusText.FontSize = 14
 $statusText.Foreground = [System.Windows.Media.Brushes]::Black
 $statusText.HorizontalAlignment = 'Center'
-$statusText.Margin = [System.Windows.Thickness]::new(0,0,0,10)
+$statusText.Margin = [System.Windows.Thickness]::new(0,0,0,15)
 [System.Windows.Controls.Grid]::SetRow($statusText,1)
 $grid.Children.Add($statusText) | Out-Null
 
+# Butonlar için StackPanel
 $stackPanel = New-Object System.Windows.Controls.StackPanel
 $stackPanel.Orientation = 'Vertical'
 $stackPanel.HorizontalAlignment = 'Center'
@@ -117,45 +63,112 @@ $stackPanel.VerticalAlignment = 'Top'
 [System.Windows.Controls.Grid]::SetRow($stackPanel,2)
 $grid.Children.Add($stackPanel) | Out-Null
 
+# Optimize butonu
 $btnOptimize = New-Object System.Windows.Controls.Button
 $btnOptimize.Content = "Optimize Et (FPS & Anti-Lag)"
 $btnOptimize.Width = 300
-$btnOptimize.Height = 40
-$btnOptimize.Margin = [System.Windows.Thickness]::new(0,0,0,10)
+$btnOptimize.Height = 45
+$btnOptimize.Margin = [System.Windows.Thickness]::new(0,0,0,15)
 $btnOptimize.Background = [System.Windows.Media.Brushes]::DarkGreen
 $btnOptimize.Foreground = [System.Windows.Media.Brushes]::White
 $btnOptimize.FontWeight = 'SemiBold'
 $stackPanel.Children.Add($btnOptimize) | Out-Null
 
+# Geri al butonu
 $btnUndo = New-Object System.Windows.Controls.Button
 $btnUndo.Content = "Ayarları Geri Al"
 $btnUndo.Width = 300
-$btnUndo.Height = 40
+$btnUndo.Height = 45
 $btnUndo.Background = [System.Windows.Media.Brushes]::DarkRed
 $btnUndo.Foreground = [System.Windows.Media.Brushes]::White
 $btnUndo.FontWeight = 'SemiBold'
 $stackPanel.Children.Add($btnUndo) | Out-Null
 
+# Alt copyright yazısı
 $copyrightText = New-Object System.Windows.Controls.TextBlock
 $copyrightText.Text = "© 2025 CRTY Tool"
 $copyrightText.FontSize = 12
 $copyrightText.Foreground = [System.Windows.Media.Brushes]::Gray
 $copyrightText.HorizontalAlignment = 'Center'
-$copyrightText.Margin = [System.Windows.Thickness]::new(0,15,0,0)
+$copyrightText.Margin = [System.Windows.Thickness]::new(0,20,0,0)
 [System.Windows.Controls.Grid]::SetRow($copyrightText,3)
 $grid.Children.Add($copyrightText) | Out-Null
 
-$btnOptimize.Add_Click({
-    $statusText.Text = "Durum: Optimize ediliyor..."
-    $result = Optimize-GameLoop
-    $statusText.Text = "Durum: $result"
-})
+# Optimize fonksiyonu
+function Optimize-GameLoop {
+    try {
+        $statusText.Text = "Durum: Optimizasyon başladı..."
 
-$btnUndo.Add_Click({
-    $statusText.Text = "Durum: Ayarlar geri alınıyor..."
-    $result = Undo-Optimize
-    $statusText.Text = "Durum: $result"
-})
+        # Windows Game Bar & DVR kapat
+        Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 0 -Type DWord -ErrorAction Stop
+        Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_FSEBehavior" -Value 0 -Type DWord -ErrorAction Stop
+        # Policies altında kapatma (bazı sistemler için)
+        if (-not (Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR")) {
+            New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows" -Name "GameDVR" -Force | Out-Null
+        }
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -Value 0 -Type DWord -ErrorAction Stop
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowBroadcastRecording" -Value 0 -Type DWord -ErrorAction Stop
 
+        # CPU güç modunu yüksek performansa ayarla
+        powercfg /setactive SCHEME_MIN
+
+        # Superfetch / SysMain servisini durdur ve devre dışı bırak
+        Stop-Service -Name "SysMain" -ErrorAction SilentlyContinue
+        Set-Service -Name "SysMain" -StartupType Disabled
+
+        # TCP autotuning disable ederek gecikmeyi azalt
+        netsh int tcp set global autotuninglevel=disabled | Out-Null
+
+        # GameLoop işlemi varsa önceliğini yüksek yap (gameLoop.exe farklıysa adını değiştir)
+        $glproc = Get-Process -Name "dnplayer" -ErrorAction SilentlyContinue
+        if ($glproc) {
+            $glproc | ForEach-Object { $_.PriorityClass = 'High' }
+        }
+
+        # Sanal bellek ayarlarını optimize et (otomatik ayarla)
+        $computer = Get-WmiObject Win32_ComputerSystem
+        $computer.AutomaticManagedPagefile = $true
+
+        $statusText.Text = "Durum: Optimizasyon tamamlandı! 🎮"
+    }
+    catch {
+        $statusText.Text = "Hata: $($_.Exception.Message)"
+    }
+}
+
+# Geri alma fonksiyonu
+function Undo-Optimization {
+    try {
+        $statusText.Text = "Durum: Ayarlar geri alınıyor..."
+
+        # Windows Game Bar & DVR aç
+        Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 1 -Type DWord -ErrorAction Stop
+        Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_FSEBehavior" -Value 1 -Type DWord -ErrorAction Stop
+
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -Value 1 -Type DWord -ErrorAction Stop
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowBroadcastRecording" -Value 1 -Type DWord -ErrorAction Stop
+
+        # CPU güç modunu varsayılan yap (Dengeli)
+        powercfg /setactive SCHEME_BALANCED
+
+        # Superfetch / SysMain servisini başlat ve otomatik yap
+        Set-Service -Name "SysMain" -StartupType Automatic
+        Start-Service -Name "SysMain" -ErrorAction SilentlyContinue
+
+        # TCP autotuning tekrar etkinleştir
+        netsh int tcp set global autotuninglevel=normal | Out-Null
+
+        $statusText.Text = "Durum: Ayarlar geri alındı."
+    }
+    catch {
+        $statusText.Text = "Hata: $($_.Exception.Message)"
+    }
+}
+
+# Buton eventleri
+$btnOptimize.Add_Click({ Optimize-GameLoop })
+$btnUndo.Add_Click({ Undo-Optimization })
+
+# Window'a grid ekle ve göster
 $window.Content = $grid
 $window.ShowDialog() | Out-Null
