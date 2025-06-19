@@ -2,8 +2,8 @@ Add-Type -AssemblyName PresentationFramework
 
 $Window = New-Object System.Windows.Window
 $Window.Title = "CRTY TOOL"
-$Window.Width = 400
-$Window.Height = 250
+$Window.Width = 950
+$Window.Height = 850
 $Window.WindowStartupLocation = "CenterScreen"
 $Window.ResizeMode = "NoResize"
 $Window.Background = [System.Windows.Media.Brushes]::WhiteSmoke
