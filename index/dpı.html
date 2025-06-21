@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GameLoop DPI Optimizer</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #1f2937, #111827);
+      font-family: 'Montserrat', sans-serif;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 0.25em;
+      color: #4ade80; /* lime green */
+      text-shadow: 0 0 8px #4ade80;
+    }
+
+    p {
+      font-size: 1.25rem;
+      margin-bottom: 2em;
+      max-width: 500px;
+      color: #a1a1aa;
+    }
+
+    button {
+      background-color: #22c55e;
+      border: none;
+      padding: 1em 2.5em;
+      font-size: 1.2rem;
+      color: white;
+      font-weight: 700;
+      border-radius: 9999px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.6);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #16a34a;
+      box-shadow: 0 6px 20px rgba(22, 163, 74, 0.8);
+    }
+
+    footer {
+      position: fixed;
+      bottom: 12px;
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <h1>GameLoop DPI Optimizer</h1>
+  <p>Optimize your GameLoop experience by calculating the perfect DPI settings for your monitor with this lightweight and easy-to-use tool.</p>
+  <button id="githubBtn">Go to GitHub Repository</button>
+
+  <footer>© 2025 CRTYPUBG</footer>
+
+  <script>
+    document.getElementById('githubBtn').addEventListener('click', () => {
+      window.open('https://github.com/CRTYPUBG/GameLoop-DPI-Optimizer', '_blank');
+    });
+  </script>
+</body>
+</html>
