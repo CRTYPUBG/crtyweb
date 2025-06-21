@@ -1,0 +1,50 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="GameLoop DPI Calculator"
+        Height="850" Width="750"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Background="#FF1E1E1E">
+    <Grid Margin="15" >
+        <Border CornerRadius="10" Background="#FF2B2B2B" Padding="15" >
+            <StackPanel>
+                <!-- ASCII Başlık -->
+                <TextBlock FontFamily="Consolas"
+						   Foreground="Lime"
+						   FontWeight="Bold"
+						   FontSize="16"
+					       TextWrapping="Wrap"
+                           Text="
+
+GAMELOOP DPI CALCULATOR
+                   
+"/>
+
+                
+                <!-- Mevcut UI öğeleri -->
+                <TextBlock Text="Screen Resolution:" FontWeight="Bold" Foreground="White" Margin="5,15,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBlock Name="ResolutionText" Foreground="LightGray" Margin="170,15,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBlock Text="Enter screen size (inches):" Foreground="White" Margin="5,55,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBox Name="InchInput" Width="120" Margin="200,55,0,0" Background="#3C3C3C" Foreground="White" BorderBrush="Gray" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Button x:Name="CalcBtn"
+                        Content="Calculate DPI"
+                        Width="140" Height="35"
+                        Margin="130,105,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Background="#FF4CAF50"
+                        Foreground="White"
+                        BorderBrush="#888"
+                        FontWeight="Bold"
+                        Cursor="Hand"/>
+                <TextBlock Name="DPIResult"
+                           FontWeight="Bold"
+                           FontSize="16"
+                           Foreground="Lime"
+                           Margin="10,165,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
