@@ -1,0 +1,16 @@
+{
+  "applications": {
+    "mk-pubg-mobile-tool": {
+      "current_version": "2.0.0",
+      "latest_version": "2.1.0",
+      "download_url": "https://github.com/CRTYPUBG/MK-PUBG-Mobile-Tool/releases/download/v2.1.0/mk-pubg-mobile-tool-v2.1.0.zip",
+      "changelog": "Yeni grafik ayarları eklendi, performans iyileştirmeleri yapıldı."
+    },
+    "gameloop-optimizer": {
+      "current_version": "1.0.0",
+      "latest_version": "1.1.0",
+      "download_url": "https://github.com/CRTYPUBG/GameLoop-Optimizer/releases/download/v1.1.0/gameloop-optimizer-v1.1.0.zip",
+      "changelog": "iPad çözünürlüğü desteği eklendi."
+    }
+  }
+}
