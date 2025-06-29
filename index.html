@@ -214,17 +214,17 @@
     });
     const signupForm = document.getElementById('signup-form-inner');
     signupForm.addEventListener('submit', async e => {
-      e.preventDefault();
-      const email = document.getElementById('signup-email').value, password = document.getElementById('signup-password').value;
-      const role = document.getElementById('signup-role').value;
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) return alert('Kayıt başarısız: ' + error.message);
-      if (data.user) {
-        const { error: insertError } = await supabase.from('users').insert([{ id: data.user.id, email, role: role === 'admin' ? 'customer' : 'customer' }]);
-        if (insertError) alert('Kullanıcı kaydı tamamlanamadı: ' + insertError.message);
-        else alert('Kayıt başarılı! Giriş yapabilirsiniz. Admin rolü için onay bekleyin.');
-      }
-    });
+  e.preventDefault();
+  const email = document.getElementById('signup-email').value, password = document.getElementById('signup-password').value;
+  const role = document.getElementById('signup-role').value;
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) return alert('Kayıt başarısız: ' + error.message);
+  if (data.user) {
+    const { error: insertError } = await supabase.from('users').insert([{ id: data.user.id, email, role: role === 'admin' ? 'customer' : 'customer' }]);
+    if (insertError) alert('Kullanıcı kaydı tamamlanamadı: ' + insertError.message);
+    else alert('Kayıt başarılı! Giriş yapabilirsiniz. Admin rolü için onay bekleyin.');
+  }
+});
     document.getElementById('logout-btn').addEventListener('click', async () => {
       await supabase.auth.signOut();
       checkAuth();
