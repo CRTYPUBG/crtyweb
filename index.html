@@ -50,11 +50,6 @@
         <input type="email" placeholder="E-posta" required>
         <textarea placeholder="Mesajınız" required></textarea>
         <button type="submit">Gönder</button>
-      <form id="KEy-form">
-        <input type="text" placeholder="30 GÜMLÜK" required>
-        <input type="email" placeholder="İnfo@crty.com" required>
-        <textarea placeholder="Crty-key-1246523564" required></textarea>
-        <button type="submit"></button>
       </form>
       <div class="social-links">
         <a href="https://x.com/crtsoftware" target="_blank" title="Twitter/X"><i class="fab fa-x-twitter"></i></a>
@@ -210,24 +205,39 @@
       const email = document.getElementById('login-email').value, password = document.getElementById('login-password').value;
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) alert('Giriş başarısız: ' + error.message);
-      else checkAuth();
+      else {
+        await checkAuth();
+        alert('Giriş başarılı!');
+      }
     });
     const signupForm = document.getElementById('signup-form-inner');
     signupForm.addEventListener('submit', async e => {
-  e.preventDefault();
-  const email = document.getElementById('signup-email').value, password = document.getElementById('signup-password').value;
-  const role = document.getElementById('signup-role').value;
-  const { data, error } = await supabase.auth.signUp({ email, password });
-  if (error) return alert('Kayıt başarısız: ' + error.message);
-  if (data.user) {
-    const { error: insertError } = await supabase.from('users').insert([{ id: data.user.id, email, role: role === 'admin' ? 'customer' : 'customer' }]);
-    if (insertError) alert('Kullanıcı kaydı tamamlanamadı: ' + insertError.message);
-    else alert('Kayıt başarılı! Giriş yapabilirsiniz. Admin rolü için onay bekleyin.');
-  }
-});
+      e.preventDefault();
+      const email = document.getElementById('signup-email').value, password = document.getElementById('signup-password').value;
+      const role = document.getElementById('signup-role').value;
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) return alert('Kayıt başarısız: ' + error.message);
+      if (data.user) {
+        // Check if the user is confirmed
+        if (!data.user.confirmed_at && data.user.confirmation_sent_at) {
+          alert('Kayıt başarılı! Lütfen e-posta adresinizi doğrulayın.');
+        } else {
+          // Insert into users table only if user is confirmed or email confirmation is disabled
+          const { error: insertError } = await supabase.from('users').insert([
+            { id: data.user.id, email, role: role === 'admin' ? 'customer' : 'customer' }
+          ]);
+          if (insertError) {
+            console.error('Kullanıcı kaydı tamamlanamadı:', insertError);
+            return alert('Kullanıcı kaydı tamamlanamadı: ' + insertError.message);
+          }
+          alert('Kayıt başarılı! Giriş yapabilirsiniz. Admin rolü için onay bekleyin.');
+        }
+      }
+    });
     document.getElementById('logout-btn').addEventListener('click', async () => {
       await supabase.auth.signOut();
-      checkAuth();
+      await checkAuth();
+      alert('Çıkış yapıldı!');
     });
     const productForm = document.getElementById('product-form');
     productForm.addEventListener('submit', async e => {
@@ -250,6 +260,7 @@
         alert('Ürün eklendi!');
         productForm.reset();
         document.querySelectorAll('#features-list input').forEach((input, i) => { if (i > 0) input.remove(); else input.value = ''; });
+        loadProducts();
       }
     });
     async function loadProducts() {
