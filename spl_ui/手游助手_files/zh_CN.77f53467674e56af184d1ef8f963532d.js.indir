@@ -1,0 +1,842 @@
+window.lang = {
+    "txvideo": {
+        "error": {
+            "normal": "视频被外星人劫走啦",
+            "next": "视频被外星人劫走啦、观看下一个吧"
+        }
+    },
+    "toolbar": {
+        "accelerator": "加速",
+        "wxgame": "小游戏",
+        "freenovel": "免费小说",
+        "about": "关于",
+        "diagnosis": "诊断工具",
+        "discovery": "发现",
+        "gameLoopStore": "商城",
+        "gamelibrary": "游戏",
+        "h5game": "页游",
+        "help": "帮助",
+        "inbox": "站内信",
+        "live_page_2": "直播",
+        "localApk": "本地APK安装",
+        "mine": "我的",
+        "novel": "小说",
+        "recommend": "推荐",
+        "setting": "设置中心",
+        "reserve_zone": "圆梦之星"
+    },
+    "store": {
+        "shippedByAfter": "发货",
+        "purchaseSuccessfulV2": "恭喜你，购买成功",
+        "purchaseSuccessfulTipsV2": "你已经成功购买了{0}",
+        "orderProcessingTips": "订单处理中，如需帮助，请联系客服",
+        "orderFailedTips": "订单失败，如需帮助，请联系客服",
+        "orderDeliveringTips": "订单发货中，请稍后查看",
+        "orderCompleteTips": "订单已发货，请前往邮箱查收",
+        "orderCloseTips": "订单处理异常，金币已退回，如需帮助，请联系客服",
+        "operateTooOften": "操作过于频繁，请稍后重试",
+        "getPurchaseHelpAfter": "",
+        "getHelpAfter": "",
+        "existUnfinishedOrder": "上一个订单处理中，请稍后重试",
+        "buy": "立即购买",
+        "completed": "已完成",
+        "confirm": "确认",
+        "errorMessage": "Your coins have been refunded to your account",
+        "failed": "交易失败",
+        "gameloopStore": "Gameloop Store",
+        "getHelp": "帮助",
+        "getHelpBefore": "如果您遇到问题，请点击",
+        "getPurchaseHelpBefore": "充值遇到问题，请点击",
+        "goTo": "去做任务",
+        "hotItems": "热销商品",
+        "myCoins": "我的金币",
+        "myOrders": "我的订单",
+        "noOrder": "您还没有订单",
+        "notEnoughCoins": "金币不足",
+        "notEnoughCoinsTips": "您可以通过完成更多任务来赚取积分，兑换金币",
+        "order": "订单",
+        "purchaseConfirmation": "购买确认",
+        "purchaseConfirmationTips": "您确定要兑换如下商品吗？",
+        "purchaseFailed": "对不起，充值失败",
+        "purchaseFailedTips": "系统错误，请重试",
+        "purchaseProcessing": "订单处理中",
+        "purchaseProcessingTips": "请在订单中心查看订单状态",
+        "purchaseSuccessful": "恭喜你，购买成功",
+        "purchaseSuccessfulTips": "商品已通过电子邮件发送到您的邮箱中，请查收",
+        "rules": "活动规则",
+        "shippedByBefore": "由",
+        "soldOut": "售罄",
+        "soldOutTips": "对不起，商品已售罄，我们会尽快补货"
+    },
+    "specialArea": {
+        "video_cnt": "个视频",
+        "live_cnt": "个直播",
+        "article_cnt": "个资讯",
+        "article": "资讯",
+        "live": "直播",
+        "video": "视频"
+    },
+    "searchResult": {
+        "searchOnGooglePlayBefore": "你可以前往",
+        "noResultGooglePlay": "抱歉，Gameloop暂时没有收录\"{0}\"这款游戏",
+        "lookAround": "去Google Play",
+        "installTips": "开启Google Play前需要先下载引擎，请稍后",
+        "hintSearch": "显示的是以下查询字词的结果 {0}，",
+        "keywords": "搜索结果",
+        "noResult": "关键词 “{0}” 暂无搜索结果",
+        "originSearch": "仍然搜索 {0} ?",
+        "searchOnGooglePlayAfter": "查找和安装它，安装后可以在Gameloop上直接进行游戏"
+    },
+    "region": {
+        "SG": "新加坡",
+        "SAU": "沙特阿拉伯",
+        "SA": "沙特阿拉伯",
+        "MYS": "马来西亚",
+        "MY": "马来西亚",
+        "FR": "法国",
+        "EGY": "埃及",
+        "EG": "埃及",
+        "CA": "加拿大",
+        "AR": "阿根廷",
+        "BR": "巴西",
+        "CN": "中国",
+        "CO": "哥伦比亚",
+        "DE": "德国",
+        "GB": "英国",
+        "HK": "中国香港",
+        "ID": "印尼",
+        "IN": "印度",
+        "JP": "日本",
+        "KR": "韩国",
+        "MX": "墨西哥",
+        "PE": "秘鲁",
+        "PH": "菲律宾",
+        "PK": "巴基斯坦",
+        "RU": "俄罗斯",
+        "TH": "泰国",
+        "TR": "土耳其",
+        "TW": "中国台湾",
+        "US": "美国",
+        "VN": "越南"
+    },
+    "quit": "退出",
+    "numUnit0": "",
+    "noaccess": {
+        "tips": "Gameloop暂未对您所在区域开放使用，敬请谅解",
+        "exit": "退出应用"
+    },
+    "my2": {
+        "myWelfare": {
+            "viewRemainingUnit": "个",
+            "bookingWelfare": "预约活动福利",
+            "collectRecord": "领取记录",
+            "debutRedeem": "首发日可兑现",
+            "debutWelfare": "首发活动福利",
+            "discoveryMoreGame": "发现更多游戏吧~",
+            "gameWelfare": "游戏福利",
+            "goUse": "去使用",
+            "myWelfare": "我的福利",
+            "noWelfarePre": "暂无福利，快去",
+            "recommendPage": "推荐页",
+            "redeem": "去兑现",
+            "viewRemaining": "查看剩余"
+        },
+        "EngineInstalling": "组件安装中…",
+        "RcmdApp": "推荐应用",
+        "RcmdGame": "推荐游戏",
+        "collapse": "收起更多",
+        "commonComp": {
+            "expired": "{0}月{1}日到期",
+            "surpriseWelfare": "惊喜福利",
+            "totalWelfare": "个礼包"
+        },
+        "expand": "展开更多",
+        "limitedTimeWelfare": {
+            "hour": "时",
+            "limitedTimeWelfare": "限时福利",
+            "minute": "分",
+            "noWelfare": "更多福利正在快马加鞭赶来",
+            "receive": "领取",
+            "received": "已领取",
+            "totalGift": "个福利可领取",
+            "welfareExpired": "福利已过期",
+            "willExpireSoon": "即将过期"
+        },
+        "recommended": "推荐",
+        "slickDotsTips": "滚动显示更多应用"
+    },
+    "mine": {
+        "customInstall": "自定义安装",
+        "app": {
+            "myApp": "我的应用"
+        },
+        "booking": {
+            "myBooking": "我的预约"
+        },
+        "game": {
+            "myGame": "我的游戏"
+        },
+        "gift": {
+            "exclusiveGift": "专属礼包"
+        },
+        "notInstalledTips": "你尚未安装任何游戏，试试这些平台最热门的游戏!",
+        "recommondOrder": "推荐预约"
+    },
+    "home": {
+        "yunGame": {
+            "title": "秒玩专区"
+        },
+        "gameSelection": {
+            "title": "热门游戏"
+        },
+        "hotTopic": {
+            "goDetail": "进入专题",
+            "title": "热门专题"
+        },
+        "liveVideoHomePage": {
+            "title": "人气直播"
+        },
+        "miniVideoHomePage": {
+            "title": "精选小视频"
+        },
+        "newGameOrder": {
+            "title": "新游预约"
+        },
+        "rank": {
+            "title": "排行榜"
+        }
+    },
+    "googlePlay": {
+        "quitInstallTips": "确定退出安装吗？",
+        "quit": "退出",
+        "componentRequiredTips": "Gameloop暂时没有收录这款游戏，即将安装Google Play Store组件，你可以在Google Play Store安装这款游戏到Gameloop进行游戏。",
+        "componentRequired": "需要安装组件",
+        "componentInstalling": "组件安装中"
+    },
+    "gamelib": {
+        "filter": {
+            "totalGameAfter": "款",
+            "filterContainerSelected": "已选",
+            "filterContainerAll": "全部",
+            "totalGamePre": "共"
+        },
+        "filterContainer": {
+            "less": "收起筛选",
+            "more": "展开筛选"
+        },
+        "menu": {
+            "allgame": "全部游戏",
+            "gift": "礼包中心",
+            "h5": "页游",
+            "rank": "游戏排行榜",
+            "updated": "重磅更新"
+        }
+    },
+    "gameOrderList": "预约榜",
+    "discovery2": {
+        "watchTower": "游戏精选集",
+        "recommendTag": "为你推荐",
+        "comingSoon": "即将播放",
+        "gameNews": "游戏资讯",
+        "gameRecommend": "视频放映厅",
+        "getVideoError": "获取视频失败，请稍后再试",
+        "guidText": "滑动鼠标滚轮、敲击⬇️方向键或者点击下一个内容都可以快速切换哦～",
+        "knowledge": "最新资讯站",
+        "live": "直播中",
+        "nextTopic": "下一专题",
+        "pastTopic": "往期专题",
+        "prevTopic": "上一专题",
+        "watching": "{0}万人正在观看",
+        "weeklySelection": "每日热榜"
+    },
+    "conflictTip": {
+        "tips": "确定要退出 “{0}” 并启动 “{1}” 吗？",
+        "runing": "应用运行中",
+        "nolongershow": "不再显示此提醒",
+        "exit": "确定"
+    },
+    "coinCard": {
+        "noCoinTip": "参加活动可获取"
+    },
+    "WebAppModal": {
+        "card4": {
+            "step1after": "",
+            "step1before": "第一步 进入游戏官网，点击",
+            "step1downloadtip": "安卓下载",
+            "step2": "第二步 双击打开安装包将自动安装"
+        },
+        "card3": {
+            "step1after": "",
+            "step1before": "第一步 进入PC应用宝详情页，点击",
+            "step1downloadtip": "立即下载",
+            "step2": "第二步 双击打开安装包将自动安装"
+        },
+        "modal3": {
+            "step1after": "并完成",
+            "step1before": "第一步 点击",
+            "step1downloadtip": "立即下载",
+            "step2": "第二步 双击打开安装包将自动安装"
+        },
+        "modal4": {
+            "step1after": "并完成",
+            "step1before": "第一步 点击",
+            "step1downloadtip": "安卓下载",
+            "step2": "第二步 双击打开安装包将自动安装"
+        },
+        "title3": "即将进入PC应用宝详情页下载游戏",
+        "title4": "即将进入游戏官网下载游戏"
+    },
+    "Diagnostic": {
+        "fields": {
+            "vdiVer": "",
+            "vdi100Ver": "",
+            "uiVer": "",
+            "rootFsVer": "",
+            "rootFs100Ver": "",
+            "openGlVer": "",
+            "appMarketVer": "",
+            "appMarketPath": "应用市场：",
+            "colorDepth": "屏幕颜色：",
+            "cpu": "CPU型号：",
+            "d3dFeatureLevel": "D3D11FeatureLevel：",
+            "memory": "安装内存：",
+            "openGlRender": "OpenGL：",
+            "os": "操作系统：",
+            "rootFs100Path": "Rootfs100：",
+            "rootFsPath": "Rootfs：",
+            "shareDirPath": "共享目录：",
+            "uiPath": "模拟器：",
+            "vdi100Path": "VDI100：",
+            "vdiPath": "VDI："
+        },
+        "export": "生成诊断报告并打开文件夹",
+        "retryTip": "生成诊断报告失败，请重试",
+        "screenColor": "{0}位 {1}Hz",
+        "title": "问题诊断",
+        "unknown": "未知"
+    },
+    "BeginnerGuide": {
+        "wxgameTips": "腾讯手游助手可以玩小游戏啦",
+        "discoveryTips": "原发现页的游戏视频可以在放映厅观看啦~",
+        "btnKnown": "知道了",
+        "downloadTips": "所有下载任务都可以在这里查看和管理哦",
+        "liveTips": "可以在这里畅享热门游戏精彩内容哦",
+        "myTips": "可以在这里查看已下载和预约的游戏哦"
+    },
+    "BrowserGame": {
+        "deleteBrowserGame": "确定要删除该游戏吗？以后可以在游戏库重新查找。",
+        "exitAndAdd": "退出并添加",
+        "exitGame": "退出游戏",
+        "exitInfo": "是否将该游戏添加至 “我的-我的游戏",
+        "minigame": "小游戏",
+        "pagegame": "页游",
+        "pureExit": "直接退出",
+        "saveBrowserGameSucc": "添加成功, 下次可在 \"我的-我的游戏\" 中直接打开",
+        "yungame": "云游戏"
+    },
+    "DownloadBox": "下载盒子",
+    "SettingCenter": {
+        "Basic": {
+            "autoBoot": "开机启动",
+            "bossKey": "快捷键",
+            "bossKeyTitle": "老板键设置",
+            "preorderGameAutoDownload": "预约游戏自动下载",
+            "curLangTitle": "语言",
+            "dpiAwareApi": "窗口固定最佳比例",
+            "langChangeTip": "此次变更需要重新启动才能生效",
+            "normalTitle": "常规设置",
+            "regionChangeLimit": "您所在的地区与切换地区不一致，暂时无法访问。",
+            "regionChangeLimitOversea": "抱歉，暂时不支持切换至此区域。",
+            "regionChangeTips": "确认切换至{0}地区吗?",
+            "regionHelp": "变更此选项会将市场切换到当地的游戏资源",
+            "regionTitle": "国家 / 地区",
+            "snapShootLabel": "默认将截取的图片、录制的视频保存至此文件夹中",
+            "snapShootPath": "截图保存路径",
+            "snapShootTitle": "截图录屏设置",
+            "useBossKey": "使用老板键",
+            "wtrMark": "隐藏高级水印"
+        },
+        "Engine": {
+            "CPUCountAuto": "自动",
+            "CPUCountTitle": "处理器设置",
+            "adbConnection": "adb调试",
+            "audioRenderType": "音频通道",
+            "faxxQuality": {
+                "balance": "均衡",
+                "closed": "关闭",
+                "perfection": "极致"
+            },
+            "faxxQualityTitle": "抗锯齿设置：",
+            "graphicsCard": "优先使用独立显卡",
+            "localCache": "强制全局渲染缓存",
+            "memSizeAuto": "自动",
+            "memSizeTitle": "内存设置",
+            "playerTitle": "播放设备",
+            "recordTitle": "录制设备",
+            "renderOptimize": "开启渲染优化",
+            "renderTypeAuto": "自动",
+            "renderTypeTitle": "画面渲染模式",
+            "resoluteCustom": "自定义",
+            "resoluteTitle": "分辨率设置",
+            "rootEnable": "root权限",
+            "shaderCache": "启用渲染缓存",
+            "vmDPITitle": "屏幕DPI",
+            "vsyncEnable": "启用垂直同步",
+            "vsyncEnableHelp": "（帧率和屏幕刷新率同步，避免画面撕裂）"
+        },
+        "Game": {
+            "dpi": {
+                "hd": "高清1080P（适用于较高配置电脑，如GTX660及以上显卡）",
+                "nomal": "标清720P（游戏默认清晰度）",
+                "sd": "超清2K（适用于顶级配置电脑，如GTX1060及以上显卡）"
+            },
+            "dpiTitle": "游戏清晰度:（仅建议高配电脑用户使用）",
+            "fps": {
+                "auto": "默认"
+            },
+            "fpsTitle": "FPS:",
+            "fpsTitleDesc": "第二次进入游戏生效，开启高帧率可能会导致不稳定",
+            "gameName": {
+                "codm": "使命召唤手游",
+                "pubgmhd": "和平精英",
+                "pubgmig": "和平精英(国际版)"
+            },
+            "quality": {
+                "auto": "自动",
+                "balance": "平衡",
+                "fluent": "流畅",
+                "high": "高清"
+            },
+            "qualityTitle": "游戏画质"
+        },
+        "Phone": {
+            "company": "请输入品牌",
+            "customize": "自定义",
+            "fast": "流畅",
+            "highfps": " 高帧率模式",
+            "modelTitle": "自定义手机型号",
+            "modelType": "请输入型号",
+            "normal": "常见机型",
+            "oneKey": "一键配置",
+            "phoneType": {
+                "defaultType": "默认机型",
+                "mi5": "小米 MI 5（支持王者荣耀高帧率）",
+                "mi6": "小米 MI 6",
+                "rog2": "ROG 2（支持部分游戏90帧率)"
+            },
+            "support": "部分旗舰机支持王者荣耀"
+        },
+        "SettingAccount": {
+            "AccountRegion": "地区",
+            "AccountRegionTip": "You can only edit your account region once a year. Please be aware that this setting will affect the server saving your personal data and the contents displayed at GameLoop.",
+            "LoginAccountLabel": "登录账号",
+            "StoreEmailButton": "验证邮箱",
+            "StoreEmailLabel": "认证邮箱地址",
+            "loginTip": "您还未登录,请先登录"
+        },
+        "bossKeySaveTip": "老板键重启客户端后生效",
+        "installTip": "安装游戏后可修改此设置",
+        "menu": {
+            "Account": "账号",
+            "Basic": "基础设置",
+            "Engine": "引擎设置",
+            "Game": "游戏设置",
+            "Phone": "机型设置"
+        },
+        "save": "保存",
+        "title": "设置中心"
+    },
+    "VoiceAssist": "语音助手",
+    "about": {
+        "checkupdate": "检查更新",
+        "goofficialWeb": "进入官网",
+        "privacyagreement": "隐私协议",
+        "updateNow": "立即更新",
+        "useragreement": "用户协议"
+    },
+    "appmoredetail": {
+        "article": "资讯",
+        "live": "直播",
+        "livingtag": "直播中",
+        "video": "视频"
+    },
+    "appupdate": {
+        "update": "更新"
+    },
+    "basedownload": {
+        "continue": "继续",
+        "delPkgTip": "确定要删除该游戏吗？以后可以在游戏库重新下载。",
+        "gotodownload": "去下载",
+        "install": "安装",
+        "installing": "安装中",
+        "open": "打开",
+        "pause": "暂停",
+        "retry": "重试",
+        "uninstalling": "卸载中",
+        "update": "更新"
+    },
+    "bbs": "玩家社区",
+    "before": "前",
+    "bestPopularityList": "最佳人气榜",
+    "cancel": "取消",
+    "card": {
+        "more": "更多"
+    },
+    "checkUpdate": {
+        "installPcyyb": "安装应用宝全新Android 13引擎，在电脑上畅玩APP",
+        "cancelContent": "是否取消本次更新？",
+        "findNewVersion": "发现新版本！",
+        "installing": "安装中，请稍后...",
+        "installingTip": "安装中，弹窗不可关闭",
+        "isNewestTip": "当前已经是最新版本",
+        "nextOpenUpdate": "下次更新",
+        "rebootTip": "重启中，请稍后...",
+        "retryTip": "更新失败，请重试",
+        "size": "大小",
+        "speed": "下载速度",
+        "updateNow": "立即更新",
+        "updateSuccessTip": "更新成功，需重启市场完成安装",
+        "updatedTip": "更新成功"
+    },
+    "close": "关闭",
+    "common": {
+        "changeTheBatch": "换一批",
+        "copy": "复制",
+        "expandAll": "展开全部",
+        "log": "登录",
+        "logNow": "立即登录",
+        "showAllGame": "查看全部游戏",
+        "showMore": "显示更多"
+    },
+    "competition": "热门赛事",
+    "day": "天",
+    "discover": {
+        "LetusHaveaSelection": "来点精选"
+    },
+    "discovery": {
+        "menu": {
+            "follow": "关注",
+            "information": "资讯",
+            "recommend": "推荐"
+        }
+    },
+    "discoveryrecommend": {
+        "liveend": {
+            "comming": "主播正在赶过来..."
+        }
+    },
+    "downLoadCard": {
+        "appDetail": "应用详情",
+        "canInstall": "去安装",
+        "canUpgradeTag": "有更新",
+        "deleteOrderApp": "取消预约",
+        "gameDetail": "游戏详情",
+        "goToDownloadTag": "去下载",
+        "hasBeenOrderTag": "已预约",
+        "join": "参与",
+        "openApp": "打开应用",
+        "openGame": "打开游戏",
+        "resourcePackage": "资源包",
+        "totalCoupon": "元宝券",
+        "uninstallApp": "卸载应用",
+        "uninstallGame": "卸载游戏"
+    },
+    "download": {
+        "doUpdate": "立即更新",
+        "downloadFail": "游戏下载失败, 请重试",
+        "fileError": "本地安装游戏已损坏，安装失败！请重新安装游戏",
+        "forceUpdateTip": "您的手游助手版本过低，需要更新到最新版本才能畅玩该游戏"
+    },
+    "downloadTask": {
+        "continueStart": "继续启动",
+        "deleteGame": "确定要删除该游戏吗？以后可以在游戏库重新下载。",
+        "officialVersion": "检测到此游戏有更新版本，是否要进行版本更新？"
+    },
+    "downloadbox": {
+        "CompareMD5": "校验中...",
+        "ConfigUpdateBegin": "配置文件更新中...",
+        "ConfigUpdateEnd": "配置文件更新完成",
+        "DownloadPause": "已暂停",
+        "EndDownload": "游戏下载完成",
+        "EngineDownloadPause": "引擎下载已暂停",
+        "EngineError": "下载失败",
+        "EngineFinish": "引擎安装完成",
+        "EngineInstalling": "引擎安装中...",
+        "EngineInstalling2": "组件安装中，暂不可操作，预计需等待30s",
+        "EngineStart": "引擎下载中...",
+        "CanInstall": "下载完成，待安装",
+        "Installing": "游戏安装中...",
+        "Uninstalling": "卸载中...",
+        "Wait": "等待中",
+        "WaitForDownload": "等待安装",
+        "WaitPrePare": "准备中",
+        "analyzePkg": "正在解析安装包，请稍等...",
+        "completed": "已完成",
+        "noTask": "当前没有下载任务",
+        "restTime": "剩余",
+        "showtips": "已加入安装任务",
+        "title": "安装管理器"
+    },
+    "engineInstallingTips": "正在下载引擎，请稍后再试",
+    "errorPage": {
+        "errorTip": "糟糕！页面异常，请稍后"
+    },
+    "filter": {
+        "less": "收起",
+        "more": "更多"
+    },
+    "follow": {
+        "fans": "粉丝",
+        "guessULike": "猜你喜欢",
+        "lastLiveBroadcast": "上次直播",
+        "latestNew": "UP主最新动态",
+        "liveing": "正在直播",
+        "noFollowLive": "你尚未关注任何主播",
+        "noFollowVideo": "你尚未关注任何UP主",
+        "noLoginLive": "登录后可查看已关注的主播",
+        "noLoginVideo": "登录后可查看已关注的UP主",
+        "notBeginPlayer": "尚未开播",
+        "playVolume": "总播放量",
+        "videoNum": "个视频"
+    },
+    "form": {
+        "errorTip": "请输入正确的 “{0}”",
+        "explore": "浏览",
+        "open": "打开"
+    },
+    "formatMMdd": "MM月dd日",
+    "formatyyyyMMdd": "yyyy年MM月dd日",
+    "gameDetail": {
+        "gift": {
+            "coupon": "游戏宝券",
+            "exclusiveGift": "专属游戏礼包",
+            "viewAllGift": "查看全部礼包",
+            "welfare": "福利专区"
+        },
+        "main": {
+            "canPlayInEmulator": "方可在模拟器体验",
+            "category": "分类",
+            "changeServer": "选择服务器",
+            "developer": "运营厂商",
+            "downloadAndroidAndReg": "下载至安卓手机并注册",
+            "downloadMobile": "下载至手机",
+            "downloadMobileToPlay": "请下载手机版进行体验",
+            "expand": "展开",
+            "multiplayer": "多人",
+            "newestVersion": "最新版本",
+            "notSupportEmulator": "游戏暂不支持模拟器",
+            "stayTuned": "敬请期待",
+            "systemNotSupportGame": "您的硬件配置暂不支持该游戏",
+            "tag": "标签",
+            "updateTime": "更新时间"
+        },
+        "recommend": {
+            "relatedSuggestion": "相关推荐"
+        }
+    },
+    "gamerank": {
+        "ranklist": {
+            "downloadAfter": {
+                "app": "{0}次安装",
+                "book": "{0}次预约"
+            }
+        }
+    },
+    "gift": {
+        "CDKeyCopySuccessNotInstall": "复制成功，请安装游戏兑换礼包",
+        "InGameCopySuccessInstalled": "领取成功！",
+        "InGameCopySuccessNotInstall": "领取成功！安装游戏即可使用哦",
+        "copyerror": "复制失败！",
+        "copysucc": "复制成功，请进入游戏兑换礼包",
+        "loadingText": "礼包领取中",
+        "loadingTextSimple": "领取中",
+        "notice": "领取条件",
+        "oneKey": "一键领取",
+        "recordTips": "可在 [我的游戏 - 领取记录] 中查看已领礼包",
+        "subtext": "可在 [我的 - 我的奖励 - 领取记录] 中查看已领礼包",
+        "text": "领取兑换码"
+    },
+    "h5game": {
+        "open": "打开",
+        "totalcountAfter": "人在玩"
+    },
+    "hour": "小时",
+    "informationTypeMap": {
+        "activity": "活动",
+        "all": "全部",
+        "news": "新闻",
+        "topic": "专题"
+    },
+    "langugue": "中文",
+    "live_page_2": {
+        "all": "全部",
+        "changeIt": "换一换",
+        "liveingText": "主播正在直播",
+        "menu": {
+            "follow": "关注",
+            "recommend": "推荐",
+            "special_area": "专区"
+        },
+        "myPopularArea": "我的专区",
+        "popularArea": "热门专区",
+        "recommendArea": "推荐专区",
+        "selectedRecommend": "精选推荐",
+        "superStar": "明星大神"
+    },
+    "livecard": {
+        "livetag": "直播中"
+    },
+    "livedetail": {
+        "liveend": {
+            "comming": "主播正在赶过来。。。\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\n可以点击右上角的订阅，关注TA的后续动向哦"
+        },
+        "sendbtn": "发送",
+        "subbtn": "关注",
+        "subers": "关注者",
+        "unSubbtn": "已关注",
+        "viewers": "人正在观看"
+    },
+    "livelist": {
+        "totalAfter": "个直播"
+    },
+    "locale": "zh_CN",
+    "messageCenter": {
+        "markAllAsRead": "全部已读",
+        "messageType": {
+            "activity": "活动",
+            "system": "系统"
+        },
+        "noMessage": "暂无系统通知"
+    },
+    "messageCenterText": "消息中心",
+    "migration": {
+        "64needupdate": "该游戏只支持在64位系统上运行，要启动该游戏需要先将模拟器升级为64位",
+        "alreadybit": "手游助手已升级至64位，下载64位引擎并迁移游戏，畅享极致体验",
+        "cancelmigration": "确定取消迁移？",
+        "canceltips": "取消迁移会导致已安装游戏无法保留，后续可在【我的】页面重新安装。",
+        "checkbox": "版本更新同时将模拟器升级为64位",
+        "clickskip": "点击跳过此流程",
+        "complete": "迁移完毕",
+        "completed": "已完成",
+        "continue": "继续迁移",
+        "downloaderror": "下载失败",
+        "downloaderrorretry": "请重试",
+        "downloading": "引擎下载中，下载完成迁移游戏",
+        "estimated": "预计需要{0}分钟",
+        "failed": "迁移失败",
+        "fold": "收起",
+        "force64confirm": "确认重装",
+        "force64content": "该游戏只支持64位引擎，当前手游助手版本不支持安装该游戏，若要安装游戏，需要删除手游助手重装",
+        "force64tips": "需重装手游助手",
+        "gamemigration": "游戏迁移中",
+        "gamesmigration": "游戏迁移中",
+        "migrationingtips": "游戏迁移中，暂不能体验手游；云游戏、小游戏可正常体验",
+        "migrations": "迁移中",
+        "minetips": "迁移游戏至64位引擎，畅享极致游戏体验",
+        "nextshow": "下次再说",
+        "nextshowtips": "下次可在【我的游戏】重新唤起游戏迁移弹窗",
+        "not64": "该游戏只支持在64位设备上运行，您的设备暂不支持",
+        "notcompleteall": "迁移未完成，现在取消迁移会导致已安装游戏无法保留，后续可在【我的】页面重新安装。",
+        "notcompletepkgname": "迁移未完成，现在取消迁移会导致该游戏无法保留，后续可在【我的】页面重新安装。",
+        "nothasgames": "没有游戏要迁移？",
+        "okmigration": "迁移游戏",
+        "selectallgames": "选择你需要迁移的游戏",
+        "selectgames": "迁移游戏至64位引擎",
+        "skip": "确定跳过迁移流程？",
+        "skipTips": "跳过迁移流程会导致已安装游戏丢失，确定要跳过吗？跳过后可在【我的游戏】中重新安装",
+        "succeeded": "迁移成功",
+        "updatenow": "立即升级 ",
+        "updatetitle": "无法体验该游戏",
+        "waiting": "等待中"
+    },
+    "minite": "分钟",
+    "modal": {
+        "confirmToLogOut": "确定要退出登录吗？",
+        "confirmToSwitchAccount": "确定要更换其他账号登录吗？"
+    },
+    "month": "月",
+    "myDownloadingCard": {
+        "compareMD5": "校验中",
+        "installing": "安装中",
+        "open": "开始游戏",
+        "pause": "暂停中",
+        "retry": "重试",
+        "updateConfig": "正在更新配置文件",
+        "waitForDownload": "等待安装",
+        "waitPrePare": "准备中"
+    },
+    "myInstalledCard": {
+        "appDetail": "应用详情页",
+        "doUpdate": "立即更新",
+        "gameDetail": "游戏详情页",
+        "installNow": "立即安装",
+        "openApp": "打开应用",
+        "openGame": "开始游戏",
+        "uninstall": "卸载"
+    },
+    "name": "腾讯手游助手",
+    "networkErrorTip": "网络出现异常, 请稍后再试",
+    "newHotGameList": "热门新游榜",
+    "numSpitLength": 10000,
+    "numUnit1": "万",
+    "numUnit2": "亿",
+    "ok": "确定",
+    "orderButton": {
+        "order": "预约",
+        "orderFailed": "预约失败，请稍后重试",
+        "ordered": "已预约"
+    },
+    "popularAppsList": "热门应用榜",
+    "preDownload": {
+        "DeleteDownloadCardResources": "删除资源包",
+        "DownloadBoxTipsApk": "用户在手游助手预约游戏，享有游戏上线后抢先下载游戏权益，让您快人一步，体验游戏！",
+        "DownloadBoxTipsResources": "用户在腾讯手游助手预约游戏，享有抢先下载游戏资源包权益; 游戏开服后无需再次等待资源包下载, 打开即玩, 快人一步, 体验游戏!",
+        "DownloadBoxTipsResourcesShort": "资源包预下载",
+        "DownloadCardResources": "用户在腾讯手游助手预约游戏，享有抢先下载游戏资源包权益; 游戏下载完成后，无需等待游戏内资源包下载，打开即玩，快人一步，体验游戏!",
+        "DownloadCardResourcesNotOnline": "游戏尚未上线, 上线后即可立即体验~",
+        "DownloadCardResourcesOnline": "游戏已上架, 安装完成后即可体验游戏~",
+        "modalDelApk": "确定要删除游戏吗? 删除将无法享受游戏上线后的福利!",
+        "modalDelResources": "确定要删除游戏资源包吗？删除后将无法享受打开即玩的游戏特权。"
+    },
+    "retry": "重试",
+    "reward": {
+        "canNotReward": "暂时没有可领取的奖励",
+        "logExt": "后可查看奖励",
+        "rewardRecord": "领取记录",
+        "title": "我的奖励"
+    },
+    "search": {
+        "historySearch": "历史搜索",
+        "popularSearches": "热门搜索"
+    },
+    "searchRecommend": {
+        "title": "大家都在玩"
+    },
+    "seconds": "秒",
+    "seeMore": "查看更多",
+    "share": "分享",
+    "subscribe": "订阅",
+    "subscribed": "已订阅",
+    "tabbar": {
+        "home": "个人中心",
+        "logout": "退出登录",
+        "switchAccount": "切换账号"
+    },
+    "title": "腾讯手游助手",
+    "totalPre": "共",
+    "updatePage": {
+        "error": {
+            "content": "手游助手版本发生未知错误，无法进行版本更新，卸载重装后可正常使用。",
+            "okBtn": "查看详情",
+            "title": "更新失败"
+        }
+    },
+    "videodetail": {
+        "errortip": "上一个视频被外星人抓走了，自动为您播放相关视频"
+    },
+    "videolist": {
+        "totalAfter": "个视频"
+    },
+    "viewAllGames": "查看全部游戏",
+    "year": "年"
+}
