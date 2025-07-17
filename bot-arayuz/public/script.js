@@ -1,21 +1,6 @@
 // /help butonuna tıklanınca sunucuya istek gönderir
 function sendHelp() {
-    const channelId = prompt('Mesaj göndermek istediğiniz kanal ID’sini girin:');
-    if (!channelId) return;
-    fetch('/send-help', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ channelId })
-    })
-        .then(res => res.json())
-        .then(data => {
-            if (data.error) {
-                alert('Hata: ' + data.error);
-            } else {
-                alert('Mesaj gönderildi!');
-            }
-        })
-        .catch(() => alert('Bir hata oluştu!'));
+    alert('/help komutu gönderilemez. (Sadece demo arayüz)');
 }
 // Discord bot bilgilerini kontrol panelinde gösterir
 function showBotInfo(bot) {
@@ -58,59 +43,54 @@ async function login() {
         return;
     }
 
-    try {
-        const response = await fetch('/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: tokenInput })
-        });
-        let data;
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.indexOf('application/json') !== -1) {
-            data = await response.json();
-        } else {
-            // Sunucu JSON döndürmüyorsa hata mesajı göster
-            const text = await response.text();
-            messageElement.style.color = 'red';
-            messageElement.textContent = 'Sunucu hatası: ' + text.substring(0, 100);
-            return;
-        }
-
-        if (data.error) {
-            messageElement.style.color = 'red';
-            messageElement.textContent = data.error;
-        } else {
-            token = tokenInput;
-            messageElement.textContent = '';
-            document.getElementById('login-title').style.display = 'none';
-            document.getElementById('token').style.display = 'none';
-            document.getElementById('login-btn').style.display = 'none';
-            dashboard.style.display = 'block';
-            showBotInfo(data.bot);
-        }
-    } catch (error) {
-        messageElement.style.color = 'red';
-        messageElement.textContent = 'Bir hata oluştu!';
-        console.error(error);
-    }
+    // Demo: Her zaman örnek bot bilgisi göster
+    token = tokenInput;
+    messageElement.textContent = '';
+    document.getElementById('login-title').style.display = 'none';
+    document.getElementById('token').style.display = 'none';
+    document.getElementById('login-btn').style.display = 'none';
+    dashboard.style.display = 'block';
+    // Örnek bot bilgisi
+    showBotInfo({
+        id: '123456789012345678',
+        username: 'DemoBot',
+        discriminator: '0001',
+        avatar: null,
+        profileUrl: 'https://discord.com/users/123456789012345678',
+        createdAt: Date.now(),
+        status: 'online',
+        host: 'github-pages',
+        ping: 42,
+        guildCount: 3,
+        channelCount: 12,
+        guilds: [
+            { name: 'Demo Sunucu 1', id: '111', memberCount: 123 },
+            { name: 'Demo Sunucu 2', id: '222', memberCount: 456 },
+            { name: 'Demo Sunucu 3', id: '333', memberCount: 789 }
+        ]
+    });
 }
 
 async function fetchDashboard() {
-    try {
-        const response = await fetch('/dashboard', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await response.json();
-        if (data.error) {
-            document.getElementById('bot-info').innerHTML = `<span style='color:red'>${data.error}</span>`;
-        } else {
-            showBotInfo(data.bot);
-        }
-    } catch (error) {
-        document.getElementById('bot-info').innerHTML = `<span style='color:red'>Bir hata oluştu!</span>`;
-        console.error(error);
-    }
-    // ...
+    // Demo: Her zaman örnek bot bilgisi göster
+    showBotInfo({
+        id: '123456789012345678',
+        username: 'DemoBot',
+        discriminator: '0001',
+        avatar: null,
+        profileUrl: 'https://discord.com/users/123456789012345678',
+        createdAt: Date.now(),
+        status: 'online',
+        host: 'github-pages',
+        ping: 42,
+        guildCount: 3,
+        channelCount: 12,
+        guilds: [
+            { name: 'Demo Sunucu 1', id: '111', memberCount: 123 },
+            { name: 'Demo Sunucu 2', id: '222', memberCount: 456 },
+            { name: 'Demo Sunucu 3', id: '333', memberCount: 789 }
+        ]
+    });
 }
 
 function logout() {
