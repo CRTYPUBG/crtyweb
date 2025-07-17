@@ -1,0 +1,82 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #23272a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.discord-box {
+    background: #2c2f33;
+    border-radius: 12px;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.4);
+    padding: 32px 32px 24px 32px;
+    min-width: 340px;
+    text-align: center;
+}
+
+.discord-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.discord-logo {
+    width: 48px;
+    height: 48px;
+    margin-right: 12px;
+    border-radius: 12px;
+}
+
+#login-title {
+    color: #fff;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+input {
+    display: block;
+    padding: 12px;
+    margin: 16px auto 8px auto;
+    width: 80%;
+    background: #23272a;
+    color: #fff;
+    border: 1px solid #7289da;
+    border-radius: 6px;
+    font-size: 1em;
+}
+
+button, .logout-btn {
+    padding: 12px 28px;
+    background-color: #5865f2;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 10px;
+    transition: background 0.2s;
+}
+
+button:hover, .logout-btn:hover {
+    background-color: #4752c4;
+}
+
+#message {
+    margin-top: 18px;
+    color: #faa61a;
+    font-weight: 500;
+}
+
+#dashboard {
+    margin-top: 24px;
+}
+
+#bot-info {
+    margin-top: 18px;
+    color: #fff;
+    font-size: 1.1em;
+}
