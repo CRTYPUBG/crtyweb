@@ -1,8 +1,0 @@
-{
-  "users": [
-    {
-      "username": "botuser",
-      "password": "$2a$10$YOUR_HASHED_PASSWORD"
-    }
-  ]
-}
