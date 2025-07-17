@@ -64,7 +64,17 @@ async function login() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: tokenInput })
         });
-        const data = await response.json();
+        let data;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.indexOf('application/json') !== -1) {
+            data = await response.json();
+        } else {
+            // Sunucu JSON döndürmüyorsa hata mesajı göster
+            const text = await response.text();
+            messageElement.style.color = 'red';
+            messageElement.textContent = 'Sunucu hatası: ' + text.substring(0, 100);
+            return;
+        }
 
         if (data.error) {
             messageElement.style.color = 'red';
