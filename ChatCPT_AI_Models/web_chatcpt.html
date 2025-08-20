@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatCPT 3.0 - Türkçe AI Asistanı</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .chat-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 12px;
+            height: 12px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.ai .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin: 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 14px;
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            order: 2;
+        }
+
+        .message.ai .message-avatar {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: #4facfe;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px 16px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .typing-dots {
+            display: inline-block;
+        }
+
+        .typing-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4facfe;
+            margin: 0 2px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .quick-action {
+            background: #f0f0f0;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .quick-action:hover {
+            background: #e0e0e0;
+        }
+
+        @media (max-width: 600px) {
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="status-indicator"></div>
+            <h1>🤖 ChatCPT 3.0</h1>
+            <p>Türkçe Yapay Zeka Asistanı - Web Sürümü</p>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message ai">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    Merhaba! Ben ChatCPT 3.0, Türkçe AI asistanınızım. Size nasıl yardımcı olabilirim? 
+                    Python, yapay zeka, sağlık, eğitim ve daha birçok konuda sorularınızı yanıtlayabilirim! 🚀
+                </div>
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typingIndicator">
+            🤖 ChatCPT 3.0 yazıyor
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <div class="chat-input-container">
+            <div class="quick-actions">
+                <button class="quick-action" onclick="sendQuickMessage('Python nedir?')">Python nedir?</button>
+                <button class="quick-action" onclick="sendQuickMessage('Yapay zeka nasıl çalışır?')">AI nasıl çalışır?</button>
+                <button class="quick-action" onclick="sendQuickMessage('Sağlıklı beslenme')">Sağlıklı beslenme</button>
+                <button class="quick-action" onclick="sendQuickMessage('Zaman yönetimi')">Zaman yönetimi</button>
+            </div>
+            
+            <div class="chat-input-wrapper">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Sorunuzu yazın..." maxlength="500">
+                <button class="send-button" id="sendButton" onclick="sendMessage()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Türkçe eğitim verisi
+        const egitimVerisi = [
+            {soru: "merhaba", cevap: "Merhaba! Ben ChatCPT 3.0, Türkçe AI asistanınızım. Size nasıl yardımcı olabilirim? 😊"},
+            {soru: "python nedir", cevap: "Python, kolay öğrenilebilir sözdizimi, geniş kütüphane desteği ve çok amaçlı kullanım imkanı sunan popüler bir programlama dilidir. Veri bilimi, web geliştirme ve AI projelerinde sıkça kullanılır. 🐍"},
+            {soru: "yapay zeka", cevap: "Yapay zeka, bilgisayarların insan benzeri düşünme, öğrenme ve problem çözme yeteneklerini simüle etmesini sağlayan teknolojidir. Makine öğrenmesi, derin öğrenme ve doğal dil işleme gibi alt dalları vardır. 🤖"},
+            {soru: "makine öğrenmesi", cevap: "Makine öğrenmesi, bilgisayarların verilerden öğrenerek tahminlerde bulunmasını sağlayan yapay zeka dalıdır. Algoritmalar, büyük veri setlerini analiz ederek kalıpları keşfeder ve gelecekteki veriler için tahminler yapar. 📊"},
+            {soru: "blockchain", cevap: "Blockchain, verilerin şifrelenmiş bloklar halinde zincir şeklinde saklandığı, merkezi olmayan ve değiştirilemez bir veri tabanı teknolojisidir. Kripto paralar ve güvenli veri transferi için kullanılır. ⛓️"},
+            {soru: "türkiye başkent", cevap: "Türkiye'nin başkenti Ankara'dır. 1923 yılında Türkiye Cumhuriyeti'nin kurulmasıyla birlikte başkent olmuştur. İstanbul ise en büyük şehir ve ekonomik merkezdir. 🇹🇷"},
+            {soru: "sağlıklı beslenme", cevap: "Sağlıklı beslenme, vücudun ihtiyaç duyduğu besin öğelerini dengeli şekilde almasını sağlar. Bol sebze-meyve, tam tahıllar, protein kaynakları ve su tüketimi önemlidir. Hastalık riskini azaltır ve enerji seviyesini yüksek tutar. 🥗"},
+            {soru: "spor faydaları", cevap: "Düzenli spor yapmak kalp sağlığını korur, kas ve kemikleri güçlendirir, kilo kontrolü sağlar, ruh halini iyileştirir, uyku kalitesini artırır ve hastalık risklerini azaltır. Haftada en az 150 dakika orta şiddetli egzersiz önerilir. 💪"},
+            {soru: "zaman yönetimi", cevap: "Etkili zaman yönetimi için: öncelikleri belirleyin, günlük plan yapın, dikkat dağıtıcıları elimine edin, görevleri parçalara bölün, mola verin ve 'hayır' demeyi öğrenin. Pomodoro tekniği gibi yöntemler de faydalıdır. ⏰"},
+            {soru: "kitap okuma", cevap: "Kitap okuma kelime dağarcığını genişletir, hayal gücünü geliştirir, stres azaltır, odaklanma yeteneğini artırır, empati kurmayı öğretir ve genel kültür seviyesini yükseltir. Günde 20-30 dakika okuma alışkanlığı edinmek faydalıdır. 📚"},
+            {soru: "çevre koruma", cevap: "Çevre koruma için: geri dönüşüm yapın, toplu taşıma kullanın, enerji tasarrufu sağlayın, plastik kullanımını azaltın, yenilenebilir enerji kaynaklarını destekleyin ve doğa dostu ürünler tercih edin. 🌱"},
+            {soru: "matematik", cevap: "Matematik mantıklı düşünme yeteneğini geliştirir, problem çözme becerilerini artırır ve günlük hayatta bize yardımcı olur. Finans, mühendislik, bilgisayar bilimi gibi birçok alanda temel oluşturur. 🔢"},
+            {soru: "müzik", cevap: "Müzik dinlemek stresi azaltır, ruh halini iyileştirir, hafızayı güçlendirir, yaratıcılığı artırır ve sosyal bağları güçlendirir. Müzik yapmak ise beyin gelişimini destekler ve koordinasyonu iyileştirir. 🎵"},
+            {soru: "girişimcilik", cevap: "Girişimcilik, yeni iş fikirleri geliştirerek değer yaratma sürecidir. Başlamak için: pazar araştırması yapın, iş planı hazırlayın, küçük adımlarla başlayın, risk yönetimi yapın ve sürekli öğrenmeye odaklanın. 💼"},
+            {soru: "dil öğrenme", cevap: "Yeni dil öğrenmek beyin fonksiyonlarını geliştirir, kültürel anlayışı artırır, iş fırsatlarını çoğaltır ve özgüveni yükseltir. Düzenli pratik, immersion ve teknoloji destekli öğrenme etkili yöntemlerdir. 🌍"},
+            {soru: "stres yönetimi", cevap: "Stres yönetimi için: derin nefes alın, düzenli egzersiz yapın, yeterli uyuyun, sosyal destek alın, zaman yönetimi becerilerinizi geliştirin ve meditasyon gibi rahatlama tekniklerini deneyin. 😌"},
+            {soru: "bulut bilişim", cevap: "Bulut bilişim, bilgi işlem kaynaklarının internet üzerinden hizmet olarak sunulmasıdır. Maliyet tasarrufu, esneklik, erişilebilirlik sağlar ve işletmelerin IT altyapı yükünü azaltır. AWS, Azure, Google Cloud örnekleridir. ☁️"},
+            {soru: "siber güvenlik", cevap: "Siber güvenlik, dijital varlıkları ve kişisel bilgileri siber saldırılardan korumak için hayati önemdedir. Güçlü şifreler, güncel yazılımlar, firewall ve bilinçli internet kullanımı temel koruma yöntemleridir. 🔒"},
+            {soru: "veri bilimi", cevap: "Veri bilimi, büyük veri setlerinden anlamlı bilgiler çıkarmak için istatistik, matematik ve programlama kullanan disiplinler arası bir alandır. İş zekası, tahminleme ve karar verme süreçlerinde kritik rol oynar. 📈"},
+            {soru: "robotik", cevap: "Robotik teknolojisi, yapay zeka ile birleşerek daha akıllı ve özerk robotlar üretecek. Sağlık, üretim, hizmet sektörlerinde devrim yaratacak ve insan hayatını kolaylaştıracak yenilikler sunacak. 🤖"}
+        ];
+
+        let sohbetGecmisi = [];
+
+        // Benzerlik hesaplama
+        function calculateSimilarity(text1, text2) {
+            const words1 = text1.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+            const words2 = text2.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+            
+            if (words1.length === 0 || words2.length === 0) return 0;
+            
+            const common = words1.filter(w => words2.includes(w)).length;
+            const total = new Set([...words1, ...words2]).size;
+            
+            return common / total;
+        }
+
+        // En iyi cevap bulma
+        function getBestAnswer(soru) {
+            let enIyiSkor = 0;
+            let enIyiCevap = null;
+            
+            for (const veri of egitimVerisi) {
+                const skor = calculateSimilarity(soru, veri.soru);
+                if (skor > enIyiSkor) {
+                    enIyiSkor = skor;
+                    enIyiCevap = veri.cevap;
+                }
+            }
+            
+            if (enIyiSkor > 0.15) {
+                return enIyiCevap;
+            } else {
+                const varsayilanCevaplar = [
+                    "Bu konu hakkında daha fazla bilgim yok, ama öğrenmeye devam ediyorum! Başka bir soru sorabilirsiniz. 🤔",
+                    "İlginç bir soru! Şu anda bu konuda yeterli bilgim yok. Python, AI, sağlık, eğitim gibi konularda daha iyi yardımcı olabilirim. 💡",
+                    "Bu soruya tam olarak cevap veremiyorum. Belki soruyu farklı bir şekilde sorabilir veya başka bir konu hakkında soru sorabilirsiniz? 🤗"
+                ];
+                return varsayilanCevaplar[Math.floor(Math.random() * varsayilanCevaplar.length)];
+            }
+        }
+
+        // Mesaj gönderme
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Kullanıcı mesajını ekle
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Typing indicator göster
+            showTypingIndicator();
+            
+            // AI cevabını gecikmeyle göster
+            setTimeout(() => {
+                hideTypingIndicator();
+                const cevap = getBestAnswer(message);
+                addMessage(cevap, 'ai');
+                
+                // Sohbet geçmişine ekle
+                sohbetGecmisi.push({soru: message, cevap: cevap});
+                if (sohbetGecmisi.length > 20) {
+                    sohbetGecmisi = sohbetGecmisi.slice(-20);
+                }
+            }, 1000 + Math.random() * 1000);
+        }
+
+        // Hızlı mesaj gönderme
+        function sendQuickMessage(message) {
+            document.getElementById('chatInput').value = message;
+            sendMessage();
+        }
+
+        // Mesaj ekleme
+        function addMessage(content, type) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = type === 'user' ? '👤' : '🤖';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.textContent = content;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            messagesContainer.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Typing indicator
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'block';
+            document.getElementById('sendButton').disabled = true;
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+            document.getElementById('sendButton').disabled = false;
+        }
+
+        // Enter tuşu ile mesaj gönderme
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Sayfa yüklendiğinde focus
+        window.addEventListener('load', function() {
+            document.getElementById('chatInput').focus();
+        });
+    </script>
+</body>
+</html>
