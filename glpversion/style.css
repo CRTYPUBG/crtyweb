@@ -1,0 +1,18 @@
+/* Animasyonlar */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-in-out;
+}
+
+/* Butonlar */
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg shadow-lg transition transform hover:scale-105;
+}
+
+.btn-secondary {
+  @apply bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg shadow-lg transition transform hover:scale-105;
+}

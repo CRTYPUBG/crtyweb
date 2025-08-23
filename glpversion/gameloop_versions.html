@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameLoop Versions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+ <link href="https://img.utdstc.com/icon/2ee/b8c/2eeb8c3735bc95844f4f61d53cda5f6b95a8a49299cc6c2bbabbbd7a20465b93:200" rel="icon">
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-6">
+
+  <h1 class="text-3xl font-bold mb-6 animate-fade-in">GameLoop Sürümleri</h1>
+
+  <!-- Arama ve Filtre -->
+  <div class="flex flex-wrap gap-3 mb-6 justify-center">
+    <input type="text" id="searchInput" placeholder="Ara..."
+      class="px-4 py-2 rounded-lg text-black w-64">
+    
+    <select id="sourceFilter" class="px-4 py-2 rounded-lg text-black">
+      <option value="all">Tüm Kaynaklar</option>
+      <option value="official">Resmi</option>
+      <option value="softonic">Softonic</option>
+      <option value="filehippo">FileHippo</option>
+      <option value="gameloopir">GameLoop.ir</option>
+    </select>
+  </div>
+
+  <!-- Butonlar -->
+  <div class="flex flex-wrap gap-3 mb-6">
+    <button id="openSelected" class="btn-primary">Seçilenleri Aç (0)</button>
+    <button id="selectVisible" class="btn-secondary">Görünürünü Seç</button>
+    <button id="clearSelection" class="btn-secondary">Temizle</button>
+  </div>
+
+  <!-- Link Listesi -->
+  <div id="linksContainer" class="grid gap-4 w-full max-w-3xl"></div>
+
+  <!-- Modal (Popup engelleyici) -->
+  <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center">
+    <div class="bg-gray-800 p-6 rounded-lg w-96">
+      <h2 class="text-xl font-bold mb-4">Bazı sekmeler engellendi</h2>
+      <p class="mb-4">Seçilen linklerin hepsini açamadık. Buradan tek tek açabilir veya tümünü kopyalayabilirsiniz.</p>
+      <div id="modalLinks" class="space-y-2 mb-4"></div>
+      <div class="flex justify-end gap-3">
+        <button id="copyAll" class="btn-secondary">Tümünü Kopyala</button>
+        <button id="closeModal" class="btn-primary">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg hidden">
+    Kopyalandı!
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
