@@ -6,7 +6,7 @@ const musicOverlay = document.createElement("div");
 musicOverlay.id = "musicOverlay";
 musicOverlay.className = "fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center text-center z-50";
 musicOverlay.innerHTML = `
-  <p class="text-white text-2xl mb-4">Devam etmek için tıklayın ve müzik çalsın</p>
+  <p class="text-white text-2xl mb-4">Devam etmek için tıklayın ! </p>
   <button id="playMusicBtn" class="px-6 py-3 bg-green-600 rounded-lg text-white font-bold hover:bg-green-500">Tıkla</button>
 `;
 document.body.appendChild(musicOverlay);
@@ -148,3 +148,4 @@ sourceFilter.addEventListener("change", renderLinks);
 
 // İlk yükleme
 renderLinks();
+
