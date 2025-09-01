@@ -1,4 +1,30 @@
-// Link verileri
+// -------------------- MÜZİK OTOMATİK --------------------
+const music = new Audio("blo.mp3");
+music.loop = true;
+
+const musicOverlay = document.createElement("div");
+musicOverlay.id = "musicOverlay";
+musicOverlay.className = "fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center text-center z-50";
+musicOverlay.innerHTML = `
+  <p class="text-white text-2xl mb-4">Devam etmek için tıklayın ve müzik çalsın</p>
+  <button id="playMusicBtn" class="px-6 py-3 bg-green-600 rounded-lg text-white font-bold hover:bg-green-500">Tıkla</button>
+`;
+document.body.appendChild(musicOverlay);
+
+const playBtn = document.getElementById("playMusicBtn");
+
+// Otomatik çalma denemesi
+music.play().catch(() => {
+  musicOverlay.style.display = "flex";
+});
+
+// Kullanıcı tıklarsa müzik başlat
+playBtn.addEventListener("click", () => {
+  music.play();
+  musicOverlay.style.display = "none";
+});
+
+// -------------------- LİNKLER --------------------
 const links = [
   { name: "GameLoop Resmi 32-bit", url: "https://down.gameloop.com/channel/3/16412/GLP_installer_1000218456_market.exe", source: "official" },
   { name: "GameLoop Resmi 64-bit", url: "https://down.gameloop.com/installer/GLP_installer_1000242496_market.exe", source: "official" },
@@ -97,7 +123,7 @@ copyAll.addEventListener("click", () => {
   navigator.clipboard.writeText(texts).then(showToast);
 });
 
-// Kopyalama
+// Kopyalama ve checkbox
 document.addEventListener("click", e => {
   if (e.target.dataset.copy) {
     navigator.clipboard.writeText(e.target.dataset.copy).then(showToast);
