@@ -3,115 +3,144 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CRTYPUBG — Windows & Game Performance Developer</title>
-  <meta name="description" content="Windows optimization, game performance, and anti-cheat-safe system tools by CRTYPUBG." />
-  <style>
-    :root {
-      --bg: #0b0e14;
-      --card: #121826;
-      --text: #e6e9ef;
-      --muted: #9aa4b2;
-      --accent: #7aa2f7;
-      --accent-2: #2ac3de;
-      --ok: #9ece6a;
-      --warn: #f7768e;
-      --border: #1f2937;
-    }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; background: radial-gradient(1200px 600px at 10% -10%, #101726, var(--bg)); color: var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
-    header { display: grid; gap: 16px; }
-    .badge { display: inline-flex; gap: 8px; align-items: center; padding: 6px 10px; border-radius: 999px; background: rgba(122,162,247,.12); color: var(--accent); width: fit-content; }
-    h1 { font-size: clamp(28px, 4vw, 44px); line-height: 1.1; margin: 0; }
-    .subtitle { color: var(--muted); max-width: 780px; }
-    .cta { display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); }
-    .btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border: none; color: #0b1020; font-weight: 600; }
-    section { margin-top: 40px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-    .card { background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
-    .card h3 { margin: 6px 0 8px; }
-    .pill { display: inline-block; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); font-size: 12px; }
-    .stack { display: flex; gap: 8px; flex-wrap: wrap; }
-    .list { display: grid; gap: 8px; }
-    footer { margin-top: 64px; padding-top: 24px; border-top: 1px dashed var(--border); color: var(--muted); display: grid; gap: 10px; }
-    .links { display: flex; gap: 14px; flex-wrap: wrap; }
-    .kpi { display: grid; grid-template-columns: repeat(4, minmax(120px,1fr)); gap: 12px; }
-    .kpi .card { text-align: center; }
-    .num { font-size: 26px; font-weight: 700; }
-    @media (max-width: 720px) { .kpi { grid-template-columns: repeat(2,1fr); } }
-  </style>
+  <title>CRTYPUBG | Enterprise System Software</title>
+  <meta name="description" content="Enterprise-grade Windows optimization and performance software by CRTYPUBG." />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- AOS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet" />
+
+  <!-- Toastr -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+  <!-- Select2 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+  <!-- Particles.js -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 </head>
-<body>
-  <div class="container">
-    <header>
-      <span class="badge">⚡ Windows & Game Performance</span>
-      <h1>CRTYPUBG</h1>
-      <p class="subtitle">I build high‑performance, anti‑cheat‑safe system tools for Windows. No bloat. No placebo tweaks. Only measurable gains.</p>
-      <div class="cta">
-        <a class="btn primary" href="https://github.com/CRTYPUBG" target="_blank" rel="noreferrer">GitHub</a>
-        <a class="btn" href="https://crtypubg.github.io/crtyweb/" target="_blank" rel="noreferrer">Website</a>
-        <a class="btn" href="https://www.youtube.com/@CRTYPUBGM_/videos" target="_blank" rel="noreferrer">YouTube</a>
-        <a class="btn" href="https://discord.gg/AX29xBa4tv" target="_blank" rel="noreferrer">Discord</a>
-      </div>
-    </header>
+<body class="bg-slate-950 text-slate-200 antialiased">
 
-    <section class="kpi">
-      <div class="card"><div class="num">59+</div><div class="pill">Repositories</div></div>
-      <div class="card"><div class="num">500+</div><div class="pill">Contributions / year</div></div>
-      <div class="card"><div class="num">Anti‑Cheat</div><div class="pill">Safe by design</div></div>
-      <div class="card"><div class="num">Low‑Level</div><div class="pill">Windows internals</div></div>
-    </section>
+<!-- Background Particles -->
+<div id="particles-js" class="fixed inset-0 -z-10"></div>
 
-    <section>
-      <h2>Featured Projects</h2>
-      <div class="grid">
-        <div class="card">
-          <span class="pill">Python · PowerShell</span>
-          <h3>Ultimate Optimizer</h3>
-          <p class="subtitle">Premium Windows optimization with hardware‑aware tweaks, latency reduction and clean UI.</p>
-          <div class="stack"><span class="pill">Performance</span><span class="pill">Latency</span><span class="pill">Windows</span></div>
-        </div>
-        <div class="card">
-          <span class="pill">C · DX11/DXGI</span>
-          <h3>NovaScale Upscaler</h3>
-          <p class="subtitle">Real‑time spatial upscaling (FSR‑like) for all GPUs. No DLL injection. Anti‑cheat safe.</p>
-          <div class="stack"><span class="pill">GPU</span><span class="pill">Upscaling</span><span class="pill">Safe</span></div>
-        </div>
-        <div class="card">
-          <span class="pill">Go</span>
-          <h3>winux</h3>
-          <p class="subtitle">Native Linux‑like coreutils for Windows. Single static binary. No WSL.</p>
-          <div class="stack"><span class="pill">CLI</span><span class="pill">Coreutils</span><span class="pill">BusyBox‑style</span></div>
-        </div>
-        <div class="card">
-          <span class="pill">Python · Qt</span>
-          <h3>CRTYBoost</h3>
-          <p class="subtitle">FPS booster & anti‑freeze tool for GameLoop with fast boost/reset.</p>
-          <div class="stack"><span class="pill">FPS</span><span class="pill">GameLoop</span><span class="pill">Boost</span></div>
-        </div>
-      </div>
-    </section>
+<div class="max-w-5xl mx-auto px-6 py-16">
 
-    <section>
-      <h2>Tech Stack</h2>
-      <div class="grid">
-        <div class="card"><h3>System</h3><div class="stack"><span class="pill">Python</span><span class="pill">C</span><span class="pill">Go</span><span class="pill">PowerShell</span></div></div>
-        <div class="card"><h3>Frontend</h3><div class="stack"><span class="pill">HTML</span><span class="pill">CSS</span><span class="pill">JavaScript</span></div></div>
-        <div class="card"><h3>Graphics</h3><div class="stack"><span class="pill">DX11</span><span class="pill">DXGI</span><span class="pill">GPU</span></div></div>
-      </div>
-    </section>
-
-    <footer>
-      <div class="links">
-        <a href="mailto:a95585995@gmail.com">a95585995@gmail.com</a>
-        <span>•</span>
-        <span>Kahramanmaraş / Türkiye</span>
-      </div>
-      <small>© 2026 CRTYPUBG — Built with performance in mind.</small>
-    </footer>
+  <!-- Header -->
+  <header class="mb-16 flex items-center gap-6" data-aos="fade-up">
+  <img src="http://help.speedloopp.rf.gd/masthead-master/images/logo.png" alt="CRTYPUBG Logo" class="h-16 w-16 rounded-lg border border-slate-800 bg-slate-900 p-2" />
+  <div>
+    <h1 class="text-4xl font-semibold tracking-wide">CRTYPUBG</h1>
+    <p class="mt-2 text-slate-400 max-w-2xl">
+      Enterprise-focused system software for Windows optimization, performance engineering
+      and stability-first design.
+    </p>
   </div>
+</header>
+
+  <!-- About -->
+  <section class="mb-20" data-aos="fade-up">
+    <h2 class="text-xl font-semibold border-l-4 border-blue-500 pl-3 mb-4">About</h2>
+    <p class="text-slate-400 max-w-3xl">
+      CRTYPUBG develops professional-grade performance tools built on measurable results.
+      All solutions are anti-cheat-safe, injection-free, and designed for long-term system stability.
+    </p>
+  </section>
+
+  <!-- Projects -->
+  <section class="mb-20" data-aos="fade-up">
+    <h2 class="text-xl font-semibold border-l-4 border-blue-500 pl-3 mb-6">Products</h2>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-lg p-6">
+        <h3 class="font-semibold mb-2">Ultimate Optimizer</h3>
+        <p class="text-slate-400 text-sm">
+          Hardware-aware Windows optimization suite focused on latency reduction and responsiveness.
+        </p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-lg p-6">
+        <h3 class="font-semibold mb-2">NovaScale Upscaler</h3>
+        <p class="text-slate-400 text-sm">
+          Real-time spatial upscaling for all GPUs. No DLL injection. Anti-cheat safe.
+        </p>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-lg p-6">
+        <h3 class="font-semibold mb-2">winux</h3>
+        <p class="text-slate-400 text-sm">
+          Native Linux-like core utilities for Windows delivered as a single static binary.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technology -->
+  <section class="mb-20" data-aos="fade-up">
+    <h2 class="text-xl font-semibold border-l-4 border-blue-500 pl-3 mb-6">Technology</h2>
+
+    <select id="tech" class="w-full bg-slate-900 border border-slate-800 rounded p-2">
+      <option>Python</option>
+      <option>C</option>
+      <option>Go</option>
+      <option>PowerShell</option>
+      <option>DirectX / DXGI</option>
+    </select>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 pt-8 text-sm text-slate-500 flex flex-wrap justify-between gap-4" data-aos="fade-up">
+    <div>
+      © 2026 CRTYPUBG · Kahramanmaraş, Türkiye
+    </div>
+    <div class="space-x-4">
+      <a href="https://github.com/CRTYPUBG" class="hover:text-white">GitHub</a>
+      <a href="https://www.youtube.com/@CRTYPUBGM_" class="hover:text-white">YouTube</a>
+      <a href="https://discord.gg/AX29xBa4tv" class="hover:text-white">Discord</a>
+    </div>
+  </footer>
+
+</div>
+
+<!-- JS Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.4/dist/cdn.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.0/sweetalert2.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+<script>
+  // AOS Init
+  AOS.init({ once: true, duration: 700 });
+
+  // Select2
+  $('#tech').select2();
+
+  // Toastr Example
+  toastr.options.positionClass = 'toast-bottom-right';
+  toastr.info('Welcome to CRTYPUBG Enterprise Software');
+
+  // SweetAlert Example
+  setTimeout(() => {
+    Swal.fire({
+      title: 'CRTYPUBG',
+      text: 'Enterprise-grade system software loaded successfully.',
+      icon: 'success',
+      confirmButtonColor: '#2563eb'
+    });
+  }, 1200);
+
+  // Particles
+  particlesJS('particles-js', {
+    particles: {
+      number: { value: 60 },
+      color: { value: '#3b82f6' },
+      size: { value: 2 },
+      move: { speed: 0.6 }
+    }
+  });
+</script>
+
 </body>
 </html>
