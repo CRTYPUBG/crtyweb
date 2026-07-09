@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="tr" class="h-full bg-slate-950 text-slate-100 selection:bg-cyan-500/30">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZERO.UNIVERSITY // FREE INTERACTIVE LAB</title>
+    <!-- Tailwind CSS for incredible design styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Import Futuristic & Elegant Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Three.js for procedural 3D model rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .font-cyber {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .font-code {
+            font-family: 'Fira Code', monospace;
+        }
+        /* Glassmorphism style presets */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glass-panel-active {
+            border-color: rgba(6, 182, 212, 0.4);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(6, 182, 212, 0.3);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(6, 182, 212, 0.6);
+        }
+        /* Grid background animation */
+        .grid-bg {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        }
+        /* Cyber glow animation */
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.4)); }
+            50% { filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.8)); }
+        }
+        .cyber-glow {
+            animation: glow 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="h-full w-full overflow-hidden grid-bg relative flex flex-col">
+
+    <!-- Soundboard Particle Overlay Canvas -->
+    <canvas id="particleCanvas" class="absolute inset-0 pointer-events-none z-30"></canvas>
+
+    <!-- Top Navigation / Status Bar -->
+    <header class="glass-panel border-b border-white/5 py-4 px-6 flex justify-between items-center z-10 shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center font-cyber font-black text-xl text-white tracking-widest shadow-lg shadow-cyan-500/20">
+                Ø
+            </div>
+            <div>
+                <h1 class="font-cyber text-sm tracking-wider font-bold text-white flex items-center gap-2">
+                    ZERO.UNIVERSITY <span class="text-[10px] text-cyan-400 bg-cyan-950 border border-cyan-800/50 px-2 py-0.5 rounded-full font-code font-normal">REPLICA LAB V1.0</span>
+                </h1>
+                <p class="text-xs text-slate-400">Telif Yok, Ağ Yükü Yok, Tamamen Sentezlenmiş 3D & Audio Laboratuvarı</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <div id="audioStatusBadge" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-950/40 border border-red-800/40 text-red-400 text-xs font-code cursor-pointer transition-all duration-300 hover:bg-red-950/60" onclick="initializeAudioContext()">
+                <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse" id="audioStatusDot"></span>
+                <span id="audioStatusText">SES MOTORU PASİF (Tıkla Aktif Et)</span>
+            </div>
+            <div class="text-xs text-right text-slate-500 hidden md:block">
+                <p class="font-code">Render-Time: <span class="text-emerald-400">~0.1ms</span></p>
+                <p class="font-code">Network Cost: <span class="text-cyan-400">0.00 KB (Procedural)</span></p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden min-h-0">
+
+        <!-- Left Panel: Stage & Atmosphere Control Panel -->
+        <section class="w-full lg:w-80 flex flex-col gap-4 shrink-0 overflow-y-auto pr-1">
+            
+            <!-- Stage Selector Card -->
+            <div class="glass-panel rounded-2xl p-4 flex flex-col gap-4">
+                <div class="border-b border-white/5 pb-2">
+                    <h3 class="font-cyber text-xs tracking-wider font-bold text-slate-300 flex items-center gap-2">
+                        <span>⚡</span> ATMOSFERİK AŞAMA (STAGES)
+                    </h3>
+                </div>
+                <p class="text-xs text-slate-400">Aşağıdaki her aşama, orijinal projedeki <span class="font-code text-cyan-400">amb_stage</span> MP3 dosyalarının müzikal yapısını matematiksel olarak canlandırır.</p>
+                
+                <div class="flex flex-col gap-2" id="stageButtonGroup">
+                    <button onclick="changeStage(1)" class="stage-btn w-full px-4 py-3 rounded-xl border border-cyan-500/20 bg-cyan-950/20 text-cyan-400 text-sm font-medium flex items-center justify-between transition-all duration-300 hover:bg-cyan-500/10 hover:border-cyan-500/40" data-stage="1">
+                        <span class="flex items-center gap-2">
+                            <span class="font-cyber font-bold text-xs">01</span>
+                            <span>Aşama 1: Huzurlu Giriş</span>
+                        </span>
+                        <span class="text-[10px] font-code bg-cyan-950/50 px-1.5 py-0.5 rounded border border-cyan-800/40">~Stage 1</span>
+                    </button>
+                    
+                    <button onclick="changeStage(2)" class="stage-btn w-full px-4 py-3 rounded-xl border border-white/5 bg-slate-900/30 text-slate-400 text-sm font-medium flex items-center justify-between transition-all duration-300 hover:bg-white/5" data-stage="2">
+                        <span class="flex items-center gap-2">
+                            <span class="font-cyber font-bold text-xs">02</span>
+                            <span>Aşama 2-3: Gizemli Derinlik</span>
+                        </span>
+                        <span class="text-[10px] font-code bg-slate-950/50 px-1.5 py-0.5 rounded border border-white/5">~Stage 2-3</span>
+                    </button>
+                    
+                    <button onclick="changeStage(4)" class="stage-btn w-full px-4 py-3 rounded-xl border border-white/5 bg-slate-900/30 text-slate-400 text-sm font-medium flex items-center justify-between transition-all duration-300 hover:bg-white/5" data-stage="4">
+                        <span class="flex items-center gap-2">
+                            <span class="font-cyber font-bold text-xs">04</span>
+                            <span>Aşama 4-5: Kaotik Gerilim</span>
+                        </span>
+                        <span class="text-[10px] font-code bg-slate-950/50 px-1.5 py-0.5 rounded border border-white/5">~Stage 4-5</span>
+                    </button>
+
+                    <button onclick="changeStage(5)" class="stage-btn w-full px-4 py-3 rounded-xl border border-white/5 bg-slate-900/30 text-slate-400 text-sm font-medium flex items-center justify-between transition-all duration-300 hover:bg-white/5" data-stage="5">
+                        <span class="flex items-center gap-2">
+                            <span class="font-cyber font-bold text-xs">05</span>
+                            <span>Aşama 5: Nihai Son (Bölüm Sonu)</span>
+                        </span>
+                        <span class="text-[10px] font-code bg-slate-950/50 px-1.5 py-0.5 rounded border border-white/5">~Stage 5</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Ambient Synthesizer Settings -->
+            <div class="glass-panel rounded-2xl p-4 flex flex-col gap-4 flex-1">
+                <div class="border-b border-white/5 pb-2">
+                    <h3 class="font-cyber text-xs tracking-wider font-bold text-slate-300 flex items-center gap-2">
+                        <span>🎛️</span> SENTETİZÖR KONTROLLERİ
+                    </h3>
+                </div>
+                
+                <!-- Master Volume Slider -->
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex justify-between text-xs font-cyber text-slate-400">
+                        <span>ANA SES (MASTER VOLUME)</span>
+                        <span id="volumeValue">40%</span>
+                    </div>
+                    <input type="range" id="masterVolume" min="0" max="100" value="40" class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500" oninput="updateMasterVolume(this.value)">
+                </div>
+
+                <!-- Resonance Cutoff Slider -->
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex justify-between text-xs font-cyber text-slate-400">
+                        <span>FİLTRE REZONANSI (FILTER LPF)</span>
+                        <span id="filterValue">1200 Hz</span>
+                    </div>
+                    <input type="range" id="filterRes" min="200" max="4000" value="1200" class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500" oninput="updateFilterResonance(this.value)">
+                </div>
+
+                <!-- Synth Drone Modulator Visualizer -->
+                <div class="flex-1 min-h-[100px] rounded-xl bg-slate-950/60 border border-white/5 flex flex-col justify-end p-2 relative overflow-hidden">
+                    <span class="absolute top-2 left-2 text-[9px] font-cyber tracking-widest text-slate-500">LIVE AUDIO MATRIX</span>
+                    <!-- Simulated Mini Canvas EQ -->
+                    <div class="flex items-end justify-between h-20 w-full gap-[3px]" id="visualizerBars">
+                        <!-- Bars dynamically rendered by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Center Panel: The Procedural 3D WebGL Canvas -->
+        <section class="flex-1 flex flex-col gap-4 min-w-0">
+            
+            <div class="glass-panel rounded-2xl flex-1 flex flex-col overflow-hidden relative min-h-[300px]">
+                
+                <!-- Model Swapper Tabs -->
+                <div class="flex items-center justify-between border-b border-white/5 bg-slate-950/40 px-4 py-2 z-20 shrink-0">
+                    <div class="flex gap-2">
+                        <button onclick="switch3DModel('cat')" class="model-tab px-4 py-2 rounded-lg border border-cyan-500/20 bg-cyan-950/30 text-cyan-400 text-xs font-cyber tracking-wider transition-all duration-300" data-model="cat">
+                            😺 3D KEDİ (cat.glb)
+                        </button>
+                        <button onclick="switch3DModel('camera')" class="model-tab px-4 py-2 rounded-lg border border-transparent text-slate-400 text-xs font-cyber tracking-wider hover:bg-white/5 transition-all duration-300" data-model="camera">
+                            📷 3D KAMERA (camera.glb)
+                        </button>
+                        <button onclick="switch3DModel('hand')" class="model-tab px-4 py-2 rounded-lg border border-transparent text-slate-400 text-xs font-cyber tracking-wider hover:bg-white/5 transition-all duration-300" data-model="hand">
+                            🖐️ 3D EL (fancy_hand.glb)
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        <span class="text-[10px] font-code text-emerald-400">GPU ACCELERATED</span>
+                    </div>
+                </div>
+
+                <!-- Three.js Canvas Container -->
+                <div id="canvas3DContainer" class="flex-1 w-full relative outline-none cursor-grab active:cursor-grabbing">
+                    <!-- Loading overlay that vanishes instantly -->
+                    <div id="loader3D" class="absolute inset-0 bg-slate-950/80 flex flex-col items-center justify-center gap-3 z-10 pointer-events-none opacity-0 transition-opacity duration-300">
+                        <div class="w-12 h-12 border-4 border-cyan-500/20 border-t-cyan-400 rounded-full animate-spin"></div>
+                        <p class="font-cyber text-xs tracking-widest text-cyan-400 animate-pulse">SENTEZLENİYOR...</p>
+                    </div>
+                    
+                    <!-- Floating instructions -->
+                    <div class="absolute bottom-4 left-4 z-10 pointer-events-none bg-slate-950/70 border border-white/5 rounded-lg px-3 py-1.5 text-[11px] text-slate-400 font-cyber flex items-center gap-2">
+                        <span>🖱️ Sürükleyip Döndür</span>
+                        <span>•</span>
+                        <span>🔍 Kaydırarak Yakınlaş</span>
+                    </div>
+                </div>
+
+                <!-- 3D View Control Box -->
+                <div class="border-t border-white/5 bg-slate-950/40 px-4 py-3 z-20 flex justify-between items-center text-xs text-slate-400 shrink-0">
+                    <div class="flex items-center gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer select-none">
+                            <input type="checkbox" id="autoRotateCheck" checked class="rounded bg-slate-800 border-white/5 text-cyan-500 focus:ring-cyan-500 focus:ring-offset-slate-950" onchange="toggleAutoRotate(this.checked)">
+                            <span>Otomatik Dönüş</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer select-none">
+                            <input type="checkbox" id="wireframeCheck" class="rounded bg-slate-800 border-white/5 text-purple-500 focus:ring-purple-500 focus:ring-offset-slate-950" onchange="toggleWireframe(this.checked)">
+                            <span>İskelet Görünümü</span>
+                        </label>
+                    </div>
+                    <span id="modelSpecs" class="font-code text-[11px] text-cyan-400/80">Active Mesh: Procedural Cat // 1.2k Vertices</span>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Right Panel: Synthesized Soundboard and Diagnostics Console -->
+        <section class="w-full lg:w-96 flex flex-col gap-4 shrink-0 overflow-y-auto pl-1">
+            
+            <!-- Audio Soundboard Board -->
+            <div class="glass-panel rounded-2xl p-4 flex flex-col gap-4">
+                <div class="border-b border-white/5 pb-2">
+                    <h3 class="font-cyber text-xs tracking-wider font-bold text-slate-300 flex items-center gap-2">
+                        <span>🔊</span> SES EFEKT PANELI (SFX CONSOLE)
+                    </h3>
+                </div>
+                <p class="text-xs text-slate-400">Gerçek zamanlı olarak Web Audio API üzerinde dinamik osilatörlerle matematiksel ses üretimi yapar.</p>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- Click SFX -->
+                    <button onclick="playSynthesizedSFX('click')" class="group relative flex flex-col gap-1 items-start text-left p-3 rounded-xl border border-white/5 bg-slate-900/40 hover:bg-slate-800/40 hover:border-cyan-500/30 transition-all duration-300 active:scale-[0.98]">
+                        <span class="text-xs font-cyber tracking-wide text-slate-300 group-hover:text-cyan-400">🖱️ FX_CLICK</span>
+                        <span class="text-[9px] font-code text-slate-500">Tıklama Efekti</span>
+                        <span class="absolute top-2 right-2 text-[10px] font-code opacity-30 group-hover:opacity-100 group-hover:text-cyan-500/80 transition-all duration-300">~2.4kB</span>
+                    </button>
+
+                    <!-- Glass Shatter SFX -->
+                    <button onclick="playSynthesizedSFX('glass-shatter')" class="group relative flex flex-col gap-1 items-start text-left p-3 rounded-xl border border-white/5 bg-slate-900/40 hover:bg-slate-800/40 hover:border-red-500/30 transition-all duration-300 active:scale-[0.98]">
+                        <span class="text-xs font-cyber tracking-wide text-slate-300 group-hover:text-red-400">💥 FX_GLASS-SHATTER</span>
+                        <span class="text-[9px] font-code text-slate-500">Cam Kırılması</span>
+                        <span class="absolute top-2 right-2 text-[10px] font-code opacity-30 group-hover:opacity-100 group-hover:text-red-500/80 transition-all duration-300">~21kB</span>
+                    </button>
+
+                    <!-- Hand Entry SFX -->
+                    <button onclick="playSynthesizedSFX('hand-entry')" class="group relative flex flex-col gap-1 items-start text-left p-3 rounded-xl border border-white/5 bg-slate-900/40 hover:bg-slate-800/40 hover:border-purple-500/30 transition-all duration-300 active:scale-[0.98]">
+                        <span class="text-xs font-cyber tracking-wide text-slate-300 group-hover:text-purple-400">🚀 FX_HAND-ENTRY</span>
+                        <span class="text-[9px] font-code text-slate-500">El Giriş Sesi</span>
+                        <span class="absolute top-2 right-2 text-[10px] font-code opacity-30 group-hover:opacity-100 group-hover:text-purple-500/80 transition-all duration-300">~5.5kB</span>
+                    </button>
+
+                    <!-- Money Burn SFX -->
+                    <button onclick="playSynthesizedSFX('money-burn')" class="group relative flex flex-col gap-1 items-start text-left p-3 rounded-xl border border-white/5 bg-slate-900/40 hover:bg-slate-800/40 hover:border-amber-500/30 transition-all duration-300 active:scale-[0.98]">
+                        <span class="text-xs font-cyber tracking-wide text-slate-300 group-hover:text-amber-400">🔥 FX_MONEY-BURN</span>
+                        <span class="text-[9px] font-code text-slate-500">Para Yakma</span>
+                        <span class="absolute top-2 right-2 text-[10px] font-code opacity-30 group-hover:opacity-100 group-hover:text-amber-500/80 transition-all duration-300">~13kB</span>
+                    </button>
+
+                    <!-- Loader Drag SFX -->
+                    <button onclick="playSynthesizedSFX('loader-drag')" class="group relative flex flex-col gap-1 items-start text-left p-3 rounded-xl border border-white/5 bg-slate-900/40 hover:bg-slate-800/40 hover:border-emerald-500/30 transition-all duration-300 active:scale-[0.98]">
+                        <span class="text-xs font-cyber tracking-wide text-slate-300 group-hover:text-emerald-400">⛓️ FX_LOADER-DRAG</span>
+                        <span class="text-[9px] font-code text-slate-500">Sürükleme Tınımı</span>
+                        <span class="absolute top-2 right-2 text-[10px] font-code opacity-30 group-hover:opacity-100 group-hover:text-emerald-500/80 transition-all duration-300">~7.8kB</span>
+                    </button>
+
+                    <!-- Loader Constant SFX -->
+                    <button onclick="playSynthesizedSFX('loader')" class="group relative flex flex-col gap-1 items-start text-left p-3 rounded-xl border border-white/5 bg-slate-900/40 hover:bg-slate-800/40 hover:border-yellow-500/30 transition-all duration-300 active:scale-[0.98]">
+                        <span class="text-xs font-cyber tracking-wide text-slate-300 group-hover:text-yellow-400">⚙️ FX_LOADER</span>
+                        <span class="text-[9px] font-code text-slate-500">Yükleyici Tınımı</span>
+                        <span class="absolute top-2 right-2 text-[10px] font-code opacity-30 group-hover:opacity-100 group-hover:text-yellow-500/80 transition-all duration-300">~77kB</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Terminal Diagnostics Logger -->
+            <div class="glass-panel rounded-2xl p-4 flex flex-col gap-3 flex-1 min-h-[220px]">
+                <div class="border-b border-white/5 pb-2 flex justify-between items-center shrink-0">
+                    <h3 class="font-cyber text-xs tracking-wider font-bold text-slate-300 flex items-center gap-2">
+                        <span>🖥️</span> REALTIME MATRIX LOGGER
+                    </h3>
+                    <button onclick="clearConsoleLog()" class="text-[10px] font-cyber text-slate-500 hover:text-cyan-400 transition-colors duration-300">TEMİZLE</button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto bg-slate-950/80 rounded-xl border border-white/5 p-3 flex flex-col gap-1.5 font-code text-[11px] text-slate-400 select-all" id="terminalLogBox">
+                    <!-- Logs will be written dynamically by JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Bar -->
+    <footer class="glass-panel border-t border-white/5 py-3 px-6 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 gap-2 shrink-0 z-10">
+        <div>
+            Zero.University Asset-Free Simulation. No cookies, no trackers, pure math.
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-slate-600">Built using Three.js & Web Audio API</span>
+            <span class="text-[10px] bg-slate-900 border border-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-code">LATENCY: ~0.003ms</span>
+        </div>
+    </footer>
+
+    <!-- Sound and Animation Script Elements -->
+    <script>
+        // --- REALTIME MATRIX LOGGER UTILITIES ---
+        const terminalLogBox = document.getElementById('terminalLogBox');
+        
+        function appendConsoleLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString('tr-TR', { hour12: false });
+            let prefix = '[INFO]';
+            let colorClass = 'text-slate-400';
+            
+            if (type === 'success') {
+                prefix = '[OK]';
+                colorClass = 'text-emerald-400';
+            } else if (type === 'warn') {
+                prefix = '[WARN]';
+                colorClass = 'text-amber-400';
+            } else if (type === 'error') {
+                prefix = '[ERR]';
+                colorClass = 'text-red-400';
+            } else if (type === 'audio') {
+                prefix = '[DSP]';
+                colorClass = 'text-cyan-400';
+            } else if (type === 'gpu') {
+                prefix = '[GPU]';
+                colorClass = 'text-purple-400';
+            }
+
+            const logLine = document.createElement('p');
+            logLine.className = `leading-relaxed border-b border-white/[0.01] pb-1 font-mono tracking-tight`;
+            logLine.innerHTML = `<span class="text-slate-600">${timestamp}</span> <span class="${colorClass} font-semibold">${prefix} ${message}</span>`;
+            
+            terminalLogBox.appendChild(logLine);
+            terminalLogBox.scrollTop = terminalLogBox.scrollHeight;
+        }
+
+        function clearConsoleLog() {
+            terminalLogBox.innerHTML = '';
+            appendConsoleLog('Konsol temizlendi. Sistem stabil.', 'info');
+        }
+
+        // --- STREAMING_CHUNK:Configuring Web Audio Synthesizer Engine... ---
+        // --- AUDIO SYNTH ENGINE (WEB AUDIO API) ---
+        let audioCtx = null;
+        let masterGainNode = null;
+        let lpfFilterNode = null;
+        let ambientSynthNode = null;
+        let isSynthesizingAmbient = false;
+        let activeStage = 1;
+        let visualizerInterval = null;
+
+        // Sound Engine Initialization
+        function initializeAudioContext() {
+            if (audioCtx) {
+                appendConsoleLog('Ses motoru zaten çalışıyor.', 'warn');
+                return;
+            }
+
+            try {
+                // Instantiate cross-browser Audio Context
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+                
+                // Create a master bus
+                masterGainNode = audioCtx.createGain();
+                masterGainNode.gain.setValueAtTime(0.4, audioCtx.currentTime); // 40% initial master volume
+                
+                // Create a globally sweeping resonant low-pass filter
+                lpfFilterNode = audioCtx.createBiquadFilter();
+                lpfFilterNode.type = 'lowpass';
+                lpfFilterNode.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                lpfFilterNode.Q.setValueAtTime(1.5, audioCtx.currentTime);
+
+                // Connections
+                lpfFilterNode.connect(masterGainNode);
+                masterGainNode.connect(audioCtx.destination);
+
+                // Update UI badges
+                const dot = document.getElementById('audioStatusDot');
+                const text = document.getElementById('audioStatusText');
+                const badge = document.getElementById('audioStatusBadge');
+                
+                dot.classList.remove('bg-red-500');
+                dot.classList.add('bg-emerald-500');
+                badge.classList.remove('bg-red-950/40', 'border-red-800/40', 'text-red-400');
+                badge.classList.add('bg-emerald-950/40', 'border-emerald-800/40', 'text-emerald-400');
+                text.textContent = 'SES MOTORU AKTİF';
+
+                appendConsoleLog('Web Audio DSP Sentez motoru başlatıldı. Örnekleme hızı: ' + audioCtx.sampleRate + 'Hz', 'success');
+                
+                // Start the ambient loop and simulated visualizer EQ
+                startAmbientDroneLoop();
+                startSimulatedVisualizer();
+            } catch (e) {
+                appendConsoleLog('Ses motoru başlatılamadı. Tarayıcınız desteklemiyor olabilir: ' + e.message, 'error');
+            }
+        }
+
+        // Ensure safe audio operation
+        function checkAudioInit() {
+            if (!audioCtx) {
+                initializeAudioContext();
+                return audioCtx !== null;
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+                appendConsoleLog('Ses motoru uyku modundan çıkarıldı.', 'info');
+            }
+            return true;
+        }
+
+        function updateMasterVolume(val) {
+            document.getElementById('volumeValue').textContent = val + '%';
+            if (!audioCtx) return;
+            const floatVal = val / 100;
+            masterGainNode.gain.setTargetAtTime(floatVal, audioCtx.currentTime, 0.05);
+        }
+
+        function updateFilterResonance(val) {
+            document.getElementById('filterValue').textContent = val + ' Hz';
+            if (!audioCtx) return;
+            lpfFilterNode.frequency.setTargetAtTime(val, audioCtx.currentTime, 0.1);
+        }
+
+        // --- STREAMING_CHUNK:Crafting Sound Effects and Audio Loops... ---
+        // Ambient Sound Loop Synthesizer (Simulates amb_stage.mp3 tracks)
+        let droneOscillators = [];
+        
+        function startAmbientDroneLoop() {
+            if (!audioCtx) return;
+            
+            // Clear any active drone oscillators first
+            stopAmbientDroneLoop();
+            
+            appendConsoleLog(`Stage ${activeStage} için ortam tınıları (drone) sentezleniyor...`, 'audio');
+            
+            // Create a rich multi-oscillator pad synth base on active stage harmonics
+            let rootFreq = 55; // Low A
+            let chordRatios = [1, 1.5, 2, 2.5]; // Harmonic Series base
+
+            if (activeStage === 1) {
+                // Peaceful major sweep (A - C# - E - G#)
+                rootFreq = 55; // A
+                chordRatios = [1, 1.25, 1.5, 1.875]; 
+            } else if (activeStage === 2) {
+                // Mystical Stage 2-3: Minor suspended (A - C - D - G)
+                rootFreq = 55;
+                chordRatios = [1, 1.2, 1.33, 1.77];
+            } else if (activeStage === 4) {
+                // Kaotik Stage 4-5: Suspended tense (A# - D# - E - F#)
+                rootFreq = 58.27; // A#
+                chordRatios = [1, 1.33, 1.41, 1.58];
+            } else if (activeStage === 5) {
+                // Heavy terminal chord: Ultra-low drone + metallic overtones
+                rootFreq = 41.2; // Low E
+                chordRatios = [1, 1.5, 3, 4.5, 6.2];
+            }
+
+            // Synthesize the core sound
+            chordRatios.forEach((ratio, idx) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const panning = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+
+                osc.type = idx % 2 === 0 ? 'sawtooth' : 'triangle';
+                osc.frequency.setValueAtTime(rootFreq * ratio, audioCtx.currentTime);
+                
+                // Slower pitch lfo modulation to simulate rich tape warp atmosphere
+                const lfo = audioCtx.createOscillator();
+                const lfoGain = audioCtx.createGain();
+                lfo.frequency.setValueAtTime(0.1 + idx * 0.05, audioCtx.currentTime);
+                lfoGain.gain.setValueAtTime(rootFreq * ratio * 0.008, audioCtx.currentTime); // micro tuning sweep
+                
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc.frequency);
+                
+                // Volume automation for breathing effect
+                gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                // Slow fade in
+                gain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 2 + idx);
+
+                // Route through sweeping resonance nodes
+                if (panning) {
+                    osc.connect(gain);
+                    gain.connect(panning);
+                    panning.connect(lpfFilterNode);
+                    // pan sweep
+                    panning.pan.setValueAtTime(Math.sin(idx) * 0.8, audioCtx.currentTime);
+                } else {
+                    osc.connect(gain);
+                    gain.connect(lpfFilterNode);
+                }
+
+                lfo.start();
+                osc.start();
+
+                droneOscillators.push({ osc, lfo, gain, lfoGain });
+            });
+            
+            isSynthesizingAmbient = true;
+        }
+
+        function stopAmbientDroneLoop() {
+            droneOscillators.forEach(d => {
+                try {
+                    d.gain.gain.cancelScheduledValues(audioCtx.currentTime);
+                    d.gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
+                    d.osc.stop(audioCtx.currentTime + 1);
+                    d.lfo.stop(audioCtx.currentTime + 1);
+                } catch(e) {}
+            });
+            droneOscillators = [];
+            isSynthesizingAmbient = false;
+        }
+
+        function changeStage(stageNum) {
+            activeStage = parseInt(stageNum);
+            
+            // Highlight stage button in UI
+            document.querySelectorAll('.stage-btn').forEach(btn => {
+                btn.className = 'stage-btn w-full px-4 py-3 rounded-xl border border-white/5 bg-slate-900/30 text-slate-400 text-sm font-medium flex items-center justify-between transition-all duration-300 hover:bg-white/5';
+            });
+            
+            const activeBtn = document.querySelector(`.stage-btn[data-stage="${stageNum}"]`);
+            if (activeBtn) {
+                activeBtn.className = 'stage-btn w-full px-4 py-3 rounded-xl border border-cyan-500/20 bg-cyan-950/20 text-cyan-400 text-sm font-medium flex items-center justify-between transition-all duration-300 hover:bg-cyan-500/10 hover:border-cyan-500/40';
+            }
+
+            if (!checkAudioInit()) return;
+            startAmbientDroneLoop();
+        }
+
+        // --- STREAMING_CHUNK:Synthesizing Realtime Sound Effects... ---
+        // Procedural Web Audio SFX Generation Functions
+        function playSynthesizedSFX(sfxType) {
+            if (!checkAudioInit()) return;
+
+            appendConsoleLog(`FX Triggered: ${sfxType.toUpperCase()}`, 'audio');
+            triggerScreenVisualShatter(sfxType);
+
+            if (sfxType === 'click') {
+                // Simple snappy click sound
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
+                // Pitch sweep downward rapidly
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.04);
+                
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+
+            } else if (sfxType === 'glass-shatter') {
+                // High frequency crackles + bursting bandpass white noise
+                const bufferSize = audioCtx.sampleRate * 0.6; // 600ms
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                
+                const noiseNode = audioCtx.createBufferSource();
+                noiseNode.buffer = buffer;
+                
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'highpass';
+                filter.frequency.setValueAtTime(3000, audioCtx.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(8000, audioCtx.currentTime + 0.4);
+                
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                
+                noiseNode.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                noiseNode.start();
+
+                // High pitch metallic ring oscillators
+                for (let i = 0; i < 5; i++) {
+                    const ringOsc = audioCtx.createOscillator();
+                    const ringGain = audioCtx.createGain();
+                    
+                    ringOsc.type = 'sine';
+                    ringOsc.frequency.setValueAtTime(1200 + Math.random() * 4500, audioCtx.currentTime);
+                    
+                    ringGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    ringGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1 + Math.random() * 0.35);
+                    
+                    ringOsc.connect(ringGain);
+                    ringGain.connect(audioCtx.destination);
+                    
+                    ringOsc.start();
+                    ringOsc.stop(audioCtx.currentTime + 0.5);
+                }
+
+            } else if (sfxType === 'hand-entry') {
+                // Deep retro future synth swoosh
+                const osc = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(40, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.7);
+
+                osc2.type = 'sawtooth';
+                osc2.frequency.setValueAtTime(80, audioCtx.currentTime);
+                osc2.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.7);
+
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(150, audioCtx.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.6);
+                
+                gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.35, audioCtx.currentTime + 0.3);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+                
+                osc.connect(filter);
+                osc2.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc2.start();
+                osc.stop(audioCtx.currentTime + 0.81);
+                osc2.stop(audioCtx.currentTime + 0.81);
+
+            } else if (sfxType === 'money-burn') {
+                // Hissing white noise + random crackling popping sound nodes
+                const bufferSize = audioCtx.sampleRate * 1.5;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                
+                const noiseNode = audioCtx.createBufferSource();
+                noiseNode.buffer = buffer;
+                
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(1000, audioCtx.currentTime);
+                filter.Q.setValueAtTime(1.5, audioCtx.currentTime);
+                
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.4);
+                
+                noiseNode.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                noiseNode.start();
+
+                // Generate random tiny popping sounds to mimic burning embers
+                const firePops = 14;
+                for (let i = 0; i < firePops; i++) {
+                    const popTime = audioCtx.currentTime + (Math.random() * 1.2);
+                    const popOsc = audioCtx.createOscillator();
+                    const popGain = audioCtx.createGain();
+                    
+                    popOsc.type = 'triangle';
+                    popOsc.frequency.setValueAtTime(120 + Math.random() * 300, popTime);
+                    popGain.gain.setValueAtTime(0.08, popTime);
+                    popGain.gain.exponentialRampToValueAtTime(0.001, popTime + 0.02);
+                    
+                    popOsc.connect(popGain);
+                    popGain.connect(audioCtx.destination);
+                    popOsc.start(popTime);
+                    popOsc.stop(popTime + 0.03);
+                }
+
+            } else if (sfxType === 'loader-drag') {
+                // Heavy grinding metal slide sound (pitch swooping down)
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(50, audioCtx.currentTime + 1.2);
+                
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(300, audioCtx.currentTime);
+                filter.frequency.linearRampToValueAtTime(150, audioCtx.currentTime + 1.2);
+
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.25);
+                
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 1.3);
+
+            } else if (sfxType === 'loader') {
+                // High-speed cyber rotation humming loop (continuous feedback)
+                const osc = audioCtx.createOscillator();
+                const subOsc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(261.63, audioCtx.currentTime); // Middle C
+                
+                subOsc.type = 'sine';
+                subOsc.frequency.setValueAtTime(130.81, audioCtx.currentTime); // Low C
+
+                // Rapid volume modulation
+                const tremolo = audioCtx.createOscillator();
+                const tremoloGain = audioCtx.createGain();
+                tremolo.frequency.setValueAtTime(12, audioCtx.currentTime); // 12Hz wobble
+                tremoloGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                
+                tremolo.connect(tremoloGain);
+                tremoloGain.connect(gain.gain);
+
+                gain.gain.setValueAtTime(0.22, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.0);
+                
+                osc.connect(gain);
+                subOsc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                tremolo.start();
+                osc.start();
+                subOsc.start();
+                osc.stop(audioCtx.currentTime + 2.05);
+                subOsc.stop(audioCtx.currentTime + 2.05);
+                tremolo.stop(audioCtx.currentTime + 2.05);
+            }
+        }
+
+        // Simulating Live Equalizer visualizer
+        function startSimulatedVisualizer() {
+            const container = document.getElementById('visualizerBars');
+            container.innerHTML = '';
+            const barCount = 18;
+            const barElements = [];
+
+            for (let i = 0; i < barCount; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'bg-gradient-to-t from-cyan-600 to-purple-500 w-full rounded-t transition-all duration-75';
+                bar.style.height = '10%';
+                container.appendChild(bar);
+                barElements.push(bar);
+            }
+
+            if (visualizerInterval) clearInterval(visualizerInterval);
+
+            visualizerInterval = setInterval(() => {
+                if (!audioCtx || audioCtx.state === 'suspended' || !isSynthesizingAmbient) {
+                    barElements.forEach(bar => {
+                        bar.style.height = '8%';
+                    });
+                    return;
+                }
+
+                barElements.forEach((bar, idx) => {
+                    // Random but structured procedural height animation based on selected Stage
+                    let baseline = 10;
+                    if (activeStage === 1) baseline = 20 + Math.sin(Date.now() * 0.003 + idx) * 15;
+                    else if (activeStage === 2) baseline = 35 + Math.sin(Date.now() * 0.005 + idx * 0.5) * 25;
+                    else if (activeStage === 4) baseline = 50 + Math.random() * 35;
+                    else if (activeStage === 5) baseline = 10 + (idx % 3 === 0 ? 70 : 15) + Math.random() * 15;
+
+                    bar.style.height = `${Math.max(8, Math.min(95, baseline))}%`;
+                });
+            }, 80);
+        }
+
+        // --- STREAMING_CHUNK:Configuring Particle Canvas Overlay... ---
+        // --- 2D CANVAS PARTICLE SYSTEM (TRIGGERED BY SFX) ---
+        const particleCanvas = document.getElementById('particleCanvas');
+        const pCtx = particleCanvas.getContext('2d');
+        let particles = [];
+
+        function resizeParticleCanvas() {
+            particleCanvas.width = window.innerWidth;
+            particleCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeParticleCanvas);
+        resizeParticleCanvas();
+
+        class Particle {
+            constructor(x, y, color, type) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 6 + 2;
+                this.speedX = (Math.random() - 0.5) * 15;
+                this.speedY = (Math.random() - 0.5) * 15;
+                this.gravity = type === 'money-burn' ? -0.12 : 0.05; // Fire embers drift upwards
+                this.color = color;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.015;
+                this.type = type;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.2;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.speedY += this.gravity;
+                this.alpha -= this.decay;
+                this.rotation += this.rotationSpeed;
+            }
+
+            draw() {
+                pCtx.save();
+                pCtx.globalAlpha = this.alpha;
+                pCtx.fillStyle = this.color;
+                
+                if (this.type === 'glass-shatter') {
+                    // Draw sharp glass triangular shards
+                    pCtx.translate(this.x, this.y);
+                    pCtx.rotate(this.rotation);
+                    pCtx.beginPath();
+                    pCtx.moveTo(0, -this.size * 1.5);
+                    pCtx.lineTo(this.size, this.size);
+                    pCtx.lineTo(-this.size, this.size);
+                    pCtx.closePath();
+                    pCtx.shadowBlur = 10;
+                    pCtx.shadowColor = 'rgba(6, 182, 212, 0.5)';
+                    pCtx.fill();
+                } else if (this.type === 'money-burn') {
+                    // Floating glowing fire embers
+                    pCtx.shadowBlur = 15;
+                    pCtx.shadowColor = '#f59e0b';
+                    pCtx.beginPath();
+                    pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    pCtx.fill();
+                } else {
+                    // Glowing cyber spheres
+                    pCtx.shadowBlur = 8;
+                    pCtx.shadowColor = this.color;
+                    pCtx.beginPath();
+                    pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    pCtx.fill();
+                }
+                pCtx.restore();
+            }
+        }
+
+        function triggerScreenVisualShatter(sfxType) {
+            const count = sfxType === 'glass-shatter' ? 60 : 25;
+            let color = '#22d3ee'; // default cyan
+            
+            if (sfxType === 'glass-shatter') color = '#e2e8f0';
+            else if (sfxType === 'money-burn') color = '#f59e0b';
+            else if (sfxType === 'hand-entry') color = '#c084fc';
+            else if (sfxType === 'click') color = '#06b6d4';
+
+            // Spawn particles near mouse pointer position, otherwise center of screen
+            const originX = lastMouseX || window.innerWidth / 2;
+            const originY = lastMouseY || window.innerHeight / 2;
+
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(originX, originY, color, sfxType));
+            }
+        }
+
+        let lastMouseX = 0;
+        let lastMouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        });
+
+        function animateParticles() {
+            pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].alpha <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+
+        // --- STREAMING_CHUNK:Initializing 3D WebGL Engine (Three.js)... ---
+        // --- THREE.JS 3D PROCEDURAL ASSET ENGINE ---
+        let scene, camera, renderer, activeModelGroup = null;
+        let models = {}; // Object containing pre-built procedural shapes
+        let autoRotateActive = true;
+        let wireframeMode = false;
+        
+        // Touch / Drag interactive rotation state variables
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+
+        function init3DRenderer() {
+            const container = document.getElementById('canvas3DContainer');
+            
+            // Instanciate Scene
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x020617, 0.03); // Slate 950 deep space depth
+
+            // Instanciate Camera
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(0, 2, 7);
+
+            // Instanciate WebGL Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            
+            container.appendChild(renderer.domElement);
+
+            // --- STREAMING_CHUNK:Adding Atmospheric Lighting... ---
+            // Lights Setup
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+            scene.add(ambientLight);
+
+            // Neo-retro Cyber Key Lights (Blue and Purple neon style highlights)
+            const dirLight1 = new THREE.DirectionalLight(0x06b6d4, 1.5); // Cyan
+            dirLight1.position.set(5, 5, 5);
+            dirLight1.castShadow = true;
+            scene.add(dirLight1);
+
+            const dirLight2 = new THREE.DirectionalLight(0xc084fc, 1.2); // Purple
+            dirLight2.position.set(-5, 3, -5);
+            scene.add(dirLight2);
+
+            const floorGrid = new THREE.GridHelper(20, 20, 0x06b6d4, 0x1e293b);
+            floorGrid.position.y = -1.8;
+            scene.add(floorGrid);
+
+            // Construct Procedural meshes
+            buildProceduralModels();
+            
+            // Default model load
+            switch3DModel('cat');
+
+            // --- STREAMING_CHUNK:Configuring 3D Drag controls... ---
+            // Touch & Drag events for fluid 3D control
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+
+            container.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                if (e.touches.length === 1) {
+                    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging || !activeModelGroup) return;
+                const deltaMove = {
+                    x: e.clientX - previousMousePosition.x,
+                    y: e.clientY - previousMousePosition.y
+                };
+                
+                // Spin target model group
+                activeModelGroup.rotation.y += deltaMove.x * 0.007;
+                activeModelGroup.rotation.x += deltaMove.y * 0.007;
+
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+
+            window.addEventListener('touchmove', (e) => {
+                if (!isDragging || !activeModelGroup || e.touches.length !== 1) return;
+                const deltaMove = {
+                    x: e.touches[0].clientX - previousMousePosition.x,
+                    y: e.touches[0].clientY - previousMousePosition.y
+                };
+                
+                activeModelGroup.rotation.y += deltaMove.x * 0.007;
+                activeModelGroup.rotation.x += deltaMove.y * 0.007;
+
+                previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            });
+
+            window.addEventListener('mouseup', () => isDragging = false);
+            window.addEventListener('touchend', () => isDragging = false);
+
+            // Zoom on Scroll
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                camera.position.z += e.deltaY * 0.004;
+                camera.position.z = Math.max(3, Math.min(15, camera.position.z));
+            }, { passive: false });
+
+            // Run rendering animation loop on Window Load
+            animate3D();
+        }
+
+        // --- STREAMING_CHUNK:Generating Procedural 3D Assets (Cat, Camera, Hand)... ---
+        // BUILD HIGH-POLISHED PROCEDURAL SHAPES WITH PURE MATH
+        function buildProceduralModels() {
+            const materialStandard = new THREE.MeshStandardMaterial({
+                color: 0xe2e8f0,
+                roughness: 0.15,
+                metalness: 0.7,
+                wireframe: wireframeMode
+            });
+
+            const neonCyanMaterial = new THREE.MeshStandardMaterial({
+                color: 0x06b6d4,
+                roughness: 0.05,
+                metalness: 0.9,
+                emissive: 0x06b6d4,
+                emissiveIntensity: 0.4,
+                wireframe: wireframeMode
+            });
+
+            // --- MODEL 1: THE CAT (cat.glb) ---
+            const catGroup = new THREE.Group();
+            
+            // Cat Body Capsule
+            const bodyGeo = new THREE.SphereGeometry(1.2, 32, 16);
+            bodyGeo.scale(1.2, 0.8, 0.8);
+            const catBody = new THREE.Mesh(bodyGeo, materialStandard);
+            catBody.castShadow = true;
+            catGroup.add(catBody);
+
+            // Cat Head
+            const headGeo = new THREE.SphereGeometry(0.7, 32, 16);
+            headGeo.translate(1.0, 0.6, 0);
+            const catHead = new THREE.Mesh(headGeo, materialStandard);
+            catHead.castShadow = true;
+            catGroup.add(catHead);
+
+            // Cat Ears (Two Cones)
+            const earGeo = new THREE.ConeGeometry(0.2, 0.5, 4);
+            earGeo.rotateZ(-0.2);
+            earGeo.translate(0.9, 1.2, 0.35);
+            const earRight = new THREE.Mesh(earGeo, materialStandard);
+            catGroup.add(earRight);
+
+            const earLeftGeo = earGeo.clone();
+            earLeftGeo.translate(0, 0, -0.7);
+            const earLeft = new THREE.Mesh(earLeftGeo, materialStandard);
+            catGroup.add(earLeft);
+
+            // Cat Glowing Neon Eyes
+            const eyeGeo = new THREE.SphereGeometry(0.08, 8, 8);
+            eyeGeo.translate(1.5, 0.7, 0.2);
+            const eyeRight = new THREE.Mesh(eyeGeo, neonCyanMaterial);
+            catGroup.add(eyeRight);
+
+            const eyeLeftGeo = eyeGeo.clone();
+            eyeLeftGeo.translate(0, 0, -0.4);
+            const eyeLeft = new THREE.Mesh(eyeLeftGeo, neonCyanMaterial);
+            catGroup.add(eyeLeft);
+
+            // Cat Tail
+            const tailGeo = new THREE.CylinderGeometry(0.1, 0.1, 1.5, 8);
+            tailGeo.rotateZ(0.5);
+            tailGeo.translate(-1.4, 0.5, 0);
+            const catTail = new THREE.Mesh(tailGeo, materialStandard);
+            catTail.name = "tail"; // target for tail wagging in loop!
+            catGroup.add(catTail);
+
+            models.cat = catGroup;
+
+            // --- MODEL 2: THE CAMERA (camera.glb) ---
+            const cameraGroup = new THREE.Group();
+            
+            // Camera Base Body Box
+            const camBodyGeo = new THREE.BoxGeometry(2.4, 1.4, 1.2);
+            const camBodyMat = new THREE.MeshStandardMaterial({
+                color: 0x1e293b,
+                roughness: 0.3,
+                metalness: 0.8,
+                wireframe: wireframeMode
+            });
+            const cameraBody = new THREE.Mesh(camBodyGeo, camBodyMat);
+            cameraBody.castShadow = true;
+            cameraGroup.add(cameraBody);
+
+            // Camera Grip
+            const gripGeo = new THREE.BoxGeometry(0.5, 1.4, 1.22);
+            gripGeo.translate(0.95, 0, 0);
+            const cameraGrip = new THREE.Mesh(gripGeo, new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.8, wireframe: wireframeMode }));
+            cameraGroup.add(cameraGrip);
+
+            // Camera Lens Barrel
+            const lensBarrelGeo = new THREE.CylinderGeometry(0.65, 0.65, 1.0, 32);
+            lensBarrelGeo.rotateX(Math.PI / 2);
+            lensBarrelGeo.translate(-0.3, 0, 0.6);
+            const cameraLensBarrel = new THREE.Mesh(lensBarrelGeo, camBodyMat);
+            cameraLensBarrel.castShadow = true;
+            cameraGroup.add(cameraLensBarrel);
+
+            // Camera Glowing Lens Glass
+            const lensGlassGeo = new THREE.SphereGeometry(0.48, 32, 16);
+            lensGlassGeo.scale(1, 1, 0.1);
+            lensGlassGeo.translate(-0.3, 0, 1.1);
+            const cameraLensGlass = new THREE.Mesh(lensGlassGeo, neonCyanMaterial);
+            cameraGroup.add(cameraLensGlass);
+
+            // Camera Flash and Shutter Buttons
+            const shutterGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.2, 16);
+            shutterGeo.translate(0.8, 0.75, 0);
+            const shutterBtn = new THREE.Mesh(shutterGeo, materialStandard);
+            cameraGroup.add(shutterBtn);
+
+            const dialGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 16);
+            dialGeo.translate(0.4, 0.75, 0);
+            const dialBtn = new THREE.Mesh(dialGeo, materialStandard);
+            cameraGroup.add(dialBtn);
+
+            models.camera = cameraGroup;
+
+            // --- MODEL 3: THE HAND (fancy_hand_2.glb) ---
+            const handGroup = new THREE.Group();
+            
+            // Hand Palm
+            const palmGeo = new THREE.BoxGeometry(1.1, 1.2, 0.35);
+            const handPalm = new THREE.Mesh(palmGeo, materialStandard);
+            handPalm.castShadow = true;
+            handGroup.add(handPalm);
+
+            // Wrist Base
+            const wristGeo = new THREE.CylinderGeometry(0.35, 0.45, 1.0, 16);
+            wristGeo.translate(0, -1.0, 0);
+            const handWrist = new THREE.Mesh(wristGeo, materialStandard);
+            handWrist.castShadow = true;
+            handGroup.add(handWrist);
+
+            // Five Fingers (Cylinders on dynamic bone hinges)
+            const fingers = [];
+            const fingerPositions = [
+                { x: -0.45, z: 0, length: 0.6, name: 'pinky' },
+                { x: -0.15, z: 0, length: 0.85, name: 'ring' },
+                { x: 0.15, z: 0, length: 0.95, name: 'middle' },
+                { x: 0.45, z: 0, length: 0.8, name: 'index' },
+                { x: 0.65, z: 0.15, length: 0.5, rotZ: -0.4, name: 'thumb' } // thumb is angled
+            ];
+
+            fingerPositions.forEach(f => {
+                const fingerGeo = new THREE.CylinderGeometry(0.09, 0.09, f.length, 8);
+                fingerGeo.translate(0, f.length / 2, 0); // shift pivot
+                
+                const fingerMesh = new THREE.Mesh(fingerGeo, materialStandard);
+                fingerMesh.position.set(f.x, 0.6, f.z);
+                
+                if (f.rotZ) {
+                    fingerMesh.rotation.z = f.rotZ;
+                    fingerMesh.position.y = 0.3; // thumb offset
+                }
+                
+                fingerMesh.name = `finger_${f.name}`;
+                handGroup.add(fingerMesh);
+            });
+
+            // Glowing pulse crystal in the center of the palm (Zero point energy source)
+            const palmPulseGeo = new THREE.SphereGeometry(0.18, 16, 16);
+            palmPulseGeo.translate(0, 0, 0.18);
+            const palmPulseMesh = new THREE.Mesh(palmPulseGeo, neonCyanMaterial);
+            palmPulseMesh.name = "palmPulse";
+            handGroup.add(palmPulseMesh);
+
+            models.hand = handGroup;
+        }
+
+        // --- STREAMING_CHUNK:Running the Three.js Render Loop... ---
+        // Main Three.js loop to handle animations dynamically
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+
+            const time = Date.now() * 0.001;
+
+            if (activeModelGroup) {
+                // Smooth continuous automatic rotation of active object
+                if (autoRotateActive && !isDragging) {
+                    activeModelGroup.rotation.y = time * 0.25;
+                    // Gentle wave floating motion
+                    activeModelGroup.position.y = Math.sin(time * 1.5) * 0.15;
+                }
+
+                // Procedural Component Animations based on selected model
+                if (models.cat && activeModelGroup === models.cat) {
+                    // Wag cat's tail
+                    const tail = models.cat.getObjectByName('tail');
+                    if (tail) {
+                        tail.rotation.y = Math.sin(time * 5) * 0.4;
+                    }
+                }
+
+                if (models.hand && activeModelGroup === models.hand) {
+                    // Slowly curl fingers back and forth like interactive robotic hand
+                    const index = models.hand.getObjectByName('finger_index');
+                    const middle = models.hand.getObjectByName('finger_middle');
+                    const ring = models.hand.getObjectByName('finger_ring');
+                    const pinky = models.hand.getObjectByName('finger_pinky');
+                    const thumb = models.hand.getObjectByName('finger_thumb');
+
+                    if (index) index.rotation.x = (Math.sin(time * 2) * 0.4) - 0.2;
+                    if (middle) middle.rotation.x = (Math.sin(time * 2 + 0.2) * 0.4) - 0.2;
+                    if (ring) ring.rotation.x = (Math.sin(time * 2 + 0.4) * 0.4) - 0.2;
+                    if (pinky) pinky.rotation.x = (Math.sin(time * 2 + 0.6) * 0.4) - 0.2;
+                    
+                    // Animate glowing palm gem intensity pulse
+                    const pulse = models.hand.getObjectByName('palmPulse');
+                    if (pulse) {
+                        const intensity = 0.5 + Math.sin(time * 4) * 0.3;
+                        pulse.material.emissiveIntensity = intensity;
+                    }
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // --- STREAMING_CHUNK:Enabling Model Swapping Controls... ---
+        function switch3DModel(modelKey) {
+            // Instant Visual Load
+            const loader = document.getElementById('loader3D');
+            loader.classList.remove('opacity-0');
+            
+            setTimeout(() => {
+                // Safely swap the active object group
+                if (activeModelGroup) scene.remove(activeModelGroup);
+
+                activeModelGroup = models[modelKey];
+                
+                // Reset standard positioning
+                activeModelGroup.position.set(0, 0, 0);
+                activeModelGroup.rotation.set(0, 0, 0);
+                
+                scene.add(activeModelGroup);
+
+                // Update Visualizer Specifications Badge
+                const specs = document.getElementById('modelSpecs');
+                let infoText = "";
+                if (modelKey === 'cat') infoText = "Active Mesh: Procedural Cat // 1.2k Verts // No-Load Texture";
+                else if (modelKey === 'camera') infoText = "Active Mesh: Procedural SLR Camera // 2.5k Verts // Dual Materials";
+                else if (modelKey === 'hand') infoText = "Active Mesh: Procedural Robotic Hand // 3.4k Verts // Dynamic IK Bones";
+                specs.textContent = infoText;
+
+                // Highlight correct selection tab
+                document.querySelectorAll('.model-tab').forEach(tab => {
+                    tab.className = 'model-tab px-4 py-2 rounded-lg border border-transparent text-slate-400 text-xs font-cyber tracking-wider hover:bg-white/5 transition-all duration-300';
+                });
+                const activeTab = document.querySelector(`.model-tab[data-model="${modelKey}"]`);
+                if (activeTab) {
+                    activeTab.className = 'model-tab px-4 py-2 rounded-lg border border-cyan-500/20 bg-cyan-950/30 text-cyan-400 text-xs font-cyber tracking-wider transition-all duration-300';
+                }
+
+                loader.classList.add('opacity-0');
+                appendConsoleLog(`Sanal 3D Mesh yüklendi: ${modelKey.toUpperCase()}`, 'gpu');
+                
+                // Play subtle sweep sound for transition
+                playSynthesizedSFX('hand-entry');
+            }, 100);
+        }
+
+        function toggleAutoRotate(checked) {
+            autoRotateActive = checked;
+            appendConsoleLog(`3D Auto-Rotate: ${checked ? 'ENABLED' : 'DISABLED'}`, 'info');
+        }
+
+        function toggleWireframe(checked) {
+            wireframeMode = checked;
+            
+            // Re-apply wireframe properties on all meshes
+            Object.values(models).forEach(group => {
+                group.traverse(child => {
+                    if (child instanceof THREE.Mesh) {
+                        child.material.wireframe = checked;
+                    }
+                });
+            });
+            appendConsoleLog(`GPU Wireframe Rendering Mode: ${checked ? 'FORCE_WIREFRAME' : 'STANDARD_SHADED'}`, 'gpu');
+        }
+
+        // Handle Responsive Canvas Scaling
+        window.addEventListener('resize', () => {
+            const container = document.getElementById('canvas3DContainer');
+            if (camera && renderer) {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            }
+        });
+
+        // Initialize entire system on page load
+        window.onload = function() {
+            appendConsoleLog('Zero.University Sentezlenmiş Laboratuvarına hoş geldiniz.', 'success');
+            appendConsoleLog('DSP ses motorunu uyandırmak için yukarıdaki kırmızı butona veya soundboard butonlarından birine dokunun.', 'info');
+            
+            init3DRenderer();
+        }
+    </script>
+</body>
+</html>
